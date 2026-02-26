@@ -15,6 +15,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -32,7 +33,7 @@ func NewSystemUserRole() *sSystemUserRole {
 }
 
 func (s *sSystemUserRole) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemUserRole.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("user_id", "role_id")
+	return dao.SystemUserRole.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("user_id", "role_id")
 }
 
 func (s *sSystemUserRole) GetRoleIdsByUserId(ctx context.Context, userId int64) (roleIds []int64, err error) {

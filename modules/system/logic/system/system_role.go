@@ -44,7 +44,7 @@ func NewSystemRole() *sSystemRole {
 }
 
 func (s *sSystemRole) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemRole.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemRole.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemRole) GetByIds(ctx context.Context, ids []int64) (res []*entity.SystemRole, err error) {

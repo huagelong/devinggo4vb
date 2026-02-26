@@ -40,7 +40,7 @@ func NewSystemMenu() *sSystemMenu {
 }
 
 func (s *sSystemMenu) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemMenu.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemMenu.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemMenu) GetRoutersByIds(ctx context.Context, menuIds []int64) (routes []*res.Router, err error) {
@@ -226,7 +226,7 @@ func (s *sSystemMenu) GetRecycleTreeList(ctx context.Context, in *req.SystemMenu
 func (s *sSystemMenu) treeItemList(ctx context.Context, nodes []entity.SystemMenu) (tree []*res.SystemMenuTree) {
 	type itemTree map[int64]*res.SystemMenuTree
 	itemList := make(itemTree)
-	
+
 	// 第一遍：创建所有节点并存储到map中
 	for _, systemMenuEntity := range nodes {
 		var item *res.SystemMenuTree
@@ -237,14 +237,14 @@ func (s *sSystemMenu) treeItemList(ctx context.Context, nodes []entity.SystemMen
 		item.Children = make([]*res.SystemMenuTree, 0)
 		itemList[systemMenuEntity.Id] = item
 	}
-	
+
 	// 第二遍：建立父子关系
 	for _, systemMenuEntity := range nodes {
 		item := itemList[systemMenuEntity.Id]
 		if item == nil {
 			continue
 		}
-		
+
 		// 如果有父节点且父节点存在，则添加到父节点的children中
 		if systemMenuEntity.ParentId != 0 && itemList[systemMenuEntity.ParentId] != nil {
 			itemList[systemMenuEntity.ParentId].Children = append(itemList[systemMenuEntity.ParentId].Children, item)
@@ -259,7 +259,7 @@ func (s *sSystemMenu) treeItemList(ctx context.Context, nodes []entity.SystemMen
 func (s *sSystemMenu) treeSelectList(nodes []entity.SystemMenu) (tree []*res.SystemDeptSelectTree) {
 	type itemTree map[int64]*res.SystemDeptSelectTree
 	itemList := make(itemTree)
-	
+
 	// 第一遍：创建所有节点并存储到map中
 	for _, systemMenuEntity := range nodes {
 		var item res.SystemDeptSelectTree
@@ -270,14 +270,14 @@ func (s *sSystemMenu) treeSelectList(nodes []entity.SystemMenu) (tree []*res.Sys
 		item.Children = make([]*res.SystemDeptSelectTree, 0)
 		itemList[systemMenuEntity.Id] = &item
 	}
-	
+
 	// 第二遍：建立父子关系
 	for _, systemMenuEntity := range nodes {
 		item := itemList[systemMenuEntity.Id]
 		if item == nil {
 			continue
 		}
-		
+
 		// 如果有父节点且父节点存在，则添加到父节点的children中
 		if systemMenuEntity.ParentId != 0 && itemList[systemMenuEntity.ParentId] != nil {
 			itemList[systemMenuEntity.ParentId].Children = append(itemList[systemMenuEntity.ParentId].Children, item)

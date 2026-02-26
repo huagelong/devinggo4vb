@@ -13,10 +13,11 @@ import (
 	"devinggo/modules/system/pkg/hook"
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
+	"time"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hibiken/asynq"
-	"time"
 )
 
 type ConfigProvider struct {
@@ -28,15 +29,8 @@ func (p *ConfigProvider) GetConfigs() ([]*asynq.PeriodicTaskConfig, error) {
 	if g.IsEmpty(bindCron) {
 		return nil, nil
 	}
-	defaultAutoCreatedUpdatedBy := false
-	defaultCacheEvict := true
-	defaultUserRelate := false
 	var dbCrons []*res.SettingCrontabOne
-	err := dao.SettingCrontab.Ctx(p.Ctx).Hook(hook.Bind(&hook.HookOptions{
-		CacheEvict:           &defaultCacheEvict,
-		UserRelate:           &defaultUserRelate,
-		AutoCreatedUpdatedBy: &defaultAutoCreatedUpdatedBy,
-	})).Cache(orm.SetCacheOption(p.Ctx, time.Hour*24)).Where("status", 1).Scan(&dbCrons)
+	err := dao.SettingCrontab.Ctx(p.Ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(p.Ctx, time.Hour*24)).Where("status", 1).Scan(&dbCrons)
 	if utils.IsError(err) {
 		return nil, err
 	}

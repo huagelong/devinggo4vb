@@ -23,6 +23,7 @@ import (
 	"devinggo/modules/system/pkg/worker/cron"
 	"devinggo/modules/system/pkg/worker/task"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -41,7 +42,7 @@ func NewSystemSettingCrontab() *sSettingCrontab {
 }
 
 func (s *sSettingCrontab) Model(ctx context.Context) *gdb.Model {
-	return dao.SettingCrontab.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SettingCrontab.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSettingCrontab) GetValidateCron(ctx context.Context) (rs []*res.SettingCrontabOne, err error) {

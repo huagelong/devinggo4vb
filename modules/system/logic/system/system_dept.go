@@ -42,7 +42,7 @@ func NewSystemDept() *sSystemDept {
 }
 
 func (s *sSystemDept) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemDept.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemDept.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemDept) GetSelectTree(ctx context.Context, userId int64) (tree []*res.SystemDeptTree, err error) {

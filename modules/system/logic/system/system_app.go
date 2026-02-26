@@ -53,7 +53,7 @@ func NewSystemApp() *sSystemApp {
 }
 
 func (s *sSystemApp) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemApp.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemApp.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemApp) GetAppId(ctx context.Context) (string, error) {

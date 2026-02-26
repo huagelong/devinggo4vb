@@ -25,6 +25,7 @@ import (
 	"devinggo/modules/system/pkg/utils/secure"
 	"devinggo/modules/system/pkg/utils/slice"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -44,7 +45,7 @@ func NewSystemUser() *sSystemUser {
 }
 
 func (s *sSystemUser) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemUser.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemUser.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemUser) GetPageList(ctx context.Context, req *model.PageListReq) (res []*res.SystemUser, total int, err error) {

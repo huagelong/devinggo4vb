@@ -18,6 +18,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -35,7 +36,7 @@ func NewSystemSettingConfigGroup() *sSettingConfigGroup {
 }
 
 func (s *sSettingConfigGroup) Model(ctx context.Context) *gdb.Model {
-	return dao.SettingConfigGroup.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SettingConfigGroup.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSettingConfigGroup) GetList(ctx context.Context) (out []*res.SettingConfigGroup, err error) {

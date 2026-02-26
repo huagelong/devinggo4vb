@@ -15,6 +15,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -32,7 +33,7 @@ func NewSystemUserPost() *sSystemUserPost {
 }
 
 func (s *sSystemUserPost) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemUserPost.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("user_id", "post_id")
+	return dao.SystemUserPost.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("user_id", "post_id")
 }
 
 func (s *sSystemUserPost) GetPostIdsByUserId(ctx context.Context, userId int64) (postIds []int64, err error) {

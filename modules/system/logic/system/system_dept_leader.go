@@ -17,6 +17,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -34,7 +35,7 @@ func NewSystemDeptLeader() *sSystemDeptLeader {
 }
 
 func (s *sSystemDeptLeader) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemDeptLeader.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("dept_id", "user_id")
+	return dao.SystemDeptLeader.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("dept_id", "user_id")
 }
 
 func (s *sSystemDeptLeader) GetPageList(ctx context.Context, req *model.PageListReq, search *req.SystemDeptLeaderSearch) (res []*res.SystemDeptLeaderInfo, total int, err error) {

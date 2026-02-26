@@ -20,6 +20,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -38,7 +39,7 @@ func NewSystemModules() *sSystemModules {
 }
 
 func (s *sSystemModules) Model(ctx context.Context) *gdb.Model {
-	return dao.SystemModules.Ctx(ctx).Hook(hook.Bind()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
+	return dao.SystemModules.Ctx(ctx).Hook(hook.Default()).Cache(orm.SetCacheOption(ctx)).OnConflict("id")
 }
 
 func (s *sSystemModules) handleSearch(ctx context.Context, in *req.SystemModulesSearch) (m *gdb.Model) {
