@@ -98,7 +98,7 @@ func Tf(ctx context.Context, key string, params ...interface{}) string {
 
 // GetCurrentLanguage 获取当前语言
 func GetCurrentLanguage(ctx context.Context) string {
-	if lang := contexts.Language(ctx); lang != "" {
+	if lang := contexts.GetLanguage(ctx); lang != "" {
 		return lang
 	}
 	return DefaultLanguage
