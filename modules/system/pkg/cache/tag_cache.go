@@ -7,13 +7,14 @@ package cache
 
 import (
 	"context"
+	"strings"
+	"time"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/redis/go-redis/v9"
-	"strings"
-	"time"
 )
 
 type TagCache struct {
@@ -23,7 +24,7 @@ type TagCache struct {
 	invalidateTagsScript string
 }
 
-func NewTagCache(ctx context.Context, client *gredis.Redis) (*TagCache, error) {
+func newTagCache(ctx context.Context, client *gredis.Redis) (*TagCache, error) {
 	const setScriptSrc = `
 local function split(input, sep)
     if sep == nil then
@@ -43,7 +44,11 @@ local tagsArray = {}
 if tags ~= "" then
     tagsArray = split(tags, ",")
 end
-redis.call("SET", key, value, "EX", expire)
+if expire > 0 then
+    redis.call("SET", key, value, "EX", expire)
+else
+    redis.call("SET", key, value)
+end
 for i=1, #tagsArray do
     redis.call("SADD", "tags:" .. tagsArray[i], key)
     redis.call("SADD", "item_tags:" .. key, tagsArray[i])
@@ -84,10 +89,6 @@ end
 		return nil, err
 	}
 	return &TagCache{client: client, setScript: setScript, deleteScript: deleteScript, invalidateTagsScript: invalidateTagsScript}, nil
-}
-
-func (c *TagCache) GetClient() *gredis.Redis {
-	return c.client
 }
 
 func (c *TagCache) Set(ctx context.Context, key string, value interface{}, expiration time.Duration, tags []string) error {

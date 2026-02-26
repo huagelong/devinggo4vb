@@ -9,21 +9,26 @@ package cache
 import (
 	"bufio"
 	"context"
+	"strings"
+
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
-	"strings"
 )
 
 // cache 缓存驱动
 var cache *gcache.Cache
+
+// tagCache 全局 TagCache 单例
+var tagCache *TagCache
+
 var groupKey = "cache"
 var cachePrefixSelectCache = "SelectCache:"
 
-//cache:metadata:
+// cache:metadata:
 var scanCount = 100
 
-// Instance 缓存实例
+// GetCache 缓存实例
 func GetCache() *gcache.Cache {
 	if cache == nil {
 		panic("cache uninitialized.")
@@ -31,7 +36,7 @@ func GetCache() *gcache.Cache {
 	return cache
 }
 
-// SetAdapter 设置缓存适配器
+// SetAdapter 设置缓存适配器，同时初始化 TagCache 单例
 func SetAdapter(ctx context.Context) {
 	var cacheAdapter gcache.Adapter
 	cacheAdapter = NewAdapter()
@@ -39,13 +44,29 @@ func SetAdapter(ctx context.Context) {
 	// 通用缓存
 	cache = gcache.New()
 	cache.SetAdapter(cacheAdapter)
+	// 初始化 TagCache 单例
+	tc, err := newTagCache(ctx, g.Redis(groupKey))
+	if err != nil {
+		panic("failed to initialize tag cache: " + err.Error())
+	}
+	tagCache = tc
 }
 
-func GetRedisClient() *gredis.Redis {
+// getTagCacheInstance 获取 TagCache 单例（包内使用）
+func getTagCacheInstance() *TagCache {
+	if tagCache == nil {
+		panic("tag cache uninitialized, call SetAdapter first")
+	}
+	return tagCache
+}
+
+// getRedisClient 获取 Redis 客户端（包内使用）
+func getRedisClient() *gredis.Redis {
 	return g.Redis(groupKey)
 }
 
-func GetAdapterRedis() gcache.Adapter {
+// getAdapterRedis 获取 Redis 缓存适配器（包内使用）
+func getAdapterRedis() gcache.Adapter {
 	return gcache.NewAdapterRedis(g.Redis(groupKey))
 }
 
@@ -59,7 +80,7 @@ func GetKeys(ctx context.Context) (keys []string, err error) {
 	iterator := uint64(0)
 	var listKeys []string
 	for {
-		iterator, listKeys, err = GetRedisClient().Scan(ctx, iterator, gredis.ScanOption{
+		iterator, listKeys, err = getRedisClient().Scan(ctx, iterator, gredis.ScanOption{
 			Match: match,
 			Count: scanCount,
 		})
@@ -78,7 +99,7 @@ func GetKeys(ctx context.Context) (keys []string, err error) {
 }
 
 func GetInfo(ctx context.Context) (map[string]map[string]interface{}, error) {
-	info, err := GetRedisClient().Do(ctx, "INFO")
+	info, err := getRedisClient().Do(ctx, "INFO")
 	if err != nil {
 		return nil, err
 	}

@@ -7,12 +7,13 @@ package cache
 
 import (
 	"context"
+	"regexp"
+	"time"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/util/gconv"
-	"regexp"
-	"time"
 )
 
 type Adapter struct{}
@@ -35,7 +36,7 @@ func (a Adapter) getTable(ctx context.Context, key interface{}) string {
 
 func (a Adapter) Set(ctx context.Context, key interface{}, value interface{}, duration time.Duration) error {
 	table := a.getTable(ctx, key)
-	return Set(ctx, key, value, duration, table)
+	return set(ctx, key, value, duration, table)
 }
 
 func (a Adapter) SetMap(ctx context.Context, data map[interface{}]interface{}, duration time.Duration) error {
@@ -71,17 +72,12 @@ func (a Adapter) SetMap(ctx context.Context, data map[interface{}]interface{}, d
 
 func (a Adapter) SetIfNotExist(ctx context.Context, key interface{}, value interface{}, duration time.Duration) (ok bool, err error) {
 	table := a.getTable(ctx, key)
-	return SetIfNotExist(ctx, key, value, duration, table)
+	return setIfNotExist(ctx, key, value, duration, table)
 }
 
 func (a Adapter) SetIfNotExistFunc(ctx context.Context, key interface{}, f gcache.Func, duration time.Duration) (ok bool, err error) {
 	table := a.getTable(ctx, key)
-	return SetIfNotExistFunc(ctx, key, f, duration, table)
-}
-
-func (a Adapter) SetIfNotExistFuncLock(ctx context.Context, key interface{}, f gcache.Func, duration time.Duration) (ok bool, err error) {
-	table := a.getTable(ctx, key)
-	return SetIfNotExistFuncLock(ctx, key, f, duration, table)
+	return setIfNotExistFunc(ctx, key, f, duration, table)
 }
 
 func (a Adapter) Get(ctx context.Context, key interface{}) (*gvar.Var, error) {
@@ -90,50 +86,55 @@ func (a Adapter) Get(ctx context.Context, key interface{}) (*gvar.Var, error) {
 
 func (a Adapter) GetOrSet(ctx context.Context, key interface{}, value interface{}, duration time.Duration) (result *gvar.Var, err error) {
 	table := a.getTable(ctx, key)
-	return GetOrSet(ctx, key, value, duration, table)
+	return getOrSet(ctx, key, value, duration, table)
 }
 
 func (a Adapter) GetOrSetFunc(ctx context.Context, key interface{}, f gcache.Func, duration time.Duration) (result *gvar.Var, err error) {
 	table := a.getTable(ctx, key)
-	return GetOrSetFunc(ctx, key, f, duration, table)
+	return getOrSetFunc(ctx, key, f, duration, table)
 }
 
 func (a Adapter) GetOrSetFuncLock(ctx context.Context, key interface{}, f gcache.Func, duration time.Duration) (result *gvar.Var, err error) {
 	return a.GetOrSetFunc(ctx, key, f, duration)
 }
 
+func (a Adapter) SetIfNotExistFuncLock(ctx context.Context, key interface{}, f gcache.Func, duration time.Duration) (ok bool, err error) {
+	table := a.getTable(ctx, key)
+	return setIfNotExistFuncLock(ctx, key, f, duration, table)
+}
+
 func (a Adapter) Contains(ctx context.Context, key interface{}) (bool, error) {
-	return Contains(ctx, key)
+	return contains(ctx, key)
 }
 
 func (a Adapter) Size(ctx context.Context) (size int, err error) {
-	return GetAdapterRedis().Size(ctx)
+	return getAdapterRedis().Size(ctx)
 }
 
 func (a Adapter) Data(ctx context.Context) (data map[interface{}]interface{}, err error) {
-	return GetAdapterRedis().Data(ctx)
+	return getAdapterRedis().Data(ctx)
 }
 
 func (a Adapter) Keys(ctx context.Context) (keys []interface{}, err error) {
-	return GetAdapterRedis().Keys(ctx)
+	return getAdapterRedis().Keys(ctx)
 }
 
 func (a Adapter) Values(ctx context.Context) (values []interface{}, err error) {
-	return GetAdapterRedis().Values(ctx)
+	return getAdapterRedis().Values(ctx)
 }
 
 func (a Adapter) Update(ctx context.Context, key interface{}, value interface{}) (oldValue *gvar.Var, exist bool, err error) {
 	table := a.getTable(ctx, key)
-	return Update(ctx, key, value, table)
+	return update(ctx, key, value, table)
 }
 
 func (a Adapter) UpdateExpire(ctx context.Context, key interface{}, duration time.Duration) (oldDuration time.Duration, err error) {
 	table := a.getTable(ctx, key)
-	return UpdateExpire(ctx, key, duration, table)
+	return updateExpire(ctx, key, duration, table)
 }
 
 func (a Adapter) GetExpire(ctx context.Context, key interface{}) (time.Duration, error) {
-	return GetExpire(ctx, key)
+	return getExpire(ctx, key)
 }
 
 func (a Adapter) Remove(ctx context.Context, keys ...interface{}) (lastValue *gvar.Var, err error) {
@@ -150,9 +151,9 @@ func (a Adapter) Remove(ctx context.Context, keys ...interface{}) (lastValue *gv
 }
 
 func (a Adapter) Clear(ctx context.Context) error {
-	return GetAdapterRedis().Clear(ctx)
+	return getAdapterRedis().Clear(ctx)
 }
 
 func (a Adapter) Close(ctx context.Context) error {
-	return GetAdapterRedis().Close(ctx)
+	return getAdapterRedis().Close(ctx)
 }
