@@ -437,19 +437,12 @@ func createModuleMigrationFiles(ctx context.Context, moduleName string, tplData 
 	name := fmt.Sprintf("%s_module", gstr.LcFirst(moduleName))
 
 	// 确定迁移文件目录和SQL模板
-	dbType := utils.GetDbType()
 	directory := "resource/migrations"
-	upTemplate := "sql/module_up_mysql.html"
-	downTemplate := "sql/module_down_mysql.html"
-
-	if dbType == "postgres" {
-		directory = "resource/migrations_pgsql"
-		upTemplate = "sql/module_up_postgres.html"
-		downTemplate = "sql/module_down_postgres.html"
-	}
+	upTemplate := "sql/module_up_postgres.html"
+	downTemplate := "sql/module_down_postgres.html"
 
 	// 创建迁移文件
-	g.Log().Infof(ctx, "开始创建模块 '%s' 的SQL迁移文件 (数据库类型: %s)", moduleName, dbType)
+	g.Log().Infof(ctx, "开始创建模块 '%s' 的SQL迁移文件 (PostgreSQL)", moduleName)
 
 	// 使用g.View渲染SQL模板
 	view := g.View()

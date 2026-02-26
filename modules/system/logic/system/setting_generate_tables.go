@@ -1330,31 +1330,15 @@ func (s *sSettingGenerateTables) getModelColumnType(columnType string) string {
 		}
 	}
 
-	// MySQL 数据库特殊处理
-	if dbType == "mysql" {
-		switch dataType {
-		case "binary", "varbinary":
-			return "[]byte"
-		case "geometry", "point", "linestring", "polygon", "multipoint", "multilinestring", "multipolygon", "geometrycollection":
-			return "string"
-		case "json":
-			return "string"
-		case "bit":
-			return "int64"
-		case "unsigned tinyint", "tinyint unsigned":
-			return "uint8"
-		case "unsigned smallint", "smallint unsigned":
-			return "uint16"
-		case "unsigned mediumint", "mediumint unsigned":
-			return "uint32"
-		case "unsigned int", "int unsigned":
-			return "uint32"
-		case "unsigned bigint", "bigint unsigned":
-			return "uint64"
-		}
+	// PostgreSQL 特有类型
+	switch dataType {
+	case "bytea":
+		return "[]byte"
+	case "boolean":
+		return "bool"
 	}
 
-	// 通用数据类型映射（MySQL 和 PostgreSQL 共有）
+	// 通用数据类型映射
 	switch dataType {
 	case "decimal":
 		return "float64"
@@ -1381,12 +1365,8 @@ func (s *sSettingGenerateTables) getModelColumnType(columnType string) string {
 	case "datetime", "timestamp":
 		return "*gtime.Time"
 	case "bool":
-		// MySQL 的 bool 类型映射为 int，PostgreSQL 的 boolean 已在上面处理
-		if dbType == "postgres" {
-			return "bool"
-		}
-		return "int"
-	case "text", "varchar", "char", "longtext", "mediumtext", "tinytext":
+		return "bool"
+	case "text", "varchar", "char":
 		return "string"
 	default:
 		return "string"

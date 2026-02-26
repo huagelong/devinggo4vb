@@ -77,38 +77,10 @@ func (s *sDataMaintain) GetAllTableStatus(ctx context.Context, groupName string)
 		err = myerror.ValidationFailed(ctx, "数据库组不存在")
 		return
 	}
-	dbType := strings.ToLower(db.GetConfig().Type)
-	switch dbType {
-	case "mysql":
-		rs, err = s.getMysqlAllTableStatus(ctx, db)
-		if err != nil {
-			return
-		}
-		return
-	case "pgsql":
-		rs, err = s.getPgsqlAllTableStatus(ctx, db)
-		if err != nil {
-			return
-		}
-		return
-	default:
-		err = myerror.ValidationFailed(ctx, "暂不支持该数据库类型")
-		return
-	}
-}
-
-func (s *sDataMaintain) getMysqlAllTableStatus(ctx context.Context, db gdb.DB) (rs []*res.DataMaintain, err error) {
-	tablesInfo, err := db.GetAll(ctx, "SHOW TABLE STATUS")
+	rs, err = s.getPgsqlAllTableStatus(ctx, db)
 	if err != nil {
 		return
 	}
-	//g.Log().Info(ctx, "tablesInfo:", tablesInfo)
-
-	err = gconv.Structs(tablesInfo, &rs)
-	if err != nil {
-		return
-	}
-	//g.Log().Info(ctx, "rs:", rs)
 	return
 }
 

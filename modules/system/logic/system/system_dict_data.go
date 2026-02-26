@@ -49,12 +49,7 @@ func (s *sSystemDictData) GetList(ctx context.Context, listReq *model.ListReq, i
 	}
 
 	mergo.Merge(&listReq, inReq)
-	dbType := utils.GetDbType()
-	if dbType == "mysql" {
-		listReq.Select = "id, `label` as `title`, `value` as `key`,code"
-	} else {
-		listReq.Select = "id, label as title, value as key,code"
-	}
+	listReq.Select = "id, label as title, value as key, code"
 	m := s.handleSearch(ctx, in)
 	err = orm.GetList(m, listReq).Scan(&out)
 	if utils.IsError(err) {

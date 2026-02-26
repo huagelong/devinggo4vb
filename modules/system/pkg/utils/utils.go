@@ -295,24 +295,15 @@ func ZipDirectory(ctx context.Context, source, target string) error {
 func GetDbType() string {
 	dbConfig := g.DB().GetConfig()
 	link := dbConfig.Link
-	dbType := "mysql" // 默认为MySQL
 	if g.IsEmpty(link) {
 		link = dbConfig.Type
 	}
-	// 判断数据库类型
-	if strings.HasPrefix(link, "postgres:") || strings.HasPrefix(link, "postgresql:") || strings.HasPrefix(link, "pgsql:") {
-		dbType = "postgres"
-	}
-	return dbType
+	return "postgres"
 }
 
-// GetFieldQuote 根据数据库类型返回字段引用符号
+// GetFieldQuote 返回PostgreSQL字段引用符号
 func GetFieldQuote() string {
-	dbType := GetDbType()
-	if dbType == "postgres" {
-		return "\"" // PostgreSQL使用双引号
-	}
-	return "`" // MySQL使用反引号
+	return "\"" // PostgreSQL使用双引号
 }
 
 // QuoteField 为字段名添加数据库兼容的引用符号

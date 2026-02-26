@@ -43,11 +43,11 @@
 
 ## 技术栈
 
-- **后端**：GoFrame v2、MySQL or Postgresql、Redis
+- **后端**：GoFrame v2、PostgreSQL、Redis
 - **前端**：Vue3、Vite5、Arco Design、Pinia
 
 ## 功能特性
-- [x] 支持mysql,postgresql
+- [x] 支持PostgreSQL数据库
 - [x] 支持多语言：支持多语言切换
 - [x] 支持多主题：支持多主题切换
 - [x] 支持队列：支持基于redis的队列
@@ -80,7 +80,7 @@
 
 - Go >= 1.23.4
 - Node >= 18
-- MySQL >= 5.7 or PostgreSQL >= 13.0
+- PostgreSQL >= 13.0
 - Redis >= 5.0
 
 ## 快速开始
@@ -110,9 +110,9 @@ git submodule update --init --recursive
 git submodule foreach git pull origin master
 ```
 
-4. 修改配置文件（mysql or postgresql,redis配置）
+4. 修改配置文件（postgresql、redis配置）
 - `manifest/config/config.example.yaml` 复制为 `manifest/config/config.yaml`
-- `manifest/config/config.yaml` # 修改redis,mysql配置
+- `manifest/config/config.yaml` # 修改redis、postgresql配置
 - `hack/config.example.yaml` 复制为 `hack/config.yaml` # 开发时使用
 - `hack/config.yaml` # 开发时使用
 
