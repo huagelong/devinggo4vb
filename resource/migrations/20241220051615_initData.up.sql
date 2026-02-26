@@ -158,7 +158,7 @@ values (3, 1, '本地存储', '1', 'upload_mode', 99, 1, 0, 0, '2021-06-27 13:33
 insert into "system_dict_type"("id", "name", "code", "status", "created_by", "updated_by", "created_at", "updated_at",
                                "deleted_at", "remark")
 values (1, '存储模式', 'upload_mode', 1, 0, 0, '2021-06-27 13:33:11', '2021-06-27 13:33:11', NULL, '上传文件存储模式'),
-       (1, '数据状态', 'data_status', 1, 0, 0, '2021-06-27 13:36:16', '2021-06-27 13:36:34', NULL, '通用数据状态'),
+       (2, '数据状态', 'data_status', 1, 0, 0, '2021-06-27 13:36:16', '2021-06-27 13:36:34', NULL, '通用数据状态'),
        (3, '后台首页', 'dashboard', 1, 0, 0, '2021-08-09 12:53:17', '2021-08-09 12:53:17', NULL, ''),
        (4, '性别', 'sex', 1, 0, 0, '2021-08-09 12:54:40', '2021-08-09 12:54:40', NULL, ''),
        (5, '接口数据类型', 'api_data_type', 1, 0, 0, '2021-11-22 20:56:03', '2021-11-22 20:56:03', NULL, ''),
@@ -565,7 +565,7 @@ values (1000, 0, ',0,', '系统管理', 'systemMg', 'IconSettings', 'systemMg', 
 insert into "system_modules"("id", "created_at", "updated_at", "created_by", "updated_by", "name", "label",
                              "description", "installed", "status", "deleted_at")
 values (1, '2024-12-17 17:15:26', '2024-12-17 17:35:59', 1, 1, 'system', '系统模块', '系统模块,系统内置', 1, 1, NULL),
-       (1, '2024-12-17 17:35:47', '2024-12-17 18:05:04', 1, 1, 'api', 'api', 'API模块，系统内置', 1, 1, NULL);
+       (2, '2024-12-17 17:35:47', '2024-12-17 18:05:04', 1, 1, 'api', 'api', 'API模块，系统内置', 1, 1, NULL);
 
 /*Data for the table "system_notice" */
 
