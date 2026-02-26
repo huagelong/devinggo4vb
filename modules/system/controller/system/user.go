@@ -24,6 +24,7 @@ import (
 	"devinggo/modules/system/pkg/utils/request"
 	"devinggo/modules/system/pkg/utils/secure"
 	"devinggo/modules/system/service"
+
 	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -199,7 +200,6 @@ func (c *userController) ReadUser(ctx context.Context, in *system.ReadUserReq) (
 	}
 	out.Data = *info
 	return
-	return
 }
 
 func (c *userController) ClearCache(ctx context.Context, in *system.ClearCacheReq) (out *system.ClearCacheRes, err error) {
@@ -305,7 +305,6 @@ func (c *userController) SetHomePage(ctx context.Context, in *system.SetHomePage
 	if err != nil {
 		return
 	}
-	return
 	return
 }
 
