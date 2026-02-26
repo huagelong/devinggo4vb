@@ -65,21 +65,6 @@ type (
 		Delete(ctx context.Context, ids []int64) (err error)
 		AddLog(ctx context.Context, id int64, status int, exceptionInfo string) (err error)
 	}
-	ISettingGenerateColumns interface {
-		Model(ctx context.Context) *gdb.Model
-		GetList(ctx context.Context, in *req.SettingGenerateColumnsSearch) (out []*res.SettingGenerateColumns, err error)
-	}
-	ISettingGenerateTables interface {
-		Model(ctx context.Context) *gdb.Model
-		GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SettingGenerateTablesSearch) (rs []*res.SettingGenerateTables, total int, err error)
-		LoadTable(ctx context.Context, in *req.LoadTable) (err error)
-		GetById(ctx context.Context, id int64) (res *res.SettingGenerateTables, err error)
-		Delete(ctx context.Context, ids []int64) (err error)
-		SyncCode(ctx context.Context, id int64) (err error)
-		UpdateTableAndColumns(ctx context.Context, in *req.TableAndColumnsUpdate) (err error)
-		GenerateCode(ctx context.Context, ids []int64) (filePath string, err error)
-		Preview(ctx context.Context, id int64) (rs []res.PreviewTable, err error)
-	}
 	ISystemApi interface {
 		Model(ctx context.Context) *gdb.Model
 		GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SystemApiSearch) (rs []*res.SystemApi, total int, err error)
@@ -355,8 +340,6 @@ var (
 	localSettingConfigGroup        ISettingConfigGroup
 	localSettingCrontab            ISettingCrontab
 	localSettingCrontabLog         ISettingCrontabLog
-	localSettingGenerateColumns    ISettingGenerateColumns
-	localSettingGenerateTables     ISettingGenerateTables
 	localSystemApi                 ISystemApi
 	localSystemApiGroup            ISystemApiGroup
 	localSystemApiLog              ISystemApiLog
@@ -460,28 +443,6 @@ func SettingCrontabLog() ISettingCrontabLog {
 
 func RegisterSettingCrontabLog(i ISettingCrontabLog) {
 	localSettingCrontabLog = i
-}
-
-func SettingGenerateColumns() ISettingGenerateColumns {
-	if localSettingGenerateColumns == nil {
-		panic("implement not found for interface ISettingGenerateColumns, forgot register?")
-	}
-	return localSettingGenerateColumns
-}
-
-func RegisterSettingGenerateColumns(i ISettingGenerateColumns) {
-	localSettingGenerateColumns = i
-}
-
-func SettingGenerateTables() ISettingGenerateTables {
-	if localSettingGenerateTables == nil {
-		panic("implement not found for interface ISettingGenerateTables, forgot register?")
-	}
-	return localSettingGenerateTables
-}
-
-func RegisterSettingGenerateTables(i ISettingGenerateTables) {
-	localSettingGenerateTables = i
 }
 
 func SystemApi() ISystemApi {
