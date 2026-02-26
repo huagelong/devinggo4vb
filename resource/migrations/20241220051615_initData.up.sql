@@ -610,7 +610,7 @@ insert into "system_role"("id", "name", "code", "data_scope", "status", "sort", 
                           "created_at", "updated_at", "deleted_at", "remark")
 values (1, '超级管理员（创始人）', 'superAdmin', 0, 1, 2, 1, 1, '2024-08-19 11:29:32', '2024-10-10 17:51:19', NULL,
         '系统内置角色，不可删除'),
-       (1, '总管理员', 'maxAdmin', 1, 1, 1, 1, 1, '2024-09-04 14:34:18', '2024-10-11 14:08:45', NULL, '111');
+       (2, '总管理员', 'maxAdmin', 1, 1, 1, 1, 1, '2024-09-04 14:34:18', '2024-10-11 14:08:45', NULL, '111');
 
 /*Data for the table "system_role_dept" */
 
