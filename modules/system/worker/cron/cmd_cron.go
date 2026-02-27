@@ -7,21 +7,16 @@
 package cron
 
 import (
-	"devinggo/modules/system/pkg/worker/cron"
+	"context"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
 	"devinggo/modules/system/pkg/worker/task"
 	"devinggo/modules/system/worker/consts"
-	"context"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hibiken/asynq"
 )
-
-var cmdCron = &ccmdCron{
-	Type:        consts.CMD_CRON,
-	Description: "执行命令",
-	Payload:     &glob2.Payload{},
-}
 
 type ccmdCron struct {
 	Type        string
@@ -34,7 +29,17 @@ type CmdCronData struct {
 }
 
 func init() {
-	cron.Register(cmdCron)
+	// 自动注册Cron任务
+	worker.RegisterCron(NewCmdCron())
+}
+
+// NewCmdCron 创建命令执行定时任务
+func NewCmdCron() *ccmdCron {
+	return &ccmdCron{
+		Type:        consts.CMD_CRON,
+		Description: "执行命令",
+		Payload:     &glob2.Payload{},
+	}
 }
 
 func (s *ccmdCron) GetType() string {

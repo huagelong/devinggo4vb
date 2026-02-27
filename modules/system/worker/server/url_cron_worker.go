@@ -7,29 +7,34 @@
 package server
 
 import (
+	"context"
 	"devinggo/modules/system/myerror"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
-	"devinggo/modules/system/pkg/worker/server"
 	"devinggo/modules/system/worker/consts"
 	"devinggo/modules/system/worker/cron"
-	"context"
+	"strings"
+	"time"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hibiken/asynq"
-	"strings"
-	"time"
 )
-
-var urlCronWorker = &cUrlCronWorker{
-	Type: consts.URL_CRON,
-}
 
 type cUrlCronWorker struct {
 	Type string
 }
 
 func init() {
-	server.Register(urlCronWorker)
+	// 自动注册Worker
+	worker.Register(NewUrlCronWorker())
+}
+
+// NewUrlCronWorker 创建URL请求Worker
+func NewUrlCronWorker() *cUrlCronWorker {
+	return &cUrlCronWorker{
+		Type: consts.URL_CRON,
+	}
 }
 
 func (s *cUrlCronWorker) GetType() string {

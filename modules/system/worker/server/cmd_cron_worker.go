@@ -7,26 +7,31 @@
 package server
 
 import (
+	"context"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
-	"devinggo/modules/system/pkg/worker/server"
 	"devinggo/modules/system/worker/consts"
 	"devinggo/modules/system/worker/cron"
-	"context"
+
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/gproc"
 	"github.com/hibiken/asynq"
 )
-
-var cmdCronWorker = &cCmdCronWorker{
-	Type: consts.CMD_CRON,
-}
 
 type cCmdCronWorker struct {
 	Type string
 }
 
 func init() {
-	server.Register(cmdCronWorker)
+	// 自动注册Worker
+	worker.Register(NewCmdCronWorker())
+}
+
+// NewCmdCronWorker 创建命令执行Worker
+func NewCmdCronWorker() *cCmdCronWorker {
+	return &cCmdCronWorker{
+		Type: consts.CMD_CRON,
+	}
 }
 
 func (s *cCmdCronWorker) GetType() string {

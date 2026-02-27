@@ -8,20 +8,15 @@ package cron
 
 import (
 	"context"
-	"devinggo/modules/system/pkg/worker/cron"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
 	"devinggo/modules/system/pkg/worker/task"
 	"devinggo/modules/system/worker/consts"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hibiken/asynq"
 )
-
-var urlCron = &curlCron{
-	Type:        consts.URL_CRON,
-	Description: "执行http请求",
-	Payload:     &glob2.Payload{},
-}
 
 type curlCron struct {
 	Type        string
@@ -42,7 +37,17 @@ type UrlCronData struct {
 }
 
 func init() {
-	cron.Register(urlCron)
+	// 自动注册Cron任务
+	worker.RegisterCron(NewUrlCron())
+}
+
+// NewUrlCron 创建URL请求定时任务
+func NewUrlCron() *curlCron {
+	return &curlCron{
+		Type:        consts.URL_CRON,
+		Description: "执行http请求",
+		Payload:     &glob2.Payload{},
+	}
 }
 
 func (s *curlCron) GetType() string {

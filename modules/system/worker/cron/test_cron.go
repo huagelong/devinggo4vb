@@ -8,20 +8,15 @@ package cron
 
 import (
 	"context"
-	"devinggo/modules/system/pkg/worker/cron"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
 	"devinggo/modules/system/pkg/worker/task"
 	"devinggo/modules/system/worker/consts"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hibiken/asynq"
 )
-
-var testCron = &ctestCron{
-	Type:        consts.TEST_CRON,
-	Description: "This is a test cron",
-	Payload:     &glob2.Payload{},
-}
 
 type ctestCron struct {
 	Type        string
@@ -34,7 +29,17 @@ type TestCronData struct {
 }
 
 func init() {
-	cron.Register(testCron)
+	// 自动注册Cron任务
+	worker.RegisterCron(NewTestCron())
+}
+
+// NewTestCron 创建测试定时任务
+func NewTestCron() *ctestCron {
+	return &ctestCron{
+		Type:        consts.TEST_CRON,
+		Description: "This is a test cron",
+		Payload:     &glob2.Payload{},
+	}
 }
 
 func (s *ctestCron) GetType() string {

@@ -7,24 +7,29 @@
 package server
 
 import (
+	"context"
+	"devinggo/modules/system/pkg/worker"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
-	"devinggo/modules/system/pkg/worker/server"
 	"devinggo/modules/system/worker/consts"
 	"devinggo/modules/system/worker/cron"
-	"context"
+
 	"github.com/hibiken/asynq"
 )
-
-var testWorker = &cTestWorker{
-	Type: consts.TEST_TASK,
-}
 
 type cTestWorker struct {
 	Type string
 }
 
 func init() {
-	server.Register(testWorker)
+	// 自动注册Worker
+	worker.Register(NewTestWorker())
+}
+
+// NewTestWorker 创建测试Worker
+func NewTestWorker() *cTestWorker {
+	return &cTestWorker{
+		Type: consts.TEST_TASK,
+	}
 }
 
 func (s *cTestWorker) GetType() string {
