@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -52,7 +52,7 @@ func (s *sSystemDeptLeader) GetPageList(ctx context.Context, req *model.PageList
 	if !g.IsEmpty(search.Status) {
 		m = m.Where("system_user.status = ?", search.Status)
 	}
-	err = orm.GetPageList(m, req).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -44,7 +44,7 @@ func (s *sSystemLoginLog) Model(ctx context.Context) *gdb.Model {
 }
 
 func (s *sSystemLoginLog) GetPageList(ctx context.Context, req *model.PageListReq, username string) (res []*res.SystemLoginLog, total int, err error) {
-	err = orm.GetPageList(s.Model(ctx), req, g.Map{"username": username}).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(s.Model(ctx)).WithPageListReq(req, g.Map{"username": username}).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -128,7 +128,7 @@ func (s *sSystemLoginLog) handleSearch(ctx context.Context, in *req.SystemLoginL
 func (s *sSystemLoginLog) GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SystemLoginLogSearch) (rs []*res.SystemLoginLog, total int, err error) {
 	m := s.handleSearch(ctx, in)
 	var entity []*entity.SystemLoginLog
-	err = orm.GetPageList(m, req).ScanAndCount(&entity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&entity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

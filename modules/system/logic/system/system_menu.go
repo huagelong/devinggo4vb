@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -167,7 +167,7 @@ func (s *sSystemMenu) GetTreeList(ctx context.Context, in *req.SystemMenuSearch)
 			m = m.WhereLTE("created_at", in.CreatedAt[1]+"23:59:59")
 		}
 	}
-	m = orm.GetList(m, inReq, params)
+	m = orm.NewQuery(m).WithListReq(inReq, params).Build()
 	systemMenuEntity := []entity.SystemMenu{}
 	err = m.Order("parent_id, sort desc").Scan(&systemMenuEntity)
 	if utils.IsError(err) {
@@ -210,7 +210,7 @@ func (s *sSystemMenu) GetRecycleTreeList(ctx context.Context, in *req.SystemMenu
 			m = m.WhereLTE("created_at", in.CreatedAt[1]+"23:59:59")
 		}
 	}
-	m = orm.GetList(m, inReq, params)
+	m = orm.NewQuery(m).WithListReq(inReq, params).Build()
 	systemMenuEntity := []entity.SystemMenu{}
 	err = m.Order("parent_id, sort desc").Scan(&systemMenuEntity)
 	if utils.IsError(err) {

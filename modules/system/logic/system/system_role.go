@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -136,7 +136,7 @@ func (s *sSystemRole) GetList(ctx context.Context, in *req.SystemRoleSearch, fil
 		OrderType: "desc",
 	}
 	m := s.handleRoleSearch(ctx, in, filterAdminRole)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return
@@ -147,7 +147,7 @@ func (s *sSystemRole) GetList(ctx context.Context, in *req.SystemRoleSearch, fil
 func (s *sSystemRole) GetPageList(ctx context.Context, req *model.PageListReq, in *req.SystemRoleSearch, filterAdminRole bool) (rs []*res.SystemRole, total int, err error) {
 	m := s.handleRoleSearch(ctx, in, filterAdminRole).Handler(handler.FilterAuth)
 	var postEntity []*entity.SystemRole
-	err = orm.GetPageList(m, req).ScanAndCount(&postEntity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&postEntity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

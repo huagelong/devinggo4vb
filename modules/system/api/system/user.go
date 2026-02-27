@@ -11,6 +11,7 @@ import (
 	"devinggo/modules/system/model/page"
 	"devinggo/modules/system/model/req"
 	"devinggo/modules/system/model/res"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
@@ -229,17 +230,4 @@ type KickUserReq struct {
 
 type KickUserRes struct {
 	g.Meta `mime:"application/json"`
-}
-
-type RemoteUserReq struct {
-	g.Meta `path:"/user/remote" method:"post" tags:"管理员信息" summary:"远程万能通用列表接口." x-exceptAuth:"true" x-permission:"system:user:remote"`
-	model.AuthorHeader
-	model.PageListReq
-}
-
-type RemoteUserRes struct {
-	g.Meta `mime:"application/json"`
-	page.PageRes
-	Items []res.SystemUser `json:"items"  dc:"list" `
-	Data  []res.SystemUser `json:"data"  dc:"list" `
 }

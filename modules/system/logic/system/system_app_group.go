@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -45,7 +45,7 @@ func (s *sSystemAppGroup) Model(ctx context.Context) *gdb.Model {
 func (s *sSystemAppGroup) GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SystemAppGroupSearch) (rs []*res.SystemAppGroup, total int, err error) {
 	m := s.handleSearch(ctx, in)
 	var entity []*entity.SystemAppGroup
-	err = orm.GetPageList(m, req).ScanAndCount(&entity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&entity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -64,7 +64,7 @@ func (s *sSystemAppGroup) GetList(ctx context.Context, in *req.SystemAppGroupSea
 		OrderType: "desc",
 	}
 	m := s.handleSearch(ctx, in).Handler(handler.FilterAuth)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return

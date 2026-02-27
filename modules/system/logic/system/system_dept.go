@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -171,7 +171,7 @@ func (s *sSystemDept) GetList(ctx context.Context, in *req.SystemDeptSearch) (ou
 		OrderType: "desc",
 	}
 	m := s.handleSearch(ctx, in)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return
@@ -184,7 +184,7 @@ func (s *sSystemDept) GetListTreeList(ctx context.Context, in *req.SystemDeptSea
 		Recycle: in.Recycle,
 	}
 	m := s.handleSearch(ctx, in)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	systemDeptEntity := []entity.SystemDept{}
 	err = m.Order("parent_id, sort desc").Scan(&systemDeptEntity)
 	if utils.IsError(err) {
@@ -202,7 +202,7 @@ func (s *sSystemDept) GetRecycleTreeList(ctx context.Context, in *req.SystemDept
 		Recycle: in.Recycle,
 	}
 	m := s.handleSearch(ctx, in)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	systemDeptEntity := []entity.SystemDept{}
 	err = m.Order("parent_id, sort desc").Scan(&systemDeptEntity)
 	if utils.IsError(err) {
@@ -244,7 +244,7 @@ func (s *sSystemDept) GetTreeList(ctx context.Context, in *req.SystemDeptSearch)
 		Recycle: in.Recycle,
 	}
 	m := s.handleSearch(ctx, in)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	systemDeptEntity := []entity.SystemDept{}
 	err = m.Order("parent_id, sort desc").Scan(&systemDeptEntity)
 	if utils.IsError(err) {

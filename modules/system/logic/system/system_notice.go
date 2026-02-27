@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -44,7 +44,7 @@ func (s *sSystemNotice) Model(ctx context.Context) *gdb.Model {
 }
 
 func (s *sSystemNotice) GetPageList(ctx context.Context, req *model.PageListReq) (res []*res.SystemNotice, total int, err error) {
-	err = orm.GetPageList(s.Model(ctx), req).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(s.Model(ctx)).WithPageListReq(req).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -54,7 +54,7 @@ func (s *sSystemNotice) GetPageList(ctx context.Context, req *model.PageListReq)
 func (s *sSystemNotice) GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SystemNoticeSearch) (rs []*res.SystemNotice, total int, err error) {
 	m := s.handleSearch(ctx, in)
 	var entity []*entity.SystemNotice
-	err = orm.GetPageList(m, req).ScanAndCount(&entity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&entity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

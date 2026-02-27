@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -52,7 +52,7 @@ func (s *sSystemDictData) GetList(ctx context.Context, listReq *model.ListReq, i
 	mergo.Merge(&listReq, inReq)
 	listReq.Select = "id, label as title, value as key, code"
 	m := s.handleSearch(ctx, in)
-	err = orm.GetList(m, listReq).Scan(&out)
+	err = orm.NewQuery(m).WithListReq(listReq).ScanAll(&out)
 	if utils.IsError(err) {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (s *sSystemDictData) GetList(ctx context.Context, listReq *model.ListReq, i
 func (s *sSystemDictData) GetPageList(ctx context.Context, req *model.PageListReq, in *req.SystemDictDataSearch) (rs []*res.SystemDictDataFull, total int, err error) {
 	m := s.handleSearch(ctx, in).Handler(handler.FilterAuth)
 	var entity []*entity.SystemDictData
-	err = orm.GetPageList(m, req).ScanAndCount(&entity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&entity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

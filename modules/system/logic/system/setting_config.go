@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -77,7 +77,7 @@ func (s *sSettingConfig) GetList(ctx context.Context, in *req.SettingConfigSearc
 		OrderType: "desc",
 	}
 	m := s.handleSearch(ctx, in)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return

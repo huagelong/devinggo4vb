@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -44,7 +44,7 @@ func (s *sSystemQueueMessage) GetReceiveUserPageList(ctx context.Context, req *m
 	m := service.SystemUser().Model(ctx).Fields(dao.SystemQueueMessageReceive.Table()+".read_status as read_status_int", dao.SystemUser.Table()+".username", dao.SystemUser.Table()+".nickname").InnerJoinOnFields(dao.SystemQueueMessageReceive.Table(), "id", "=", "user_id")
 	m = m.Where(dao.SystemQueueMessageReceive.Table()+".message_id", messageId)
 	m = m.OrderDesc(dao.SystemUser.Table() + ".created_at")
-	err = orm.GetPageList(m, req).ScanAndCount(&rs, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&rs, &total)
 	if utils.IsError(err) {
 		return
 	}
@@ -87,7 +87,7 @@ func (s *sSystemQueueMessage) GetPageList(ctx context.Context, req *model.PageLi
 
 	m = m.OrderDesc("message_id")
 	var receiveRes []*entity.SystemQueueMessageReceive
-	err = orm.GetPageList(m, req).ScanAndCount(&receiveRes, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&receiveRes, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

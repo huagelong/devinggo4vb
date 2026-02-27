@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -64,7 +64,7 @@ func (s *sSystemUploadfile) GetPageList(ctx context.Context, in *model.PageListR
 		m = m.WhereBetween("created_at", params.MinDate+" 00:00:00", params.MaxDate+" 23:59:59")
 	}
 
-	err = orm.GetPageList(m, in).ScanAndCount(&out, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(in).ScanAndCount(&out, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -42,7 +42,7 @@ func (s *sSettingConfigGroup) Model(ctx context.Context) *gdb.Model {
 func (s *sSettingConfigGroup) GetList(ctx context.Context) (out []*res.SettingConfigGroup, err error) {
 	inReq := &model.ListReq{}
 	m := s.Model(ctx)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return

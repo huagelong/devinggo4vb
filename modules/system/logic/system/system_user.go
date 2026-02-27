@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -49,7 +49,7 @@ func (s *sSystemUser) Model(ctx context.Context) *gdb.Model {
 }
 
 func (s *sSystemUser) GetPageList(ctx context.Context, req *model.PageListReq) (res []*res.SystemUser, total int, err error) {
-	err = orm.GetPageList(s.Model(ctx), req).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(s.Model(ctx)).WithPageListReq(req).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -58,7 +58,7 @@ func (s *sSystemUser) GetPageList(ctx context.Context, req *model.PageListReq) (
 
 func (s *sSystemUser) GetPageListForSearch(ctx context.Context, req *model.PageListReq, in *req.SystemUserSearch) (res []*res.SystemUser, total int, err error) {
 	m := s.handleUserSearch(ctx, in)
-	err = orm.GetPageList(m, req).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -82,7 +82,7 @@ func (s *sSystemUser) GetOnlineUserPageListForSearch(ctx context.Context, req *m
 		userAppMap[userApp.UserId] = userApp.AppId
 	}
 	m = m.WhereIn("id", userIds)
-	err = orm.GetPageList(m, req).ScanAndCount(&res, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&res, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -96,7 +96,7 @@ func (s *sSystemUser) GetOnlineUserPageListForSearch(ctx context.Context, req *m
 
 func (s *sSystemUser) GetExportList(ctx context.Context, req *model.ListReq, in *req.SystemUserSearch) (res []*res.SystemUserExport, err error) {
 	m := s.handleUserSearch(ctx, in)
-	err = orm.GetList(m, req).Scan(&res)
+	err = orm.NewQuery(m).WithListReq(req).ScanAll(&res)
 	if utils.IsError(err) {
 		return
 	}

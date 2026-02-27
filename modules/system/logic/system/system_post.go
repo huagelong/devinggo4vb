@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -71,7 +71,7 @@ func (s *sSystemPost) GetList(ctx context.Context, in *req.SystemPostSearch) (ou
 		OrderType: "desc",
 	}
 	m := s.handlePostSearch(ctx, in).Handler(handler.FilterAuth)
-	m = orm.GetList(m, inReq)
+	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)
 	if utils.IsError(err) {
 		return
@@ -82,7 +82,7 @@ func (s *sSystemPost) GetList(ctx context.Context, in *req.SystemPostSearch) (ou
 func (s *sSystemPost) GetPageList(ctx context.Context, req *model.PageListReq, in *req.SystemPostSearch) (rs []*res.SystemPost, total int, err error) {
 	m := s.handlePostSearch(ctx, in).Handler(handler.FilterAuth)
 	var postEntity []*entity.SystemPost
-	err = orm.GetPageList(m, req).ScanAndCount(&postEntity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&postEntity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}

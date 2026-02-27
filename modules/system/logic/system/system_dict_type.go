@@ -1,4 +1,4 @@
-// Package system
+﻿// Package system
 // @Link  https://github.com/huagelong/devinggo
 // @Copyright  Copyright (c) 2024 devinggo
 // @Author  Kai <hpuwang@gmail.com>
@@ -46,7 +46,7 @@ func (s *sSystemDictType) Model(ctx context.Context) *gdb.Model {
 func (s *sSystemDictType) GetPageList(ctx context.Context, req *model.PageListReq, in *req.SystemDictTypeSearch) (rs []*res.SystemDictType, total int, err error) {
 	m := s.handleSearch(ctx, in).Handler(handler.FilterAuth)
 	var entity []*entity.SystemDictType
-	err = orm.GetPageList(m, req).ScanAndCount(&entity, &total, false)
+	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&entity, &total)
 	if utils.IsError(err) {
 		return nil, 0, err
 	}
@@ -66,7 +66,7 @@ func (s *sSystemDictType) GetList(ctx context.Context, listReq *model.ListReq, i
 	}
 	mergo.Merge(&listReq, inReq)
 	m := s.handleSearch(ctx, in)
-	err = orm.GetList(m, listReq).Scan(&out)
+	err = orm.NewQuery(m).WithListReq(listReq).ScanAll(&out)
 	if utils.IsError(err) {
 		return nil, err
 	}
