@@ -1,4 +1,4 @@
-# Pusher Protocol v8.3.0 实现验证清单
+﻿# Pusher Protocol v8.3.0 实现验证清单
 
 ## ✅ Phase 1-3: 核心协议实现（已完成）
 
@@ -15,7 +15,7 @@
 ### Phase 2: Private Channel
 - ✅ HMAC-SHA256认证签名生成/验证
 - ✅ private-* 前缀识别
-- ✅ HTTP认证端点：POST /api/system/pusher/auth
+- ✅ HTTP认证端点：POST /system/pusher/auth
 - ✅ pusher:subscription_error 错误处理
 - ✅ constant-time比较防止时序攻击
 
@@ -106,7 +106,7 @@ privateChannel.bind('client-typing', (data) => {
 
 **HTTP认证端点测试**:
 ```bash
-curl -X POST http://localhost:8000/api/system/pusher/auth \
+curl -X POST http://localhost:8070/system/pusher/auth \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -152,7 +152,7 @@ presenceChannel.bind('pusher:member_removed', (member) => {
 
 **HTTP认证端点测试（Presence）**:
 ```bash
-curl -X POST http://localhost:8000/api/system/pusher/auth \
+curl -X POST http://localhost:8070/system/pusher/auth \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -375,7 +375,7 @@ go build -o devinggo.exe .\main.go
 .\devinggo.exe
 
 # WebSocket连接地址
-ws://localhost:8000/api/system/ws?token=YOUR_JWT_TOKEN
+ws://localhost:8070/system/ws
 ```
 
 **连接后首条消息**:
@@ -389,3 +389,4 @@ ws://localhost:8000/api/system/ws?token=YOUR_JWT_TOKEN
 ---
 
 **状态**: 🎉 **Phase 4完成，可以开始验证测试！**
+

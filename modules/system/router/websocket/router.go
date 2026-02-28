@@ -14,10 +14,6 @@ import (
 )
 
 func BindController(group *ghttp.RouterGroup) {
-	group.Group("/system/ws", func(group *ghttp.RouterGroup) {
-		group.Bind(
-			websocket.WsPage,
-		).Middleware(service.Middleware().WsAuth)
-	})
-
+	// Pusher标准路径：/app/{key}
+	group.ALL("/app/*", websocket.WsPage).Middleware(service.Middleware().WsAuth)
 }

@@ -51,7 +51,7 @@
 - [x] 支持多语言：支持多语言切换
 - [x] 支持多主题：支持多主题切换
 - [x] 支持队列：支持基于redis的队列
-- [x] 支持websocket：支持websocket通信,websocket支持分布式服务器
+- [x] 支持websocket：支持websocket通信,websocket支持分布式服务器。完整实现 **Pusher Protocol v8.3.0**，支持Public/Private/Presence频道，详见 [WebSocket使用教程](modules/system/pkg/websocket/README.md)
 - [x] 支持docker部署
 - [x] 支持 migrate 数据库操作
 - [x] 支持 module 模块管理

@@ -1,4 +1,4 @@
-# 🚀 Pusher WebSocket 快速启动指南
+﻿# 🚀 Pusher WebSocket 快速启动指南
 
 ## 一、环境准备
 
@@ -40,8 +40,8 @@ go build -o devinggo.exe .\main.go
 
 **成功标志**：
 ```
-2026-02-28 10:00:00.000 [INFO] Server started on :8000
-2026-02-28 10:00:00.000 [INFO] WebSocket endpoint: /api/system/ws
+2026-02-28 10:00:00.000 [INFO] Server started on :8070
+2026-02-28 10:00:00.000 [INFO] WebSocket endpoint: /system/ws
 ```
 
 ---
@@ -52,7 +52,7 @@ go build -o devinggo.exe .\main.go
 
 1. 启动服务后，浏览器打开：
    ```
-   http://localhost:8000/pusher-test.html
+   http://localhost:8070/pusher-test.html
    ```
 
 2. 点击"连接"按钮
@@ -78,10 +78,12 @@ const Pusher = require('pusher-js');
 
 const pusher = new Pusher('devinggo-app-key', {
   wsHost: 'localhost',
-  wsPort: 8000,
+  wsPort: 8070,
   forceTLS: false,
   enabledTransports: ['ws'],
-  authEndpoint: 'http://localhost:8000/api/system/pusher/auth',
+  cluster: 'mt1',  // 自托管服务器必需（虚拟cluster名称）
+  disableStats: true,  // 禁用统计信息
+  authEndpoint: 'http://localhost:8070/system/pusher/auth',
   auth: {
     headers: {
       'Authorization': 'Bearer YOUR_JWT_TOKEN'  // 如需认证
@@ -148,7 +150,7 @@ presenceChannel.bind('pusher:member_removed', function(member) {
 
 ```bash
 # Private频道认证
-curl -X POST http://localhost:8000/api/system/pusher/auth \
+curl -X POST http://localhost:8070/system/pusher/auth \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -162,7 +164,7 @@ curl -X POST http://localhost:8000/api/system/pusher/auth \
 
 ```bash
 # Presence频道认证
-curl -X POST http://localhost:8000/api/system/pusher/auth \
+curl -X POST http://localhost:8070/system/pusher/auth \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -188,10 +190,10 @@ curl -X POST http://localhost:8000/api/system/pusher/auth \
 **解决**:
 ```bash
 # 检查服务是否运行
-netstat -ano | findstr :8000
+netstat -ano | findstr :8070
 
 # 确认WebSocket端点
-curl http://localhost:8000/api/system/ws
+curl http://localhost:8070/system/ws
 # 应返回: 400 Bad Request (Upgrade required)
 ```
 
@@ -204,7 +206,7 @@ curl http://localhost:8000/api/system/ws
 **检查**:
 1. 认证端点是否可访问：
    ```bash
-   curl -X POST http://localhost:8000/api/system/pusher/auth
+   curl -X POST http://localhost:8070/system/pusher/auth
    ```
 
 2. JWT Token是否有效（如需认证）
@@ -365,7 +367,7 @@ upstream websocket_backend {
 }
 
 server {
-    listen 8000;
+    listen 8070;
     
     location /api/system/ws {
         proxy_pass http://websocket_backend;
@@ -403,9 +405,10 @@ server {
 ## 🎉 完成！
 
 现在你可以：
-1. ✅ 打开 http://localhost:8000/pusher-test.html 测试
+1. ✅ 打开 http://localhost:8070/pusher-test.html 测试
 2. ✅ 集成pusher-js到你的前端应用
 3. ✅ 使用Laravel Echo等框架（配置认证端点）
 4. ✅ 部署到生产环境（记得改appSecret！）
 
 **祝开发顺利！** 🚀
+

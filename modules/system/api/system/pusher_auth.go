@@ -14,7 +14,7 @@ import (
 
 // PusherAuthReq Pusher频道认证请求
 type PusherAuthReq struct {
-	g.Meta `path:"/pusher/auth" method:"post" tags:"WebSocket" summary:"Pusher频道认证" x-exceptAuth:"false"`
+	g.Meta `path:"/pusher/auth" method:"post" tags:"WebSocket" summary:"Pusher频道认证" x-exceptAuth:"true"`
 	model.AuthorHeader
 	SocketId    string `json:"socket_id" dc:"WebSocket连接的socket_id" v:"required"`
 	ChannelName string `json:"channel_name" dc:"要订阅的频道名称" v:"required"`

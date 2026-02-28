@@ -1,4 +1,4 @@
-# ✅ Pusher Protocol v8.3.0 实现检查清单
+﻿# ✅ Pusher Protocol v8.3.0 实现检查清单
 
 **检查日期**: 2026-02-28  
 **检查范围**: 完整性、代码质量、功能验证  
@@ -67,7 +67,7 @@
 | ✅ HMAC-SHA256签名生成 | 正常 | auth.go:GenerateAuthSignature() |
 | ✅ HMAC-SHA256签名验证 | 正常 | auth.go:ValidateChannelAuth() |
 | ✅ constant-time比较 | 正常 | auth.go:87 (hmac.Equal) |
-| ✅ HTTP认证端点 | 正常 | POST /api/system/pusher/auth |
+| ✅ HTTP认证端点 | 正常 | POST /system/pusher/auth |
 | ✅ pusher:subscription_error | 正常 | controller.go:93-99 + client.go:SendSubscriptionError() |
 | ✅ socket_id验证 | 正常 | pusher_auth.go:48-53 |
 
@@ -218,7 +218,7 @@ $ go build -o devinggo.exe .\main.go
 ### HTTP认证端点
 | 路径 | 方法 | 中间件 | 状态 |
 |------|------|--------|------|
-| ✅ /api/system/pusher/auth | POST | AdminAuth | 正常 |
+| ✅ /system/pusher/auth | POST | AdminAuth | 正常 |
 
 ---
 
@@ -342,4 +342,5 @@ node pusher-test.js
 
 **服务端口**: 8070  
 **WebSocket端点**: ws://localhost:8070/system/ws  
-**HTTP认证端点**: http://localhost:8070/api/system/pusher/auth
+**HTTP认证端点**: http://localhost:8070/system/pusher/auth
+

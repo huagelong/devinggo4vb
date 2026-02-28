@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusher Protocol v8.3.0 测试客户端</title>
     <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -134,10 +135,35 @@
             padding: 10px;
             margin: 10px 0;
         }
+        
+        code {
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <h1>🚀 Pusher Protocol v8.3.0 测试客户端</h1>
+    
+    <div class="container">
+        <h2>� 用户登录</h2>
+        <div>
+            <label>用户名: </label>
+            <input type="text" id="username" value="superAdmin" style="width: 200px;">
+            <label>密码: </label>
+            <input type="password" id="password" value="admin123" style="width: 200px;">
+            <button onclick="login()">🔑 登录</button>
+            <button onclick="logout()" class="danger">🚪 退出</button>
+        </div>
+        <div id="loginStatus" class="status disconnected">● 未登录</div>
+        <div class="info-box" id="userInfo" style="display: none;">
+            <strong>用户信息:</strong> <span id="userDetail">-</span>
+        </div>        <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+            <strong>🔐 安全说明:</strong> 密码使用 AES-ECB 加密传输（密钥需与配置文件 <code>settings.aesKey</code> 一致）
+        </div>    </div>
     
     <div class="container">
         <h2>📡 连接配置</h2>
@@ -149,11 +175,11 @@
             <label>WebSocket Host: </label>
             <input type="text" id="wsHost" value="localhost" style="width: 200px;">
             <label>Port: </label>
-            <input type="number" id="wsPort" value="8000" style="width: 80px;">
+            <input type="number" id="wsPort" value="8070" style="width: 80px;">
         </div>
         <div>
             <label>JWT Token: </label>
-            <input type="text" id="token" placeholder="Bearer token（可选）" style="width: 400px;">
+            <input type="text" id="token" placeholder="登录后自动填充" style="width: 400px;" readonly>
         </div>
         <div>
             <button onclick="connect()">🔌 连接</button>
@@ -233,16 +259,179 @@
         let privateChannelObj = null;
         let presenceChannelObj = null;
         
+        // AES加密配置（与后端保持一致）
+        const AES_KEY = '1234567890123456';  // 16字节密钥（AES-128）
+        
+        /**
+         * AES-ECB加密（与后端secure.AESEncrypt保持一致）
+         * @param {string} plaintext - 明文
+         * @param {string} key - 密钥（16字节）
+         * @returns {string} Base64编码的密文
+         */
+        function aesEncrypt(plaintext, key) {
+            const keyHex = CryptoJS.enc.Utf8.parse(key);
+            const encrypted = CryptoJS.AES.encrypt(plaintext, keyHex, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted.toString();  // 返回Base64编码
+        }
+        
         function log(message, type = 'info') {
-            const logs = document.getElementById('logs');
-            const time = new Date().toLocaleTimeString();
-            const className = type === 'error' ? 'log-error' : (type === 'event' ? 'log-event' : 'log-data');
-            logs.innerHTML += `<div><span class="log-time">[${time}]</span> <span class="${className}">${message}</span></div>`;
-            logs.scrollTop = logs.scrollHeight;
+            try {
+                const logs = document.getElementById('logs');
+                if (!logs) {
+                    console.error('❌ 找不到#logs元素！');
+                    return;
+                }
+                const time = new Date().toLocaleTimeString();
+                const className = type === 'error' ? 'log-error' : (type === 'event' ? 'log-event' : 'log-data');
+                logs.innerHTML += `<div><span class="log-time">[${time}]</span> <span class="${className}">${message}</span></div>`;
+                logs.scrollTop = logs.scrollHeight;
+            } catch (e) {
+                console.error('❌ log()函数错误:', e);
+            }
         }
         
         function clearLogs() {
             document.getElementById('logs').innerHTML = '';
+        }
+        
+        function updateLoginStatus(status, isLoggedIn, userInfo = null) {
+            const statusEl = document.getElementById('loginStatus');
+            statusEl.textContent = status;
+            statusEl.className = 'status ' + (isLoggedIn ? 'connected' : 'disconnected');
+            
+            const userInfoEl = document.getElementById('userInfo');
+            if (isLoggedIn && userInfo) {
+                userInfoEl.style.display = 'block';
+                document.getElementById('userDetail').textContent = userInfo;
+            } else {
+                userInfoEl.style.display = 'none';
+            }
+        }
+        
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            
+            if (!username || !password) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            
+            log('🔑 正在登录: ' + username, 'event');
+            
+            // AES加密密码
+            const encryptedPassword = aesEncrypt(password, AES_KEY);
+            log('🔐 密码已加密（AES-ECB）', 'data');
+            
+            try {
+                const response = await fetch(`http://${wsHost}:${wsPort}/system/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: encryptedPassword  // 发送加密后的密码
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // 调试：打印完整响应
+                console.log('🔍 登录接口响应:', result);
+                console.log('🔍 result.code:', result.code, '(类型:', typeof result.code, ')');
+                console.log('🔍 result.success:', result.success);
+                console.log('🔍 result.data:', result.data);
+                console.log('🔍 result.data.token:', result.data?.token);
+                
+                // 后端成功时返回: { code: 0, success: true, data: { token, expire } }
+                if (result.success && result.data && result.data.token) {
+                    const token = result.data.token;
+                    const expire = result.data.expire;
+                    
+                    // 保存token到输入框
+                    document.getElementById('token').value = token;
+                    
+                    // 保存到localStorage（带错误处理）
+                    try {
+                        localStorage.setItem('pusher_test_token', token);
+                        localStorage.setItem('pusher_test_username', username);
+                        log('💾 Token已保存到localStorage', 'data');
+                        
+                        // 验证保存是否成功
+                        const savedToken = localStorage.getItem('pusher_test_token');
+                        const savedUsername = localStorage.getItem('pusher_test_username');
+                        if (savedToken && savedUsername) {
+                            log('✅ localStorage验证成功: token和username已保存', 'data');
+                        } else {
+                            log('⚠️ localStorage验证失败: 数据未正确保存', 'error');
+                        }
+                    } catch (e) {
+                        log('❌ localStorage保存失败: ' + e.message, 'error');
+                        log('⚠️ 可能原因: 浏览器隐私模式、localStorage被禁用、或使用file://协议', 'error');
+                    }
+                    
+                    updateLoginStatus('● 已登录', true, `${username} (Token过期时间: ${new Date(expire * 1000).toLocaleString()})`);
+                    log('✅ 登录成功！Token已自动填充', 'event');
+                    log('💾 Token前50字符: ' + token.substring(0, 50) + '...', 'data');
+                } else {
+                    log('❌ 登录失败: ' + (result.message || '未知错误'), 'error');
+                    alert('登录失败: ' + (result.message || '未知错误'));
+                }
+            } catch (error) {
+                log('❌ 登录请求失败: ' + error.message, 'error');
+                alert('登录请求失败: ' + error.message);
+            }
+        }
+        
+        async function logout() {
+            const token = document.getElementById('token').value;
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            
+            if (!token) {
+                alert('未登录');
+                return;
+            }
+            
+            log('🚪 正在退出登录...', 'event');
+            
+            try {
+                const response = await fetch(`http://${wsHost}:${wsPort}/system/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                
+                const result = await response.json();
+                
+                // 清空token
+                document.getElementById('token').value = '';
+                localStorage.removeItem('pusher_test_token');
+                localStorage.removeItem('pusher_test_username');
+                
+                updateLoginStatus('● 未登录', false);
+                log('✅ 已退出登录', 'event');
+                
+                // 断开WebSocket连接
+                if (pusher) {
+                    disconnect();
+                }
+            } catch (error) {
+                log('❌ 退出请求失败: ' + error.message, 'error');
+                
+                // 即使请求失败也清空本地token
+                document.getElementById('token').value = '';
+                localStorage.removeItem('pusher_test_token');
+                updateLoginStatus('● 未登录', false);
+            }
         }
         
         function updateStatus(status, isConnected) {
@@ -260,21 +449,14 @@
             updateStatus('● 连接中...', false);
             log('🔌 正在连接到 ' + wsHost + ':' + wsPort, 'event');
             
-            // 配置认证端点
-            Pusher.Runtime.createXHR = function() {
-                const xhr = new XMLHttpRequest();
-                if (token) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                }
-                return xhr;
-            };
-            
             pusher = new Pusher(appKey, {
                 wsHost: wsHost,
                 wsPort: wsPort,
                 forceTLS: false,
                 enabledTransports: ['ws'],
-                authEndpoint: `http://${wsHost}:${wsPort}/api/system/pusher/auth`,
+                cluster: 'mt1',  // 自托管服务器必需（虚拟cluster名称）
+                disableStats: true,  // 禁用统计信息
+                authEndpoint: `http://${wsHost}:${wsPort}/system/pusher/auth`,
                 auth: {
                     headers: token ? {
                         'Authorization': 'Bearer ' + token
@@ -474,18 +656,52 @@
                             log('🧪 速率限制测试完成: ' + result, 'event');
                         }, 500);
                     }
-                }, i * 50); // 每50ms发送1条
+                }, i * 100); // 每100ms发送1条（10次/秒）
             }
         }
         
-        // 页面加载时的提示
-        log('👋 欢迎使用Pusher Protocol v8.3.0测试客户端', 'event');
-        log('📖 使用说明:', 'event');
-        log('1. 配置连接信息并点击"连接"', 'data');
-        log('2. 测试Public/Private/Presence频道订阅', 'data');
-        log('3. 在Private频道发送Client Event', 'data');
-        log('4. 运行速率限制测试', 'data');
-        log('', 'data');
+        // 页面初始化（立即执行，因为script在body底部，DOM已加载）
+        (function initializePage() {
+            // 页面加载时的提示
+            log('👋 欢迎使用Pusher Protocol v8.3.0测试客户端', 'event');
+            log('📖 使用说明:', 'event');
+            log('1. 先登录获取JWT Token（默认：superAdmin/admin123）', 'data');
+            log('2. 配置连接信息并点击"连接"', 'data');
+            log('3. 测试Public/Private/Presence频道订阅', 'data');
+            log('4. 在Private频道发送Client Event', 'data');
+            log('5. 运行速率限制测试', 'data');
+            log('', 'data');
+            log('🔐 安全提示: 密码使用AES-ECB加密传输（密钥: 1234567890123456）', 'data');
+            log('', 'data');
+            
+            // 检查localStorage是否可用
+            try {
+                const testKey = '__test_localStorage__';
+                localStorage.setItem(testKey, 'test');
+                localStorage.removeItem(testKey);
+                log('✅ localStorage可用', 'data');
+            } catch (e) {
+                log('❌ localStorage不可用: ' + e.message, 'error');
+                log('⚠️ 请确保: 1) 不在隐私模式下浏览 2) 未禁用localStorage 3) 使用http://协议而非file://', 'error');
+            }
+            
+            // 恢复登录状态（从localStorage）
+            try {
+                const savedToken = localStorage.getItem('pusher_test_token');
+                const savedUsername = localStorage.getItem('pusher_test_username');
+                
+                if (savedToken && savedUsername) {
+                    document.getElementById('token').value = savedToken;
+                    updateLoginStatus('● 已登录', true, `${savedUsername} (Token已从缓存恢复)`);
+                    log('', 'data');
+                    log('💾 已从缓存恢复登录状态: ' + savedUsername, 'event');
+                } else {
+                    log('ℹ️ 未找到缓存的登录信息', 'data');
+                }
+            } catch (e) {
+                log('⚠️ 恢复登录状态失败: ' + e.message, 'error');
+            }
+        })();
     </script>
 </body>
 </html>

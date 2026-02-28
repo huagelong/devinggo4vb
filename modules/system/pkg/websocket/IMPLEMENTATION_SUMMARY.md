@@ -1,4 +1,4 @@
-# ✅ Pusher Protocol v8.3.0 实现完成总结
+﻿# ✅ Pusher Protocol v8.3.0 实现完成总结
 
 ## 🎉 项目状态
 
@@ -31,7 +31,7 @@
 #### Private Channel（私有频道）
 - 需要HMAC-SHA256认证
 - 频道名前缀：`private-*`
-- HTTP认证端点：`POST /api/system/pusher/auth`
+- HTTP认证端点：`POST /system/pusher/auth`
 - 支持Client Events
 - 用途：私聊、敏感数据传输
 
@@ -119,7 +119,7 @@
 ### 控制器与API
 | 文件 | 行数 | 功能 |
 |------|------|------|
-| [pusher_auth.go](modules/system/controller/system/pusher_auth.go) | 120+ | HTTP认证端点（POST /api/system/pusher/auth） |
+| [pusher_auth.go](modules/system/controller/system/pusher_auth.go) | 120+ | HTTP认证端点（POST /system/pusher/auth） |
 | [pusher_auth.go](modules/system/api/system/pusher_auth.go) | 50+ | 认证API请求/响应结构 |
 
 ### 配置与文档
@@ -171,13 +171,13 @@ go build -o devinggo.exe .\main.go
 
 ### 3. WebSocket连接地址
 ```
-ws://localhost:8000/api/system/ws?token=YOUR_JWT_TOKEN
+ws://localhost:8070/system/ws?token=YOUR_JWT_TOKEN
 ```
 
 ### 4. 使用测试客户端
 在浏览器打开：
 ```
-http://localhost:8000/pusher-test.html
+http://localhost:8070/pusher-test.html
 ```
 
 ---
@@ -195,9 +195,11 @@ http://localhost:8000/pusher-test.html
 ```javascript
 const pusher = new Pusher('devinggo-app-key', {
   wsHost: 'localhost',
-  wsPort: 8000,
+  wsPort: 8070,
   forceTLS: false,
-  authEndpoint: 'http://localhost:8000/api/system/pusher/auth'
+  cluster: 'mt1',
+  disableStats: true,
+  authEndpoint: 'http://localhost:8070/system/pusher/auth'
 });
 
 // 订阅频道
@@ -346,3 +348,4 @@ channel.trigger('client-typing', {user: 'Alice'});
 **状态**: 🎉 **生产就绪 (Production Ready)**  
 **最后更新**: 2026-02-28  
 **版本**: v1.0.0
+
