@@ -151,7 +151,7 @@ func GenerateSharedSecret() string {
 		// 返回固定密钥作为降级方案（仅用于开发/测试）
 		return base64.StdEncoding.EncodeToString([]byte("INSECURE-FALLBACK-KEY-32BYTES!"))
 	}
-	
+
 	// Base64 编码（标准编码，Pusher.js 要求）
 	return base64.StdEncoding.EncodeToString(key)
 }
