@@ -135,7 +135,8 @@ func SubscribeController(ctx context.Context, client *Client, req *PusherRequest
 		}
 
 		// 发送订阅成功事件（包含完整成员列表）
-		presenceData := FormatPresenceData(members)
+		// ⚠️ 传入当前用户ID以构造 me 字段
+		presenceData := FormatPresenceData(members, member.UserID)
 		client.SendPusherEvent(EventSubscriptionSucceeded, channel, presenceData)
 
 		// 向频道内其他成员广播member_added事件

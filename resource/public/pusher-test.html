@@ -489,6 +489,16 @@
             pusher.connection.bind('error', function(err) {
                 log('❌ 连接错误: ' + JSON.stringify(err), 'error');
             });
+            
+            // 监听所有Pusher错误事件（包括客户端事件错误）
+            pusher.connection.bind('pusher:error', function(err) {
+                log('❌ Pusher错误: ' + JSON.stringify(err), 'error');
+                console.error('Pusher error:', err);
+            });
+            
+            // 启用Pusher调试日志（在控制台输出）
+            Pusher.logToConsole = true;
+            log('🔧 已启用Pusher调试日志（请查看浏览器控制台）', 'data');
         }
         
         function disconnect() {
@@ -558,36 +568,106 @@
             privateChannelObj.bind('pusher:subscription_succeeded', function() {
                 document.getElementById('privateStatus').textContent = '✅ 已订阅';
                 log('✅ Private频道订阅成功: ' + channel, 'event');
+                log('🔍 [Debug] privateChannelObj.subscribed = true', 'data');
             });
             
             privateChannelObj.bind('pusher:subscription_error', function(err) {
                 document.getElementById('privateStatus').textContent = '❌ 订阅失败（检查认证）';
                 log('❌ Private频道订阅失败: ' + JSON.stringify(err), 'error');
+                console.error('Subscription error:', err);
+            });
+            
+            // 监听频道错误（包括客户端事件发送错误）
+            privateChannelObj.bind('pusher:error', function(err) {
+                log('❌ [' + channel + '] 频道错误: ' + JSON.stringify(err), 'error');
+                console.error('Channel error:', err);
             });
             
             // 监听Client Event
             privateChannelObj.bind_global(function(event, data) {
                 if (event.startsWith('client-')) {
                     log('📨 [' + channel + '] 收到Client Event: ' + event + ' => ' + JSON.stringify(data), 'data');
+                } else if (!event.startsWith('pusher:')) {
+                    // 其他服务器端事件
+                    log('📨 [' + channel + '] 收到服务器事件: ' + event + ' => ' + JSON.stringify(data), 'data');
                 }
             });
         }
         
         function sendClientEvent() {
-            if (!privateChannelObj) {
-                alert('请先订阅Private频道！');
-                return;
-            }
-            
-            const event = document.getElementById('clientEvent').value;
-            const dataStr = document.getElementById('clientEventData').value;
-            
             try {
+                log('🔍 [Debug] sendClientEvent() 函数被调用', 'event');
+                
+                // 检查 Pusher 连接状态
+                if (!pusher) {
+                    const msg = '❌ 请先连接WebSocket！';
+                    alert(msg);
+                    log(msg, 'error');
+                    return;
+                }
+                
+                log('🔍 [Debug] Pusher连接状态: ' + pusher.connection.state, 'data');
+                
+                if (pusher.connection.state !== 'connected') {
+                    const msg = '❌ WebSocket未连接，当前状态: ' + pusher.connection.state;
+                    alert(msg);
+                    log(msg, 'error');
+                    return;
+                }
+                
+                // 检查 Private 频道订阅状态
+                if (!privateChannelObj) {
+                    const msg = '❌ 请先订阅Private频道！';
+                    alert(msg);
+                    log(msg, 'error');
+                    return;
+                }
+                
+                log('🔍 [Debug] privateChannelObj 存在', 'data');
+                log('🔍 [Debug] privateChannelObj.subscribed: ' + privateChannelObj.subscribed, 'data');
+                log('🔍 [Debug] privateChannelObj.subscriptionPending: ' + privateChannelObj.subscriptionPending, 'data');
+                log('🔍 [Debug] privateChannelObj.subscriptionCancelled: ' + privateChannelObj.subscriptionCancelled, 'data');
+                
+                // 修复：不检查 subscribed 属性，直接尝试发送
+                // Pusher.js 的 subscribed 属性可能不可靠，只要订阅成功事件触发了就可以发送
+                
+                const event = document.getElementById('clientEvent').value;
+                const dataStr = document.getElementById('clientEventData').value;
+                
+                log('🔍 [Debug] 事件名: ' + event, 'data');
+                log('🔍 [Debug] 数据字符串: ' + dataStr, 'data');
+                
+                if (!event) {
+                    const msg = '❌ 请输入事件名';
+                    alert(msg);
+                    log(msg, 'error');
+                    return;
+                }
+                
+                if (!event.startsWith('client-')) {
+                    const msg = '❌ Client Event名称必须以 "client-" 开头';
+                    alert(msg);
+                    log(msg, 'error');
+                    return;
+                }
+                
                 const data = JSON.parse(dataStr);
                 log('📤 发送Client Event: ' + event + ' => ' + JSON.stringify(data), 'event');
-                privateChannelObj.trigger(event, data);
+                
+                const success = privateChannelObj.trigger(event, data);
+                log('🔍 [Debug] trigger() 返回值: ' + success, 'data');
+                
+                if (success) {
+                    log('✅ Client Event已发送', 'event');
+                } else {
+                    log('⚠️ Client Event发送可能失败（trigger返回false）', 'error');
+                }
+                
             } catch (e) {
-                alert('数据格式错误，请输入有效的JSON');
+                const msg = '❌ 发送失败: ' + e.message;
+                alert(msg);
+                log(msg, 'error');
+                console.error('sendClientEvent error:', e);
             }
         }
         
@@ -606,21 +686,35 @@
                 document.getElementById('presenceStatus').textContent = '✅ 已订阅';
                 log('✅ Presence频道订阅成功: ' + channel, 'event');
                 
-                // 调试：打印members对象结构
-                console.log('🔍 Members对象:', members);
+                // 详细调试：打印members对象的所有信息
+                console.log('========== Members 对象详细信息 ==========');
+                console.log('🔍 members 对象:', members);
+                console.log('🔍 typeof members:', typeof members);
                 console.log('🔍 members.count:', members.count);
                 console.log('🔍 members.members:', members.members);
                 console.log('🔍 members.me:', members.me);
+                console.log('🔍 members.myID:', members.myID);
+                console.log('🔍 typeof members.each:', typeof members.each);
+                console.log('🔍 typeof members.get:', typeof members.get);
+                console.log('🔍 Object.keys(members):', Object.keys(members));
                 
-                // 修复：Pusher.js的count属性可能需要直接访问
-                const memberCount = members.count || Object.keys(members.members || {}).length || 0;
+                // 尝试遍历 members 的所有属性
+                for (let key in members) {
+                    console.log('🔍 members[' + key + ']:', members[key]);
+                }
+                console.log('==========================================');
+                
+                const memberCount = members.count || 0;
                 log('👥 当前成员数: ' + memberCount, 'data');
                 
-                // 打印所有成员
-                if (members.members) {
-                    log('👥 成员列表: ' + JSON.stringify(members.members), 'data');
-                } else {
-                    log('⚠️ members.members为空', 'data');
+                // 尝试使用 get 方法获取成员
+                if (typeof members.get === 'function' && members.myID) {
+                    try {
+                        const me = members.get(members.myID);
+                        log('👤 当前用户 (使用get): ' + JSON.stringify(me), 'data');
+                    } catch (e) {
+                        log('❌ members.get() 失败: ' + e.message, 'error');
+                    }
                 }
                 
                 updateMembersInfo(members);
@@ -645,23 +739,34 @@
         function updateMembersInfo(members) {
             const membersInfo = document.getElementById('membersInfo');
             
-            // 修复：正确计算成员数量
-            const memberCount = members.count || Object.keys(members.members || {}).length || 0;
+            // Pusher.js Members 对象结构
+            console.log('🔍 [updateMembersInfo] members:', members);
+            console.log('🔍 [updateMembersInfo] members.count:', members.count);
+            console.log('🔍 [updateMembersInfo] typeof members.each:', typeof members.each);
+            
+            const memberCount = members.count || 0;
             membersInfo.innerHTML = '<strong>当前成员:</strong> ' + memberCount + ' 人<br>';
             
-            // 修复：检查members.each是否存在
+            if (memberCount === 0) {
+                membersInfo.innerHTML += '<em>暂无成员</em><br>';
+                return;
+            }
+            
+            // Pusher.js 的 members 对象使用 each() 方法遍历
             if (typeof members.each === 'function') {
-                members.each(function(member) {
-                    membersInfo.innerHTML += '• ' + member.id + ': ' + JSON.stringify(member.info) + '<br>';
-                });
-            } else if (members.members) {
-                // 如果没有each方法，手动遍历members.members对象
-                for (const memberId in members.members) {
-                    const member = members.members[memberId];
-                    membersInfo.innerHTML += '• ' + memberId + ': ' + JSON.stringify(member) + '<br>';
+                log('🔍 使用 members.each() 遍历成员', 'data');
+                try {
+                    members.each(function(member) {
+                        console.log('🔍 [each] member:', member);
+                        membersInfo.innerHTML += '• ' + member.id + ': ' + JSON.stringify(member.info) + '<br>';
+                    });
+                } catch (e) {
+                    log('❌ members.each() 执行失败: ' + e.message, 'error');
+                    console.error('members.each() error:', e);
                 }
             } else {
-                membersInfo.innerHTML += '<em>暂无成员信息</em><br>';
+                log('⚠️ members.each() 不可用，尝试其他方法', 'error');
+                membersInfo.innerHTML += '<em>无法遍历成员列表</em><br>';
             }
         }
         

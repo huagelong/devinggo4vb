@@ -12,13 +12,25 @@ import (
 
 // FormatPresenceData 格式化Presence成员列表为Pusher v8.3.0格式
 // ⚠️ v8.3.0格式要求：hash字段只包含user_info，不含user_id
-func FormatPresenceData(members map[string]map[string]interface{}) PresenceData {
+// ⚠️ Pusher 协议要求：必须包装在 presence 字段中
+func FormatPresenceData(members map[string]map[string]interface{}, currentUserID string) PresenceData {
 	ids := make([]string, 0, len(members))
 	hash := make(map[string]interface{})
+
+	// 当前用户信息
+	var me *PresenceMember
 
 	for userID, userInfo := range members {
 		ids = append(ids, userID)
 		hash[userID] = userInfo // ⚠️ 只存储user_info，不包含user_id
+
+		// 设置当前用户信息
+		if userID == currentUserID {
+			me = &PresenceMember{
+				UserID:   userID,
+				UserInfo: userInfo,
+			}
+		}
 	}
 
 	return PresenceData{
@@ -26,6 +38,7 @@ func FormatPresenceData(members map[string]map[string]interface{}) PresenceData 
 			Count: len(members),
 			Ids:   ids,
 			Hash:  hash,
+			Me:    me,
 		},
 	}
 }
