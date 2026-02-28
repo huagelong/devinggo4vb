@@ -205,9 +205,9 @@ func verifySignature(authKey string, authTimestamp int64, authVersion string, bo
 // getAppConfig 获取应用配置（复用pusher_auth.go中的逻辑）
 func getAppConfig(ctx context.Context) (*AppConfig, error) {
 	config := g.Cfg()
-	appID := config.MustGet(ctx, "websocket.pusher.app_id").String()
-	appKey := config.MustGet(ctx, "websocket.pusher.app_key").String()
-	appSecret := config.MustGet(ctx, "websocket.pusher.app_secret").String()
+	appID := config.MustGet(ctx, "pusher.appId", "").String()
+	appKey := config.MustGet(ctx, "pusher.appKey", "").String()
+	appSecret := config.MustGet(ctx, "pusher.appSecret", "").String()
 
 	if appID == "" || appKey == "" || appSecret == "" {
 		return nil, fmt.Errorf("WebSocket Pusher configuration not found in config file")
