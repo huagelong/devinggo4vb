@@ -22,21 +22,13 @@ func (s *sMiddleware) WsAuth(r *ghttp.Request) {
 	ctx := r.GetCtx()
 	sessionId, err := s.parseSessionId(r)
 	g.Log().Debug(ctx, "sessionId:", sessionId)
+
+	// ⚠️ Pusher协议支持：允许无token连接（用于Public频道）
+	// Private/Presence频道通过HTTP认证端点进行认证
 	if err != nil && g.IsEmpty(sessionId) {
-		conn, err := websocket2.GetConnection(r)
-		if err != nil {
-			// Pusher协议连接失败处理
-			r.Response.WriteStatus(400)
-			r.Response.WriteJson(g.Map{"error": err.Error()})
-		} else {
-			// Pusher协议错误响应
-			errResponse := &websocket2.PusherResponse{
-				Event: websocket2.EventError,
-				Data:  `{"message":"sessionId miss","code":4009}`,
-			}
-			conn.WriteJSON(errResponse)
-			conn.Close()
-		}
+		// 设置空sessionId，允许连接
+		r.SetCtxVar(websocket2.SESSION_ID_KEY, "")
+		r.Middleware.Next()
 		return
 	} else {
 		r.SetCtxVar(websocket2.SESSION_ID_KEY, sessionId)
