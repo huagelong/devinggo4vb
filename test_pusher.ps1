@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 # Configuration (match with hack/config.yaml)
 $appId = "devinggo-app-id"
 $appKey = "devinggo-app-key"
-$appSecret = "devinggo-app-secret"
+$appSecret = "devinggo-app-secret-change-me"
 $serverHost = "localhost:8070"
 
 Write-Host "Pusher HTTP API Test Script" -ForegroundColor Green
@@ -21,16 +21,11 @@ function Get-PusherSignature {
         [string]$method,
         [string]$path,
         [string]$queryString,
-        [string]$body,
         [string]$secret
     )
     
+    # String to sign: METHOD\nPATH\nQUERY_STRING
     $stringToSign = "$method`n$path`n$queryString"
-    if ($body) {
-        $bodyMd5 = [System.Security.Cryptography.MD5]::Create().ComputeHash([System.Text.Encoding]::UTF8.GetBytes($body))
-        $bodyMd5Hex = [System.BitConverter]::ToString($bodyMd5).Replace("-", "").ToLower()
-        $stringToSign += "`n$bodyMd5Hex"
-    }
     
     $hmac = New-Object System.Security.Cryptography.HMACSHA256
     $hmac.Key = [System.Text.Encoding]::UTF8.GetBytes($secret)
@@ -48,27 +43,46 @@ function Send-PusherEvent {
         [hashtable]$data
     )
     
-    $timestamp = [int][double]::Parse((Get-Date -UFormat %s))
+    # Generate Unix timestamp (seconds since 1970-01-01 UTC)
+    $epoch = [DateTime]::new(1970, 1, 1, 0, 0, 0, [DateTimeKind]::Utc)
+    $timestamp = [int64][Math]::Floor(([DateTime]::UtcNow - $epoch).TotalSeconds)
+    
     $bodyJson = @{
         name = $event
         channels = @($channel)
         data = ($data | ConvertTo-Json -Compress)
     } | ConvertTo-Json -Compress
     
-    # Build query parameters
+    # Calculate body MD5
+    $bodyMd5 = [System.Security.Cryptography.MD5]::Create().ComputeHash([System.Text.Encoding]::UTF8.GetBytes($bodyJson))
+    $bodyMd5Hex = [System.BitConverter]::ToString($bodyMd5).Replace("-", "").ToLower()
+    
+    # Build query parameters (sorted alphabetically)
     $queryParams = @{
         auth_key = $appKey
-        auth_timestamp = $timestamp
+        auth_timestamp = $timestamp.ToString()
         auth_version = "1.0"
-        body_md5 = [System.Security.Cryptography.MD5]::Create().ComputeHash([System.Text.Encoding]::UTF8.GetBytes($bodyJson)) |
-                   ForEach-Object { [System.BitConverter]::ToString($_).Replace("-", "").ToLower() }
+        body_md5 = $bodyMd5Hex
     }
     
     $queryString = ($queryParams.GetEnumerator() | Sort-Object Name | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join "&"
     
+    # Debug output
+    Write-Host "DEBUG [PowerShell Client]:" -ForegroundColor Magenta
+    Write-Host "  Body JSON: $bodyJson" -ForegroundColor Magenta
+    Write-Host "  Body MD5: $bodyMd5Hex" -ForegroundColor Magenta
+    Write-Host "  Body length: $($bodyJson.Length) bytes" -ForegroundColor Magenta
+    Write-Host "  Query string: $queryString" -ForegroundColor Magenta
+    
     # Calculate signature
     $path = "/apps/$appId/events"
-    $signature = Get-PusherSignature -method "POST" -path $path -queryString $queryString -body $bodyJson -secret $appSecret
+    $stringToSign = "POST`n$path`n$queryString"
+    Write-Host "  String to sign: $stringToSign" -ForegroundColor Magenta
+    
+    $signature = Get-PusherSignature -method "POST" -path $path -queryString $queryString -secret $appSecret
+    Write-Host "  Signature: $signature" -ForegroundColor Magenta
+    Write-Host "" -NoNewline
+    
     $queryString += "&auth_signature=$signature"
     
     # Send request

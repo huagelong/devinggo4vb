@@ -166,7 +166,14 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 func verifySignature(authKey string, authTimestamp int64, authVersion string, bodyMd5Provided string, authSignature string, appSecret string, method string, path string, bodyBytes []byte) bool {
 	// 1. 验证body_md5
 	bodyMd5Computed := fmt.Sprintf("%x", md5.Sum(bodyBytes))
+
+	g.Log().Debugf(context.Background(), "Signature Verification:")
+	g.Log().Debugf(context.Background(), "  Body MD5 (provided): %s", bodyMd5Provided)
+	g.Log().Debugf(context.Background(), "  Body MD5 (computed): %s", bodyMd5Computed)
+	g.Log().Debugf(context.Background(), "  Body length: %d bytes", len(bodyBytes))
+
 	if bodyMd5Provided != bodyMd5Computed {
+		g.Log().Warning(context.Background(), "Body MD5 mismatch!")
 		return false
 	}
 
@@ -193,13 +200,23 @@ func verifySignature(authKey string, authTimestamp int64, authVersion string, bo
 	// 3. 构建待签名字符串
 	stringToSign := fmt.Sprintf("%s\n%s\n%s", method, path, queryString)
 
+	g.Log().Debugf(context.Background(), "  Query string: %s", queryString)
+	g.Log().Debugf(context.Background(), "  String to sign: %s", stringToSign)
+
 	// 4. 计算HMAC-SHA256签名
 	mac := hmac.New(sha256.New, []byte(appSecret))
 	mac.Write([]byte(stringToSign))
 	expectedSignature := hex.EncodeToString(mac.Sum(nil))
 
+	g.Log().Debugf(context.Background(), "  Expected signature: %s", expectedSignature)
+	g.Log().Debugf(context.Background(), "  Provided signature: %s", authSignature)
+
 	// 5. 比对签名
-	return authSignature == expectedSignature
+	match := authSignature == expectedSignature
+	if !match {
+		g.Log().Warning(context.Background(), "Signature mismatch!")
+	}
+	return match
 }
 
 // getAppConfig 获取应用配置（复用pusher_auth.go中的逻辑）
