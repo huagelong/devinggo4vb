@@ -14,6 +14,11 @@ import (
 )
 
 func BindController(group *ghttp.RouterGroup) {
+	// Pusher HTTP Events API (无需认证，通过HMAC签名验证)
+	group.Bind(
+		system.PusherEvents,
+	)
+
 	group.Group("/system", func(group *ghttp.RouterGroup) {
 		group.Bind(
 			system.LoginController,

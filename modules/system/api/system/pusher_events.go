@@ -1,0 +1,68 @@
+// Package system
+// @Link  https://github.com/huagelong/devinggo
+// @Copyright  Copyright (c) 2024 devinggo
+// @Author  Kai <hpuwang@gmail.com>
+// @License  https://github.com/huagelong/devinggo/blob/master/LICENSE
+
+package system
+
+import (
+	"github.com/gogf/gf/v2/frame/g"
+)
+
+// PusherEventsReq Pusher HTTP Events API请求（服务端推送事件）
+type PusherEventsReq struct {
+	g.Meta `path:"/apps/:app_id/events" method:"post" tags:"WebSocket" summary:"Pusher Events API - 推送事件到频道" x-exceptAuth:"true"`
+
+	// Path参数
+	AppId string `json:"app_id" in:"path" dc:"应用ID" v:"required"`
+
+	// Query参数（用于签名验证）
+	AuthKey       string `json:"auth_key" in:"query" dc:"应用Key" v:"required"`
+	AuthTimestamp int64  `json:"auth_timestamp" in:"query" dc:"时间戳" v:"required"`
+	AuthVersion   string `json:"auth_version" in:"query" dc:"认证版本" v:"required"`
+	BodyMd5       string `json:"body_md5" in:"query" dc:"请求体MD5" v:"required"`
+	AuthSignature string `json:"auth_signature" in:"query" dc:"HMAC-SHA256签名" v:"required"`
+
+	// Body参数
+	Name     string   `json:"name" dc:"事件名称" v:"required"`
+	Channels []string `json:"channels" dc:"频道列表" v:"required|length:1,100"`
+	Data     string   `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
+	SocketId string   `json:"socket_id" dc:"排除的socket_id（可选）"`
+}
+
+// PusherEventsRes Pusher HTTP Events API响应
+type PusherEventsRes struct {
+	g.Meta `mime:"application/json" status:"200"`
+}
+
+// PusherBatchEventsReq Pusher HTTP Batch Events API请求（批量推送）
+type PusherBatchEventsReq struct {
+	g.Meta `path:"/apps/:app_id/batch_events" method:"post" tags:"WebSocket" summary:"Pusher Batch Events API - 批量推送事件" x-exceptAuth:"true"`
+
+	// Path参数
+	AppId string `json:"app_id" in:"path" dc:"应用ID" v:"required"`
+
+	// Query参数（用于签名验证）
+	AuthKey       string `json:"auth_key" in:"query" dc:"应用Key" v:"required"`
+	AuthTimestamp int64  `json:"auth_timestamp" in:"query" dc:"时间戳" v:"required"`
+	AuthVersion   string `json:"auth_version" in:"query" dc:"认证版本" v:"required"`
+	BodyMd5       string `json:"body_md5" in:"query" dc:"请求体MD5" v:"required"`
+	AuthSignature string `json:"auth_signature" in:"query" dc:"HMAC-SHA256签名" v:"required"`
+
+	// Body参数
+	Batch []PusherBatchEvent `json:"batch" dc:"事件列表" v:"required"`
+}
+
+// PusherBatchEvent 批量事件项
+type PusherBatchEvent struct {
+	Name     string `json:"name" dc:"事件名称" v:"required"`
+	Channel  string `json:"channel" dc:"频道名称" v:"required"`
+	Data     string `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
+	SocketId string `json:"socket_id" dc:"排除的socket_id（可选）"`
+}
+
+// PusherBatchEventsRes Pusher HTTP Batch Events API响应
+type PusherBatchEventsRes struct {
+	g.Meta `mime:"application/json" status:"200"`
+}

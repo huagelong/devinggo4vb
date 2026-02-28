@@ -155,11 +155,19 @@ func (manager *ClientManager) EventBroadcast(ctx context.Context, response *Push
 
 func (manager *ClientManager) EventChannelBroadcast(ctx context.Context, response *TopicWResponse) {
 	clients := manager.GetClients()
+	glob.WithWsLog().Debugf(ctx, "EventChannelBroadcast: channel=%s, event=%s, total_clients=%d",
+		response.Topic, response.PusherResponse.Event, len(clients))
+
+	sentCount := 0
 	for _, conn := range clients {
 		if conn.HasChannel(response.Topic) {
+			glob.WithWsLog().Debugf(ctx, "Sending to client: socket_id=%s, channel=%s", conn.SocketID, response.Topic)
 			conn.SendMsg(response.PusherResponse)
+			sentCount++
 		}
 	}
+
+	glob.WithWsLog().Debugf(ctx, "EventChannelBroadcast completed: sent to %d clients", sentCount)
 }
 
 func (manager *ClientManager) EventSocketIdBroadcast(ctx context.Context, response *ClientIdWResponse) {
