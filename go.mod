@@ -16,6 +16,7 @@ require (
 	github.com/mileusna/useragent v1.3.5
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/satori/go.uuid v1.2.0
+	github.com/stretchr/testify v1.10.0
 	github.com/xiaoqidun/qqwry v0.0.0-20240620014500-698a12cf0369
 	github.com/xuri/excelize/v2 v2.9.0
 	github.com/yitter/idgenerator-go v1.3.3
@@ -44,6 +45,7 @@ require (
 	github.com/aws/smithy-go v1.22.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
@@ -62,7 +64,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pusher/pusher-http-go/v5 v5.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
