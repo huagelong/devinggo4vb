@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusher 高级功能测试 - Encrypted Channels & Client Events Metadata</title>
+    <!-- 加密频道支持：需要 TweetNaCl 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+    <!-- Pusher.js 8.3.0 -->
     <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
     <style>
         body {
@@ -210,9 +213,16 @@
         let encryptedChannel = null;
         let presenceChannel = null;
 
-        // 初始化 Pusher 连接
+        // 初始化 Pusher 连接（支持加密频道）
         function initPusher() {
             if (pusher) return pusher;
+
+            // ⚠️ 配置加密频道支持
+            if (typeof nacl !== 'undefined') {
+                console.log('✅ NaCl 加密库已加载');
+            } else {
+                console.error('❌ NaCl 加密库未加载，加密频道功能将不可用');
+            }
 
             pusher = new Pusher('local-app-key', {
                 wsHost: 'localhost',
@@ -222,7 +232,9 @@
                 enabledTransports: ['ws'],
                 disableStats: true,
                 authEndpoint: 'http://localhost:8070/system/pusher/auth',
-                cluster: 'mt1'
+                cluster: 'mt1',
+                // ⚠️ 加密频道需要这个配置（虽然文档说会自动检测 nacl）
+                nacl: typeof nacl !== 'undefined' ? nacl : undefined
             });
 
             pusher.connection.bind('connected', function() {
@@ -244,9 +256,17 @@
             const channelName = document.getElementById('encryptedChannelName').value;
             const token = document.getElementById('encryptedToken').value;
 
+            // ⚠️ 检查 NaCl 库是否加载
+            if (typeof nacl === 'undefined') {
+                log('error', 'encryptedLog', '❌ NaCl 加密库未加载！请刷新页面重试。');
+                alert('加密库未加载，无法订阅加密频道。请刷新页面后重试。');
+                return;
+            }
+
             if (!pusher) initPusher();
 
             log('info', 'encryptedLog', '正在订阅加密频道: ' + channelName);
+            log('info', 'encryptedLog', '✅ NaCl 加密库已就绪');
             
             // 设置认证头
             pusher.config.auth = {
@@ -476,7 +496,17 @@
 
         // 页面加载时自动初始化
         window.onload = function() {
-            log('info', '', '页面已加载，准备测试高级功能');
+            // 检查加密库是否加载
+            if (typeof nacl !== 'undefined') {
+                log('success', 'encryptedLog', '✅ TweetNaCl 加密库已加载，支持加密频道');
+                console.log('✅ NaCl 版本信息:', nacl);
+            } else {
+                log('error', 'encryptedLog', '❌ TweetNaCl 加密库加载失败，加密频道功能不可用');
+                console.error('❌ NaCl 未定义，加密频道将无法使用');
+            }
+            
+            log('info', 'presenceLog', '页面已加载，准备测试高级功能');
+            log('info', 'encryptedLog', '📚 使用的库版本：Pusher.js 8.3.0 + TweetNaCl 1.0.3');
         };
     </script>
 </body>
