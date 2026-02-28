@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusher Protocol v8.3.0 测试客户端</title>
+    <title>Pusher Protocol v8.3.0 测试客户端（完整版）</title>
+    <!-- TweetNaCl 加密库（支持 Encrypted Channels）-->
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+    <!-- Pusher.js 8.3.0 -->
     <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
+    <!-- CryptoJS（用于密码加密）-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         body {
@@ -146,7 +150,10 @@
     </style>
 </head>
 <body>
-    <h1>🚀 Pusher Protocol v8.3.0 测试客户端</h1>
+    <h1>🚀 Pusher Protocol v8.3.0 测试客户端（完整版）</h1>
+    <div class="info-box" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 10px; margin-bottom: 20px;">
+        <strong>✨ 新功能:</strong> 支持 Encrypted Channels 和 Presence Client Events Metadata
+    </div>
     
     <div class="container">
         <h2>� 用户登录</h2>
@@ -235,6 +242,40 @@
             <strong>状态:</strong> <span id="presenceStatus">未订阅</span>
         </div>
         <div id="membersInfo" style="margin-top: 10px;"></div>
+        <div style="margin-top: 15px; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+            <strong>💬 Client Events 测试（含 user_id metadata）:</strong>
+            <div style="margin-top: 10px;">
+                <input type="text" id="presenceMessage" placeholder="输入消息..." style="width: 250px;">
+                <button onclick="sendPresenceTyping()">📤 发送 typing 事件</button>
+                <button onclick="sendPresenceCustom()">✨ 发送自定义事件</button>
+            </div>
+            <div id="presenceClientEventLog" style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px; min-height: 40px; font-size: 12px; color: #666;"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>🔐 Encrypted Channel (private-encrypted-*)</h2>
+        <div>
+            <input type="text" id="encryptedChannel" value="private-encrypted-secure" placeholder="private-encrypted-*">
+            <button onclick="subscribeEncrypted()">订阅加密频道</button>
+            <button onclick="unsubscribeEncrypted()" class="danger">取消订阅</button>
+        </div>
+        <div style="margin-top: 10px;">
+            <strong>状态:</strong> <span id="encryptedStatus">未订阅</span>
+        </div>
+        <div style="margin-top: 10px;">
+            <input type="text" id="encryptedEventName" value="client-message" placeholder="client-*">
+            <input type="text" id="encryptedEventData" value='{"text":"加密消息"}' placeholder="JSON数据">
+            <button onclick="sendEncryptedEvent()">发送加密事件</button>
+        </div>
+        <div id="encryptedInfo" style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+            <strong>📚 说明:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                <li>需要 TweetNaCl 库支持（已自动加载）</li>
+                <li>加密由客户端自动处理，服务器端只负责路由</li>
+                <li>所有 Client Events 会自动加密和解密</li>
+            </ul>
+        </div>
     </div>
     
     <div class="container">
@@ -258,6 +299,7 @@
         let publicChannelObj = null;
         let privateChannelObj = null;
         let presenceChannelObj = null;
+        let encryptedChannelObj = null;
         
         // AES加密配置（与后端保持一致）
         const AES_KEY = '1234567890123456';  // 16字节密钥（AES-128）
@@ -459,20 +501,31 @@
             updateStatus('● 连接中...', false);
             log('🔌 正在连接到 ' + wsHost + ':' + wsPort, 'event');
             
-            pusher = new Pusher(appKey, {
+            // 配置对象：支持加密频道
+            const pusherConfig = {
                 wsHost: wsHost,
                 wsPort: wsPort,
                 forceTLS: false,
                 enabledTransports: ['ws'],
-                cluster: 'mt1',  // 自托管服务器必需（虚拟cluster名称）
-                disableStats: true,  // 禁用统计信息
+                cluster: 'mt1',
+                disableStats: true,
                 authEndpoint: `http://${wsHost}:${wsPort}/system/pusher/auth`,
                 auth: {
                     headers: token ? {
                         'Authorization': 'Bearer ' + token
                     } : {}
                 }
-            });
+            };
+            
+            // 如果 NaCl 库可用，添加加密支持
+            if (typeof nacl !== 'undefined') {
+                pusherConfig.nacl = nacl;
+                log('✅ 加密库已就绪，支持 Encrypted Channels', 'data');
+            } else {
+                log('⚠️ NaCl 库未加载，Encrypted Channels 不可用', 'error');
+            }
+            
+            pusher = new Pusher(appKey, pusherConfig);
             
             pusher.connection.bind('connected', function() {
                 updateStatus('● 已连接', true);
@@ -734,6 +787,37 @@
                 log('👤 成员离开: ' + member.id, 'event');
                 updateMembersInfo(presenceChannelObj.members);
             });
+            
+            // ⚠️ 监听 Client Events 并检查 metadata（user_id）
+            presenceChannelObj.bind('client-typing', function(data, metadata) {
+                console.log('🔍 收到 client-typing:', { data, metadata });
+                const logEl = document.getElementById('presenceClientEventLog');
+                
+                if (metadata && metadata.user_id) {
+                    const msg = '✅ typing 事件 (发送者: ' + metadata.user_id + '): ' + JSON.stringify(data);
+                    log(msg, 'event');
+                    logEl.innerHTML = '<span style="color: green;">' + msg + '</span>';
+                } else {
+                    const msg = '❌ typing 事件缺少 user_id metadata! data=' + JSON.stringify(data);
+                    log(msg, 'error');
+                    logEl.innerHTML = '<span style="color: red;">' + msg + '</span>';
+                }
+            });
+            
+            presenceChannelObj.bind('client-custom', function(data, metadata) {
+                console.log('🔍 收到 client-custom:', { data, metadata });
+                const logEl = document.getElementById('presenceClientEventLog');
+                
+                if (metadata && metadata.user_id) {
+                    const msg = '✅ 自定义事件 (发送者: ' + metadata.user_id + '): ' + JSON.stringify(data);
+                    log(msg, 'event');
+                    logEl.innerHTML = '<span style="color: green;">' + msg + '</span>';
+                } else {
+                    const msg = '❌ 自定义事件缺少 user_id metadata! data=' + JSON.stringify(data);
+                    log(msg, 'error');
+                    logEl.innerHTML = '<span style="color: red;">' + msg + '</span>';
+                }
+            });
         }
         
         function updateMembersInfo(members) {
@@ -831,18 +915,130 @@
             }
         }
         
+        // ========== Encrypted Channel 功能 ==========
+        function subscribeEncrypted() {
+            if (!pusher) {
+                alert('请先连接！');
+                return;
+            }
+            
+            // 检查 NaCl 库
+            if (typeof nacl === 'undefined') {
+                alert('NaCl 加密库未加载，无法订阅加密频道！请刷新页面。');
+                log('❌ NaCl 库未加载，无法订阅加密频道', 'error');
+                return;
+            }
+            
+            const channel = document.getElementById('encryptedChannel').value;
+            log('🔐 订阅加密频道: ' + channel + '（需要HTTP认证，客户端自动加密）', 'event');
+            
+            encryptedChannelObj = pusher.subscribe(channel);
+            
+            encryptedChannelObj.bind('pusher:subscription_succeeded', function() {
+                document.getElementById('encryptedStatus').textContent = '✅ 已订阅（加密模式）';
+                log('✅ 加密频道订阅成功: ' + channel, 'event');
+                log('🔒 所有消息将自动加密/解密（NaCl 端到端加密）', 'data');
+            });
+            
+            encryptedChannelObj.bind('pusher:subscription_error', function(err) {
+                document.getElementById('encryptedStatus').textContent = '❌ 订阅失败';
+                log('❌ 加密频道订阅失败: ' + JSON.stringify(err), 'error');
+            });
+            
+            // 监听 Client Events（会自动解密）
+            encryptedChannelObj.bind('client-message', function(data) {
+                log('📩 收到加密消息（已自动解密）: ' + JSON.stringify(data), 'event');
+            });
+        }
+        
+        function sendEncryptedEvent() {
+            if (!encryptedChannelObj) {
+                alert('请先订阅加密频道！');
+                return;
+            }
+            
+            const eventName = document.getElementById('encryptedEventName').value;
+            const eventDataStr = document.getElementById('encryptedEventData').value;
+            
+            try {
+                const eventData = JSON.parse(eventDataStr);
+                log('📤 发送加密事件: ' + eventName + '（将自动加密）', 'event');
+                encryptedChannelObj.trigger(eventName, eventData);
+                log('✅ 加密事件已发送（NaCl 加密）', 'data');
+            } catch (e) {
+                alert('JSON数据格式错误: ' + e.message);
+                log('❌ JSON解析失败: ' + e.message, 'error');
+            }
+        }
+        
+        function unsubscribeEncrypted() {
+            if (encryptedChannelObj) {
+                const channel = document.getElementById('encryptedChannel').value;
+                pusher.unsubscribe(channel);
+                encryptedChannelObj = null;
+                document.getElementById('encryptedStatus').textContent = '未订阅';
+                log('🔌 已取消订阅加密频道', 'event');
+            }
+        }
+        
+        // ========== Presence Client Events Metadata 功能 ==========
+        function sendPresenceTyping() {
+            if (!presenceChannelObj) {
+                alert('请先订阅 Presence 频道！');
+                return;
+            }
+            
+            const message = document.getElementById('presenceMessage').value || '正在输入...';
+            const data = {
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+            
+            presenceChannelObj.trigger('client-typing', data);
+            log('📤 已发送 typing 事件: ' + JSON.stringify(data), 'event');
+            document.getElementById('presenceClientEventLog').innerHTML = '<span style="color: #666;">等待其他成员响应...</span>';
+        }
+        
+        function sendPresenceCustom() {
+            if (!presenceChannelObj) {
+                alert('请先订阅 Presence 频道！');
+                return;
+            }
+            
+            const message = document.getElementById('presenceMessage').value || '自定义消息';
+            const data = {
+                action: 'custom_action',
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+            
+            presenceChannelObj.trigger('client-custom', data);
+            log('📤 已发送自定义事件: ' + JSON.stringify(data), 'event');
+            document.getElementById('presenceClientEventLog').innerHTML = '<span style="color: #666;">等待其他成员响应...</span>';
+        }
+        
         // 页面初始化（立即执行，因为script在body底部，DOM已加载）
         (function initializePage() {
             // 页面加载时的提示
-            log('👋 欢迎使用Pusher Protocol v8.3.0测试客户端', 'event');
+            log('👋 欢迎使用Pusher Protocol v8.3.0测试客户端（完整版）', 'event');
             log('📖 使用说明:', 'event');
             log('1. 先登录获取JWT Token（默认：superAdmin/admin123）', 'data');
             log('2. 配置连接信息并点击"连接"', 'data');
-            log('3. 测试Public/Private/Presence频道订阅', 'data');
-            log('4. 在Private频道发送Client Event', 'data');
+            log('3. 测试Public/Private/Presence/Encrypted频道订阅', 'data');
+            log('4. 测试 Client Events 和 Presence metadata', 'data');
             log('5. 运行速率限制测试', 'data');
             log('', 'data');
             log('🔐 安全提示: 密码使用AES-ECB加密传输（密钥: 1234567890123456）', 'data');
+            log('', 'data');
+            
+            // 检查 NaCl 加密库
+            if (typeof nacl !== 'undefined') {
+                log('✅ TweetNaCl 加密库已加载，支持 Encrypted Channels', 'data');
+                console.log('✅ NaCl 版本信息:', nacl);
+            } else {
+                log('❌ TweetNaCl 加密库未加载，Encrypted Channels 功能不可用', 'error');
+                console.error('❌ NaCl 未定义');
+            }
             log('', 'data');
             
             // 检查localStorage是否可用
