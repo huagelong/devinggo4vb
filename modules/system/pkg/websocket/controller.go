@@ -134,9 +134,19 @@ func SubscribeController(ctx context.Context, client *Client, req *PusherRequest
 			members = make(map[string]map[string]interface{})
 		}
 
+		// 🔍 调试：打印成员列表
+		glob.WithWsLog().Debugf(ctx, "🔍 [Presence订阅] channel=%s, members数量=%d", channel, len(members))
+		for userID, userInfo := range members {
+			glob.WithWsLog().Debugf(ctx, "🔍 [Presence成员] userID=%s, userInfo=%+v", userID, userInfo)
+		}
+
 		// 发送订阅成功事件（包含完整成员列表）
 		// ⚠️ 传入当前用户ID以构造 me 字段
 		presenceData := FormatPresenceData(members, member.UserID)
+
+		// 🔍 调试：打印格式化后的数据
+		glob.WithWsLog().Debugf(ctx, "🔍 [Presence数据] presenceData=%+v", presenceData)
+
 		client.SendPusherEvent(EventSubscriptionSucceeded, channel, presenceData)
 
 		// 向频道内其他成员广播member_added事件

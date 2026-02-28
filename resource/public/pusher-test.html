@@ -767,11 +767,27 @@
             }
             
             // 直接遍历 ids 和 hash
+            console.log('🔍 开始遍历 memberIds...');
             memberIds.forEach(function(memberId) {
+                console.log('🔍 处理成员ID:', memberId, '类型:', typeof memberId);
+                console.log('🔍 memberHash[memberId]:', memberHash[memberId]);
+                console.log('🔍 memberHash 所有键:', Object.keys(memberHash));
+                
                 const memberInfo = memberHash[memberId];
                 if (memberInfo) {
                     membersInfo.innerHTML += '• ' + memberId + ': ' + JSON.stringify(memberInfo) + '<br>';
-                    console.log('🔍 显示成员:', memberId, memberInfo);
+                    console.log('✅ 显示成员:', memberId, memberInfo);
+                } else {
+                    console.log('❌ 未找到成员信息:', memberId);
+                    // 尝试所有键
+                    console.log('🔍 尝试直接遍历 memberHash:');
+                    for (let key in memberHash) {
+                        console.log('  - key:', key, '(类型:', typeof key, '), value:', memberHash[key]);
+                        if (key == memberId) {  // 使用 == 而不是 ===，允许类型转换
+                            console.log('  ✅ 找到匹配（使用 == 比较）');
+                            membersInfo.innerHTML += '• ' + key + ': ' + JSON.stringify(memberHash[key]) + '<br>';
+                        }
+                    }
                 }
             });
             

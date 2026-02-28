@@ -315,6 +315,10 @@ func AddPresenceMember4Redis(ctx context.Context, channel, userID string, userIn
 	key := KeyPresenceChannel + channel
 	userInfoJSON := gconv.String(userInfo)
 
+	// 🔍 调试：打印添加的成员信息
+	glob.WithWsLog().Debugf(ctx, "🔍 [AddPresenceMember] channel=%s, userID=%s, userInfo=%+v", channel, userID, userInfo)
+	glob.WithWsLog().Debugf(ctx, "🔍 [AddPresenceMember] userInfoJSON=%s", userInfoJSON)
+
 	_, err := getRedisClient().HSet(ctx, key, g.Map{userID: userInfoJSON})
 	if err != nil {
 		glob.WithWsLog().Warning(ctx, "PresenceChannel HSET error:", err)
@@ -356,13 +360,23 @@ func GetPresenceMembers4Redis(ctx context.Context, channel string) (map[string]m
 		return nil, err
 	}
 
+	// 🔍 调试：打印从Redis获取的原始数据
+	glob.WithWsLog().Debugf(ctx, "🔍 [GetPresenceMembers] channel=%s, Redis返回数据: %+v", channel, value.Map())
+
 	members := make(map[string]map[string]interface{})
 	for userID, userInfoJSON := range value.Map() {
+		glob.WithWsLog().Debugf(ctx, "🔍 [GetPresenceMembers] 解析: userID=%s, userInfoJSON=%v", userID, userInfoJSON)
+
 		var userInfo map[string]interface{}
 		if err := gconv.Struct(userInfoJSON, &userInfo); err == nil {
 			members[userID] = userInfo
+			glob.WithWsLog().Debugf(ctx, "🔍 [GetPresenceMembers] 解析成功: userInfo=%+v", userInfo)
+		} else {
+			glob.WithWsLog().Warning(ctx, "🔍 [GetPresenceMembers] 解析失败: userID=%s, error=%v", userID, err)
 		}
 	}
+
+	glob.WithWsLog().Debugf(ctx, "🔍 [GetPresenceMembers] channel=%s, 最终members数量=%d", channel, len(members))
 
 	return members, nil
 }
