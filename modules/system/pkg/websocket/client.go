@@ -138,9 +138,17 @@ func (c *Client) SendPusherEvent(event, channel string, data interface{}) error 
 	} else {
 		jsonBytes, err := json.Marshal(data)
 		if err != nil {
+			// 🔍 如果序列化失败，记录错误
+			glob.WithWsLog().Errorf(gctx.GetInitCtx(), "🔍 [SendPusherEvent] JSON序列化失败: %v, data类型: %T", err, data)
 			return err
 		}
 		dataStr = string(jsonBytes)
+	}
+
+	// 🔍 调试：打印发送的数据
+	if event == EventSubscriptionSucceeded && channel != "" {
+		glob.WithWsLog().Debugf(gctx.GetInitCtx(), "🔍 [SendPusherEvent] event=%s, channel=%s", event, channel)
+		glob.WithWsLog().Debugf(gctx.GetInitCtx(), "🔍 [SendPusherEvent] dataStr长度=%d, 前200字符=%s", len(dataStr), dataStr[:min(200, len(dataStr))])
 	}
 
 	// 使用sync.Pool优化内存分配
@@ -150,6 +158,13 @@ func (c *Client) SendPusherEvent(event, channel string, data interface{}) error 
 	response.Data = dataStr
 
 	return c.SendMsg(response)
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // SendError 发送错误消息（pusher:error）

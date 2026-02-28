@@ -142,12 +142,19 @@ func SubscribeController(ctx context.Context, client *Client, req *PusherRequest
 
 		// 发送订阅成功事件（包含完整成员列表）
 		// ⚠️ 传入当前用户ID以构造 me 字段
+		// ⚠️ Pusher.js 8.3.0 需要扁平化结构，直接发送 PresenceMemberList，不包装在 presence 字段中
 		presenceData := FormatPresenceData(members, member.UserID)
 
-		// 🔍 调试：打印格式化后的数据
-		glob.WithWsLog().Debugf(ctx, "🔍 [Presence数据] presenceData=%+v", presenceData)
+		// 🔍 调试：验证 presenceData.Presence 可以被正确序列化
+		testJSON, testErr := json.Marshal(presenceData.Presence) // 使用 .Presence 字段（扁平化）
+		if testErr != nil {
+			glob.WithWsLog().Errorf(ctx, "❌ [Presence数据] JSON序列化测试失败: %v", testErr)
+		} else {
+			glob.WithWsLog().Debugf(ctx, "🔍 [Presence数据] JSON序列化成功（扁平化），长度=%d, 内容=%s", len(testJSON), string(testJSON))
+		}
 
-		client.SendPusherEvent(EventSubscriptionSucceeded, channel, presenceData)
+		// 直接发送 PresenceMemberList（扁平化），而不是包装在 PresenceData 中
+		client.SendPusherEvent(EventSubscriptionSucceeded, channel, presenceData.Presence)
 
 		// 向频道内其他成员广播member_added事件
 		memberAddedData := MemberAddedData{
