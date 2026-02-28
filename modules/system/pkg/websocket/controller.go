@@ -42,19 +42,20 @@ func SubscribeController(ctx context.Context, client *Client, req *PusherRequest
 	// 获取频道类型
 	channelType := GetChannelType(channel)
 
-	// Phase 2: Private Channel认证
-	if channelType == ChannelTypePrivate {
+	// Phase 2: Private/Encrypted Channel认证
+	// ⚠️ Encrypted channels 使用与 Private channels 相同的认证流程
+	if channelType == ChannelTypePrivate || channelType == ChannelTypeEncrypted {
 		auth := subData.Auth
 		if auth == "" {
-			glob.WithWsLog().Warning(ctx, "Private channel missing auth:", channel)
-			client.SendSubscriptionError(channel, "AuthError", "Auth signature required for private channel", CodeUnauthorized)
+			glob.WithWsLog().Warning(ctx, "Private/Encrypted channel missing auth:", channel)
+			client.SendSubscriptionError(channel, "AuthError", "Auth signature required for private/encrypted channel", CodeUnauthorized)
 			return
 		}
 
 		// 验证认证签名
 		err := ValidateChannelAuth(client.SocketID, channel, auth, "")
 		if err != nil {
-			glob.WithWsLog().Warning(ctx, "Private channel auth failed:", err)
+			glob.WithWsLog().Warning(ctx, "Private/Encrypted channel auth failed:", err)
 			client.SendSubscriptionError(channel, "AuthError", "Invalid auth signature", CodeUnauthorized)
 			return
 		}
@@ -73,7 +74,12 @@ func SubscribeController(ctx context.Context, client *Client, req *PusherRequest
 
 		// 发送订阅成功事件
 		client.SendPusherEvent(EventSubscriptionSucceeded, channel, map[string]interface{}{})
-		glob.WithWsLog().Debugf(ctx, "Client %s subscribed to private channel %s", client.SocketID, channel)
+
+		if channelType == ChannelTypeEncrypted {
+			glob.WithWsLog().Debugf(ctx, "Client %s subscribed to encrypted channel %s", client.SocketID, channel)
+		} else {
+			glob.WithWsLog().Debugf(ctx, "Client %s subscribed to private channel %s", client.SocketID, channel)
+		}
 		return
 	}
 
@@ -262,11 +268,11 @@ func ClientEventController(ctx context.Context, client *Client, req *PusherReque
 		return
 	}
 
-	// ⚠️ v8.3.0要求：仅允许Private/Presence频道使用Client Events
+	// ⚠️ v8.3.0要求：仅允许Private/Presence/Encrypted频道使用Client Events
 	channelType := GetChannelType(req.Channel)
 	if channelType == ChannelTypePublic {
 		glob.WithWsLog().Warning(ctx, "Client events not allowed on public channels:", req.Channel)
-		client.SendError("Client events only allowed on private and presence channels", CodeClientEventForbidden)
+		client.SendError("Client events only allowed on private, presence and encrypted channels", CodeClientEventForbidden)
 		return
 	}
 
@@ -286,7 +292,13 @@ func ClientEventController(ctx context.Context, client *Client, req *PusherReque
 	}
 
 	// 转发给频道内其他客户端（不包括发送者）
-	BroadcastToChannel(ctx, req.Channel, req.Event, req.Data, client.SocketID)
+	// ⚠️ Presence Channel 需要包含发送者的 user_id
+	if channelType == ChannelTypePresence && client.UserID != "" {
+		// 为 Presence Channel 的 Client Events 添加发送者信息
+		BroadcastToChannelWithSender(ctx, req.Channel, req.Event, req.Data, client.SocketID, client.UserID)
+	} else {
+		BroadcastToChannel(ctx, req.Channel, req.Event, req.Data, client.SocketID)
+	}
 
 	glob.WithWsLog().Debugf(ctx, "Client event forwarded: socket=%s, channel=%s, event=%s",
 		client.SocketID, req.Channel, req.Event)
@@ -294,6 +306,12 @@ func ClientEventController(ctx context.Context, client *Client, req *PusherReque
 
 // BroadcastToChannel 向频道内除了指定客户端以外的所有成员广播消息
 func BroadcastToChannel(ctx context.Context, channel, event string, data interface{}, excludeSocketID string) {
+	BroadcastToChannelWithSender(ctx, channel, event, data, excludeSocketID, "")
+}
+
+// BroadcastToChannelWithSender 向频道内除了指定客户端以外的所有成员广播消息（可选包含发送者信息）
+// ⚠️ 用于 Presence Channel 的 Client Events，需要包含 user_id
+func BroadcastToChannelWithSender(ctx context.Context, channel, event string, data interface{}, excludeSocketID, senderUserID string) {
 	// 获取频道内所有socket_id
 	socketIds := GetAllSocketIdByChannel4Redis(ctx, channel)
 
@@ -306,7 +324,18 @@ func BroadcastToChannel(ctx context.Context, channel, event string, data interfa
 		// 获取客户端并发送消息
 		targetClient := clientManager.GetClientBySocketID(socketId)
 		if targetClient != nil {
-			targetClient.SendPusherEvent(event, channel, data)
+			// ⚠️ Presence Channel Client Events: 包装数据以包含发送者 user_id
+			if senderUserID != "" && strings.HasPrefix(event, "client-") {
+				// 创建包含 metadata 的包装对象
+				// Pusher.js 会自动解析这个格式并将 user_id 作为第二个参数传递给回调
+				wrappedData := map[string]interface{}{
+					"data":    data,
+					"user_id": senderUserID, // Pusher.js 需要的 metadata
+				}
+				targetClient.SendPusherEvent(event, channel, wrappedData)
+			} else {
+				targetClient.SendPusherEvent(event, channel, data)
+			}
 		}
 	}
 }
