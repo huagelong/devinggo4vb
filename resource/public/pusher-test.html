@@ -567,6 +567,9 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 channelAuthorization: {
                     endpoint: `http://${wsHost}:${wsPort}/system/pusher/auth`,
                     transport: channelAuthTransport,
+                    params: token ? {
+                        authorization: token
+                    } : {},
                     headers: token ? {
                         'Authorization': 'Bearer ' + token
                     } : {}
@@ -574,6 +577,9 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 userAuthentication: {
                     endpoint: `http://${wsHost}:${wsPort}/system/pusher/user-auth`,
                     transport: userAuthTransport,
+                    params: token ? {
+                        authorization: token
+                    } : {},
                     headers: token ? {
                         'Authorization': 'Bearer ' + token
                     } : {}
@@ -704,11 +710,13 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             const wsHost = document.getElementById('wsHost').value;
             const wsPort = document.getElementById('wsPort').value;
             const socketId = pusher.connection.socket_id;
+            const token = document.getElementById('token').value;
 
             log('🧪 测试 user-auth JSONP 开始...', 'event');
             try {
                 const payload = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/user-auth`, {
-                    socket_id: socketId
+                    socket_id: socketId,
+                    ...(token ? { authorization: token } : {})
                 });
                 log('✅ user-auth JSONP 成功: ' + JSON.stringify(payload), 'data');
             } catch (e) {
@@ -725,12 +733,14 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             const wsPort = document.getElementById('wsPort').value;
             const socketId = pusher.connection.socket_id;
             const channel = document.getElementById('privateChannel').value;
+            const token = document.getElementById('token').value;
 
             log('🧪 测试 channel-auth JSONP 开始... channel=' + channel, 'event');
             try {
                 const payload = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/auth`, {
                     socket_id: socketId,
-                    channel_name: channel
+                    channel_name: channel,
+                    ...(token ? { authorization: token } : {})
                 });
                 log('✅ channel-auth JSONP 成功: ' + JSON.stringify(payload), 'data');
             } catch (e) {
@@ -795,6 +805,7 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             const wsPort = document.getElementById('wsPort').value;
             const socketId = pusher.connection.socket_id;
             const channels = parseBatchChannels();
+            const token = document.getElementById('token').value;
 
             if (!channels.length) {
                 alert('请输入至少一个频道');
@@ -807,7 +818,8 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             try {
                 const result = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/auth/batch`, {
                     socket_id: socketId,
-                    channel_names: channels.join(',')
+                    channel_names: channels.join(','),
+                    ...(token ? { authorization: token } : {})
                 });
                 document.getElementById('batchAuthStatus').textContent = '✅ JSONP 成功';
                 log('✅ 批量授权 JSONP 返回: ' + JSON.stringify(result), 'data');
