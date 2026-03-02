@@ -39,6 +39,8 @@ func ProcessData(ctx context.Context, client *Client, message []byte) {
 
 	// 路由Pusher系统事件
 	switch request.Event {
+	case EventSignin:
+		SigninController(ctx, client, request)
 	case EventSubscribe:
 		SubscribeController(ctx, client, request)
 	case EventUnsubscribe:

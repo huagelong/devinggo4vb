@@ -10,10 +10,93 @@ import (
 	"context"
 	"devinggo/modules/system/pkg/websocket/glob"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/os/gtime"
 )
+
+// SigninController Pusher用户认证控制器
+// 客户端发送 pusher:signin 后验证签名，成功返回 pusher:signin_success
+func SigninController(ctx context.Context, client *Client, req *PusherRequest) {
+	dataBytes, err := json.Marshal(req.Data)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController marshal error:", err)
+		client.SendError("Invalid signin data", CodeUnauthorized)
+		return
+	}
+
+	var payload struct {
+		Auth     string          `json:"auth"`
+		UserData json.RawMessage `json:"user_data"`
+	}
+	if err = json.Unmarshal(dataBytes, &payload); err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController unmarshal error:", err)
+		client.SendError("Invalid signin payload", CodeUnauthorized)
+		return
+	}
+
+	if payload.Auth == "" || len(payload.UserData) == 0 {
+		client.SendError("Missing auth or user_data", CodeUnauthorized)
+		return
+	}
+
+	userDataMap, userDataJSON, err := parseSigninUserData(payload.UserData)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController parse user_data error:", err)
+		client.SendError("Invalid user_data", CodeUnauthorized)
+		return
+	}
+
+	userID, ok := userDataMap["id"].(string)
+	if !ok || userID == "" {
+		client.SendError("user_data.id is required and must be string", CodeUnauthorized)
+		return
+	}
+
+	if err = ValidateUserAuthSignature(client.SocketID, payload.Auth, userDataJSON); err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController validate signature failed:", err)
+		client.SendError("Invalid user auth signature", CodeUnauthorized)
+		return
+	}
+
+	// 标记用户级连接状态
+	client.UserID = userID
+	client.UserInfo = userDataMap
+
+	// 返回用户级登录成功事件
+	if err = client.SendPusherEvent(EventSigninSuccess, "", SigninSuccessData{UserData: userDataMap}); err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController send signin_success failed:", err)
+		return
+	}
+
+	glob.WithWsLog().Infof(ctx, "Client signed in: socket_id=%s, user_id=%s", client.SocketID, userID)
+}
+
+func parseSigninUserData(raw json.RawMessage) (map[string]interface{}, string, error) {
+	trimmed := strings.TrimSpace(string(raw))
+	if trimmed == "" {
+		return nil, "", fmt.Errorf("empty user_data")
+	}
+
+	if strings.HasPrefix(trimmed, "\"") {
+		var userDataJSON string
+		if err := json.Unmarshal(raw, &userDataJSON); err != nil {
+			return nil, "", err
+		}
+		var userDataMap map[string]interface{}
+		if err := json.Unmarshal([]byte(userDataJSON), &userDataMap); err != nil {
+			return nil, "", err
+		}
+		return userDataMap, userDataJSON, nil
+	}
+
+	var userDataMap map[string]interface{}
+	if err := json.Unmarshal(raw, &userDataMap); err != nil {
+		return nil, "", err
+	}
+	return userDataMap, trimmed, nil
+}
 
 // SubscribeController Pusher订阅控制器
 func SubscribeController(ctx context.Context, client *Client, req *PusherRequest) {

@@ -49,6 +49,17 @@ type SubscribeRequestData struct {
 	ChannelData string `json:"channel_data,omitempty"` // 频道数据（Presence）
 }
 
+// SigninRequestData 用户登录请求数据
+type SigninRequestData struct {
+	Auth     string      `json:"auth"`      // 用户认证签名
+	UserData interface{} `json:"user_data"` // 用户数据（对象或JSON字符串）
+}
+
+// SigninSuccessData 用户登录成功数据
+type SigninSuccessData struct {
+	UserData map[string]interface{} `json:"user_data"`
+}
+
 // PresenceData Presence频道订阅成功时的数据结构
 type PresenceData struct {
 	Presence PresenceMemberList `json:"presence"`
@@ -116,6 +127,8 @@ const (
 	EventError                 = "pusher:error"
 	EventPing                  = "pusher:ping"
 	EventPong                  = "pusher:pong"
+	EventSignin                = "pusher:signin"
+	EventSigninSuccess         = "pusher:signin_success"
 	EventSubscribe             = "pusher:subscribe"
 	EventSubscriptionSucceeded = "pusher:subscription_succeeded"
 	EventSubscriptionError     = "pusher:subscription_error"

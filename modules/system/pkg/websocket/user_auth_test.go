@@ -223,3 +223,31 @@ func BenchmarkGenerateUserAuthSignature(b *testing.B) {
 		}
 	}
 }
+
+func TestValidateUserAuthSignature(t *testing.T) {
+	InitPusherAuth("test-app-key", "test-app-secret")
+
+	socketID := "server1.123456"
+	userData := map[string]interface{}{
+		"id":   "user123",
+		"name": "Alice",
+	}
+
+	auth, err := GenerateUserAuthSignature(socketID, userData)
+	if err != nil {
+		t.Fatalf("GenerateUserAuthSignature failed: %v", err)
+	}
+
+	userDataJSON, _ := json.Marshal(userData)
+	if err := ValidateUserAuthSignature(socketID, auth, string(userDataJSON)); err != nil {
+		t.Fatalf("ValidateUserAuthSignature should succeed: %v", err)
+	}
+
+	if err := ValidateUserAuthSignature(socketID, "bad-app:bad-sign", string(userDataJSON)); err == nil {
+		t.Fatalf("ValidateUserAuthSignature should fail for invalid auth")
+	}
+
+	if err := ValidateUserAuthSignature(socketID, auth, `{"id":"tampered"}`); err == nil {
+		t.Fatalf("ValidateUserAuthSignature should fail for tampered user_data")
+	}
+}

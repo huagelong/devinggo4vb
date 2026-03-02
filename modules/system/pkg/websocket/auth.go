@@ -210,3 +210,38 @@ func GenerateUserAuthSignature(socketID string, userData map[string]interface{})
 	// 5. 返回格式：app_key:signature
 	return fmt.Sprintf("%s:%s", pusherAppKey, signature), nil
 }
+
+// ValidateUserAuthSignature 验证用户认证签名
+// 校验规则：
+//  1. auth 格式为 app_key:signature
+//  2. app_key 必须匹配配置
+//  3. 签名字符串为 socket_id::user::user_data_json
+//  4. 使用 HMAC-SHA256 且常量时间比较
+func ValidateUserAuthSignature(socketID, auth, userDataJSON string) error {
+	if socketID == "" || auth == "" || userDataJSON == "" {
+		return errors.New("missing required parameters")
+	}
+
+	parts := strings.Split(auth, ":")
+	if len(parts) != 2 {
+		return errors.New("invalid auth format, expected: app_key:signature")
+	}
+
+	if pusherAppKey == "" || pusherAppSecret == "" {
+		GetPusherConfig()
+	}
+
+	receivedAppKey := parts[0]
+	receivedSignature := parts[1]
+	if receivedAppKey != pusherAppKey {
+		return errors.New("invalid app_key")
+	}
+
+	stringToSign := fmt.Sprintf("%s::user::%s", socketID, userDataJSON)
+	expectedSignature := generateHMAC(stringToSign, pusherAppSecret)
+	if !constantTimeCompare(receivedSignature, expectedSignature) {
+		return errors.New("invalid signature")
+	}
+
+	return nil
+}
