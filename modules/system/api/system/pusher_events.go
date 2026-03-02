@@ -25,8 +25,8 @@ type PusherEventsReq struct {
 	AuthSignature string `json:"auth_signature" in:"query" dc:"HMAC-SHA256签名" v:"required"`
 
 	// Body参数
-	Name     string   `json:"name" dc:"事件名称" v:"required"`
-	Channels []string `json:"channels" dc:"频道列表" v:"required|length:1,100"`
+	Name     string   `json:"name" dc:"事件名称" v:"required|max-length:200"`
+	Channels []string `json:"channels" dc:"频道列表" v:"required|length:1,10"`
 	Data     string   `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
 	SocketId string   `json:"socket_id" dc:"排除的socket_id（可选）"`
 	Info     string   `json:"info" dc:"要返回的频道信息（可选），如：user_count"`
@@ -63,8 +63,8 @@ type PusherBatchEventsReq struct {
 
 // PusherBatchEvent 批量事件项
 type PusherBatchEvent struct {
-	Name     string `json:"name" dc:"事件名称" v:"required"`
-	Channel  string `json:"channel" dc:"频道名称" v:"required"`
+	Name     string `json:"name" dc:"事件名称" v:"required|max-length:200"`
+	Channel  string `json:"channel" dc:"频道名称" v:"required|max-length:200"`
 	Data     string `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
 	SocketId string `json:"socket_id" dc:"排除的socket_id（可选）"`
 	Info     string `json:"info" dc:"要返回的频道信息（可选），如：user_count"`
@@ -97,7 +97,7 @@ type PusherSendToUserReq struct {
 	AuthSignature string `json:"auth_signature" in:"query" dc:"HMAC-SHA256签名" v:"required"`
 
 	// Body参数
-	Name string `json:"name" dc:"事件名称" v:"required"`
+	Name string `json:"name" dc:"事件名称" v:"required|max-length:200"`
 	Data string `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
 }
 

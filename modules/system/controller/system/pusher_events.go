@@ -55,6 +55,25 @@ func (c *cPusherEvents) Events(ctx context.Context, req *system.PusherEventsReq)
 		return nil, timestampExpiredError(r)
 	}
 
+	// 2.5. 验证事件名称和频道名称（Pusher 命名约定）
+	if err := websocket.ValidateEventName(req.Name); err != nil {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": fmt.Sprintf("Invalid event name: %s", err.Error()),
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
+	if err := websocket.ValidateChannels(req.Channels); err != nil {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": fmt.Sprintf("Invalid channels: %s", err.Error()),
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
 	// 3. 验证签名
 	bodyBytes := r.GetBody()
 	if !verifySignature(req.AuthKey, req.AuthTimestamp, req.AuthVersion, req.BodyMd5, req.AuthSignature, config.Secret, "POST", fmt.Sprintf("/apps/%s/events", req.AppId), bodyBytes) {
@@ -197,6 +216,45 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 		return nil, timestampExpiredError(r)
 	}
 
+	// 2.5. 验证批量事件数据（Pusher 命名约定）
+	if len(req.Batch) == 0 {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": "At least one event is required in batch",
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
+	if len(req.Batch) > 10 {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": "Cannot send more than 10 events in a single batch",
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
+	for i, event := range req.Batch {
+		if err := websocket.ValidateEventName(event.Name); err != nil {
+			r.Response.Status = 400
+			r.Response.WriteJson(g.Map{
+				"error": fmt.Sprintf("Invalid event name at index %d: %s", i, err.Error()),
+			})
+			r.ExitAll()
+			return nil, nil
+		}
+
+		if err := websocket.ValidateChannelName(event.Channel); err != nil {
+			r.Response.Status = 400
+			r.Response.WriteJson(g.Map{
+				"error": fmt.Sprintf("Invalid channel name at index %d: %s", i, err.Error()),
+			})
+			r.ExitAll()
+			return nil, nil
+		}
+	}
+
 	// 3. 验证签名
 	bodyBytes := r.GetBody()
 	if !verifySignature(req.AuthKey, req.AuthTimestamp, req.AuthVersion, req.BodyMd5, req.AuthSignature, config.Secret, "POST", fmt.Sprintf("/apps/%s/batch_events", req.AppId), bodyBytes) {
@@ -302,6 +360,16 @@ func (c *cPusherEvents) SendToUser(ctx context.Context, req *system.PusherSendTo
 	now := time.Now().Unix()
 	if abs(now-req.AuthTimestamp) > 600 {
 		return nil, timestampExpiredError(r)
+	}
+
+	// 2.5. 验证事件名称（Pusher 命名约定）
+	if err := websocket.ValidateEventName(req.Name); err != nil {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": fmt.Sprintf("Invalid event name: %s", err.Error()),
+		})
+		r.ExitAll()
+		return nil, nil
 	}
 
 	// 3. 验证签名
