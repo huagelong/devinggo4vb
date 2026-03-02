@@ -209,7 +209,10 @@ There are a number of configuration parameters which can be set for the client, 
 const pusher = new Pusher(APP_KEY, {
   cluster: APP_CLUSTER,
   channelAuthorization: {
-    endpoint: 'http://example.com/pusher/auth'
+    endpoint: '/system/pusher/auth'
+  },
+  userAuthentication: {
+    endpoint: '/system/pusher/user-auth'
   },
 });
 ```
@@ -224,9 +227,9 @@ Forces the connection to use TLS. When set to `false` the library will attempt n
 
 Object containing the configuration for user authentication. Valid keys are:
 
-* `endpoint` (String) - Endpoint on your server that will return the authentication signature needed for signing the user in. Defaults to `/pusher/user-auth`.
+* `endpoint` (String) - Endpoint on your server that will return the authentication signature needed for signing the user in. Defaults to `/pusher/user-auth` in upstream docs. In this project use `/system/pusher/user-auth`.
 
-* `transport` (String) - Defines how the authentication endpoint will be called. There are two options available:
+* `transport` (String) - Defines how the authentication endpoint will be called. There are two options available (both are supported in this project):
   * `ajax` - the **default** option where an `XMLHttpRequest` object will be used to make a request. The parameters will be passed as `POST` parameters.
   * `jsonp` - The authentication endpoint will be called by a `<script>` tag being dynamically created pointing to the endpoint defined by `userAuthentication.endpoint`. This can be used when the authentication endpoint is on a different domain to the web application. The endpoint will therefore be requested as a `GET` and parameters passed in the query string.
 
@@ -240,6 +243,30 @@ Object containing the configuration for user authentication. Valid keys are:
 
 * `customHandler` (Function) - When present, this function is called instead of a request being made to the endpoint specified by `userAuthentication.endpoint`.
 
+Example (ajax):
+
+```js
+const pusher = new Pusher(APP_KEY, {
+  cluster: APP_CLUSTER,
+  userAuthentication: {
+    endpoint: '/system/pusher/user-auth',
+    transport: 'ajax'
+  }
+});
+```
+
+Example (jsonp / GET):
+
+```js
+const pusher = new Pusher(APP_KEY, {
+  cluster: APP_CLUSTER,
+  userAuthentication: {
+    endpoint: '/system/pusher/user-auth',
+    transport: 'jsonp'
+  }
+});
+```
+
 
 For more information see [authenticating users](https://pusher.com/docs/channels/server_api/authenticating-users/).
 
@@ -248,9 +275,9 @@ For more information see [authenticating users](https://pusher.com/docs/channels
 
 Object containing the configuration for user authorization. Valid keys are:
 
-* `endpoint` (String) - Endpoint on your server that will return the authorization signature needed for private and presence channels. Defaults to `/pusher/auth`.
+* `endpoint` (String) - Endpoint on your server that will return the authorization signature needed for private and presence channels. Defaults to `/pusher/auth` in upstream docs. In this project use `/system/pusher/auth`.
 
-* `transport` (String) - Defines how the authorization endpoint will be called. There are two options available:
+* `transport` (String) - Defines how the authorization endpoint will be called. There are two options available (both are supported in this project):
   * `ajax` - the **default** option where an `XMLHttpRequest` object will be used to make a request. The parameters will be passed as `POST` parameters.
   * `jsonp` - The authorization endpoint will be called by a `<script>` tag being dynamically created pointing to the endpoint defined by `channelAuthorization.endpoint`. This can be used when the authorization endpoint is on a different domain to the web application. The endpoint will therefore be requested as a `GET` and parameters passed in the query string.
 
@@ -263,6 +290,30 @@ Object containing the configuration for user authorization. Valid keys are:
 * `headersProvider` (Function) - When present, this function is called to get additional headers to be sent when the user authentication endpoint is called. This is equivalent to passing them on the headers key, but allows for the headers to be retrieved dynamically at the time of the request.
 
 * `customHandler` (Function) - When present, this function is called instead of a request being made to the endpoint specified by `channelAuthorization.endpoint`.
+
+Example (ajax):
+
+```js
+const pusher = new Pusher(APP_KEY, {
+  cluster: APP_CLUSTER,
+  channelAuthorization: {
+    endpoint: '/system/pusher/auth',
+    transport: 'ajax'
+  }
+});
+```
+
+Example (jsonp / GET):
+
+```js
+const pusher = new Pusher(APP_KEY, {
+  cluster: APP_CLUSTER,
+  channelAuthorization: {
+    endpoint: '/system/pusher/auth',
+    transport: 'jsonp'
+  }
+});
+```
 
 
 For more information see [authorizing users](https://pusher.com/docs/channels/server_api/authorizing-users).
@@ -559,7 +610,33 @@ channel.trigger('client-my-event', {message: 'Hello, world!'})
 
 ## Batching authorization requests (aka multi-authorization)
 
-Currently, pusher-js itself does not support authorizing multiple channels in one HTTP request. However, thanks to @dirkbonhomme you can use the [pusher-js-auth](https://github.com/dirkbonhomme/pusher-js-auth) plugin that buffers subscription requests and sends authorization requests to your endpoint in batches.
+By default, pusher-js itself does not authorize multiple channels in one HTTP request. In this project, a server-side batch authorization endpoint is available:
+
+- `POST/GET /system/pusher/auth/batch`
+- input: `socket_id` + `channel_names` (or `channels`)
+- output: `channels` map with per-channel auth payload (`auth`, and optionally `channel_data` / `shared_secret`)
+
+You can still use the [pusher-js-auth](https://github.com/dirkbonhomme/pusher-js-auth) plugin to aggregate requests client-side and forward them to this endpoint.
+
+Example response:
+
+```json
+{
+  "channels": {
+    "private-chat": {
+      "auth": "app_key:signature"
+    },
+    "presence-room": {
+      "auth": "app_key:signature",
+      "channel_data": "{\"user_id\":\"1\",\"user_info\":{\"name\":\"User 1\"}}"
+    },
+    "private-encrypted-secure": {
+      "auth": "app_key:signature",
+      "shared_secret": "base64-32-byte-key"
+    }
+  }
+}
+```
 
 ## Default events
 
