@@ -189,12 +189,54 @@
             <input type="text" id="token" placeholder="登录后自动填充" style="width: 400px;" readonly>
         </div>
         <div>
+            <label>Channel Auth Transport: </label>
+            <select id="channelAuthTransport" style="width: 120px;">
+                <option value="ajax" selected>ajax</option>
+                <option value="jsonp">jsonp</option>
+            </select>
+            <label>User Auth Transport: </label>
+            <select id="userAuthTransport" style="width: 120px;">
+                <option value="ajax" selected>ajax</option>
+                <option value="jsonp">jsonp</option>
+            </select>
+        </div>
+        <div>
             <button onclick="connect()">🔌 连接</button>
             <button onclick="disconnect()" class="danger">❌ 断开</button>
         </div>
         <div id="status" class="status disconnected">● 未连接</div>
         <div class="info-box">
             <strong>Socket ID:</strong> <span id="socketId">-</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>👤 User Authentication / Signin 测试</h2>
+        <div>
+            <button onclick="signinUser()">🔐 调用 pusher.signin()</button>
+            <button onclick="testUserAuthJSONP()">🧪 测试 user-auth JSONP</button>
+            <button onclick="testChannelAuthJSONP()">🧪 测试 channel-auth JSONP</button>
+        </div>
+        <div style="margin-top: 10px;">
+            <strong>状态:</strong> <span id="signinStatus">未触发</span>
+        </div>
+        <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+            <strong>提示:</strong> JSONP 测试无法携带自定义 Header，若你的认证中间件仅接受 Header Token，JSONP 可能失败。
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📦 批量频道授权测试</h2>
+        <div>
+            <label>频道列表(逗号分隔): </label>
+            <input type="text" id="batchAuthChannels" value="private-user-123,presence-lobby,private-encrypted-secure" style="width: 520px;">
+        </div>
+        <div>
+            <button onclick="testBatchAuthPost()">🚀 测试 /system/pusher/auth/batch (POST)</button>
+            <button onclick="testBatchAuthJSONP()">🧪 测试 /system/pusher/auth/batch (GET/JSONP)</button>
+        </div>
+        <div style="margin-top: 10px;">
+            <strong>结果:</strong> <span id="batchAuthStatus">等待测试...</span>
         </div>
     </div>
     
@@ -508,6 +550,8 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             const wsHost = document.getElementById('wsHost').value;
             const wsPort = document.getElementById('wsPort').value;
             const token = document.getElementById('token').value;
+            const channelAuthTransport = document.getElementById('channelAuthTransport').value;
+            const userAuthTransport = document.getElementById('userAuthTransport').value;
             
             updateStatus('● 连接中...', false);
             log('🔌 正在连接到 ' + wsHost + ':' + wsPort, 'event');
@@ -520,8 +564,16 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 enabledTransports: ['ws'],
                 cluster: 'mt1',
                 disableStats: true,
-                authEndpoint: `http://${wsHost}:${wsPort}/system/pusher/auth`,
-                auth: {
+                channelAuthorization: {
+                    endpoint: `http://${wsHost}:${wsPort}/system/pusher/auth`,
+                    transport: channelAuthTransport,
+                    headers: token ? {
+                        'Authorization': 'Bearer ' + token
+                    } : {}
+                },
+                userAuthentication: {
+                    endpoint: `http://${wsHost}:${wsPort}/system/pusher/user-auth`,
+                    transport: userAuthTransport,
                     headers: token ? {
                         'Authorization': 'Bearer ' + token
                     } : {}
@@ -543,6 +595,7 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 const socketId = pusher.connection.socket_id;
                 document.getElementById('socketId').textContent = socketId;
                 log('✅ 连接成功！Socket ID: ' + socketId, 'event');
+                log('🔧 channelAuthTransport=' + channelAuthTransport + ', userAuthTransport=' + userAuthTransport, 'data');
             });
             
             pusher.connection.bind('disconnected', function() {
@@ -553,6 +606,18 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             pusher.connection.bind('error', function(err) {
                 log('❌ 连接错误: ' + JSON.stringify(err), 'error');
             });
+
+            if (pusher.user && typeof pusher.user.bind === 'function') {
+                pusher.user.bind('pusher:signin_success', function(data) {
+                    document.getElementById('signinStatus').textContent = '✅ signin_success';
+                    log('✅ 收到 pusher:signin_success => ' + JSON.stringify(data), 'event');
+                });
+
+                pusher.user.bind('pusher:signin_error', function(data) {
+                    document.getElementById('signinStatus').textContent = '❌ signin_error';
+                    log('❌ 收到 pusher:signin_error => ' + JSON.stringify(data), 'error');
+                });
+            }
             
             // 监听所有Pusher错误事件（包括客户端事件错误）
             pusher.connection.bind('pusher:error', function(err) {
@@ -570,7 +635,182 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 pusher.disconnect();
                 updateStatus('● 未连接', false);
                 document.getElementById('socketId').textContent = '-';
+                document.getElementById('signinStatus').textContent = '未触发';
                 log('🔌 已断开连接', 'event');
+            }
+        }
+
+        function signinUser() {
+            if (!pusher || pusher.connection.state !== 'connected') {
+                alert('请先连接 WebSocket');
+                return;
+            }
+            if (typeof pusher.signin !== 'function') {
+                log('❌ 当前 pusher-js 不支持 pusher.signin()', 'error');
+                return;
+            }
+
+            document.getElementById('signinStatus').textContent = '⏳ signin中...';
+            log('🔐 调用 pusher.signin()', 'event');
+            try {
+                pusher.signin();
+            } catch (e) {
+                document.getElementById('signinStatus').textContent = '❌ 调用失败';
+                log('❌ pusher.signin() 调用异常: ' + e.message, 'error');
+            }
+        }
+
+        function jsonpRequest(url, params = {}, timeoutMs = 10000) {
+            return new Promise((resolve, reject) => {
+                const callbackName = '__jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+                const query = new URLSearchParams({ ...params, callback: callbackName }).toString();
+                const script = document.createElement('script');
+                let timer = null;
+
+                window[callbackName] = function(payload) {
+                    cleanup();
+                    resolve(payload);
+                };
+
+                function cleanup() {
+                    if (timer) clearTimeout(timer);
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                    delete window[callbackName];
+                }
+
+                script.onerror = function() {
+                    cleanup();
+                    reject(new Error('JSONP script load error'));
+                };
+
+                timer = setTimeout(() => {
+                    cleanup();
+                    reject(new Error('JSONP timeout'));
+                }, timeoutMs);
+
+                script.src = `${url}?${query}`;
+                document.body.appendChild(script);
+            });
+        }
+
+        async function testUserAuthJSONP() {
+            if (!pusher || pusher.connection.state !== 'connected') {
+                alert('请先连接 WebSocket');
+                return;
+            }
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            const socketId = pusher.connection.socket_id;
+
+            log('🧪 测试 user-auth JSONP 开始...', 'event');
+            try {
+                const payload = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/user-auth`, {
+                    socket_id: socketId
+                });
+                log('✅ user-auth JSONP 成功: ' + JSON.stringify(payload), 'data');
+            } catch (e) {
+                log('❌ user-auth JSONP 失败: ' + e.message, 'error');
+            }
+        }
+
+        async function testChannelAuthJSONP() {
+            if (!pusher || pusher.connection.state !== 'connected') {
+                alert('请先连接 WebSocket');
+                return;
+            }
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            const socketId = pusher.connection.socket_id;
+            const channel = document.getElementById('privateChannel').value;
+
+            log('🧪 测试 channel-auth JSONP 开始... channel=' + channel, 'event');
+            try {
+                const payload = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/auth`, {
+                    socket_id: socketId,
+                    channel_name: channel
+                });
+                log('✅ channel-auth JSONP 成功: ' + JSON.stringify(payload), 'data');
+            } catch (e) {
+                log('❌ channel-auth JSONP 失败: ' + e.message, 'error');
+            }
+        }
+
+        function parseBatchChannels() {
+            const raw = document.getElementById('batchAuthChannels').value || '';
+            return raw.split(',').map(s => s.trim()).filter(Boolean);
+        }
+
+        async function testBatchAuthPost() {
+            if (!pusher || pusher.connection.state !== 'connected') {
+                alert('请先连接 WebSocket');
+                return;
+            }
+
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            const token = document.getElementById('token').value;
+            const socketId = pusher.connection.socket_id;
+            const channels = parseBatchChannels();
+
+            if (!channels.length) {
+                alert('请输入至少一个频道');
+                return;
+            }
+
+            document.getElementById('batchAuthStatus').textContent = '⏳ POST 测试中...';
+            log('🚀 测试批量授权 POST: channels=' + JSON.stringify(channels), 'event');
+
+            try {
+                const response = await fetch(`http://${wsHost}:${wsPort}/system/pusher/auth/batch`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+                    },
+                    body: JSON.stringify({
+                        socket_id: socketId,
+                        channel_names: channels
+                    })
+                });
+
+                const result = await response.json();
+                document.getElementById('batchAuthStatus').textContent = response.ok ? '✅ POST 成功' : '❌ POST 失败';
+                log((response.ok ? '✅' : '❌') + ' 批量授权 POST 返回: ' + JSON.stringify(result), response.ok ? 'data' : 'error');
+            } catch (e) {
+                document.getElementById('batchAuthStatus').textContent = '❌ POST 异常';
+                log('❌ 批量授权 POST 异常: ' + e.message, 'error');
+            }
+        }
+
+        async function testBatchAuthJSONP() {
+            if (!pusher || pusher.connection.state !== 'connected') {
+                alert('请先连接 WebSocket');
+                return;
+            }
+
+            const wsHost = document.getElementById('wsHost').value;
+            const wsPort = document.getElementById('wsPort').value;
+            const socketId = pusher.connection.socket_id;
+            const channels = parseBatchChannels();
+
+            if (!channels.length) {
+                alert('请输入至少一个频道');
+                return;
+            }
+
+            document.getElementById('batchAuthStatus').textContent = '⏳ JSONP 测试中...';
+            log('🧪 测试批量授权 JSONP: channels=' + JSON.stringify(channels), 'event');
+
+            try {
+                const result = await jsonpRequest(`http://${wsHost}:${wsPort}/system/pusher/auth/batch`, {
+                    socket_id: socketId,
+                    channel_names: channels.join(',')
+                });
+                document.getElementById('batchAuthStatus').textContent = '✅ JSONP 成功';
+                log('✅ 批量授权 JSONP 返回: ' + JSON.stringify(result), 'data');
+            } catch (e) {
+                document.getElementById('batchAuthStatus').textContent = '❌ JSONP 失败';
+                log('❌ 批量授权 JSONP 失败: ' + e.message, 'error');
             }
         }
         
