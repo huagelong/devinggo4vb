@@ -122,7 +122,55 @@ func (c *cPusherEvents) Events(ctx context.Context, req *system.PusherEventsReq)
 
 	// 5. 返回成功响应
 	res = &system.PusherEventsRes{}
+
+	// 6. 如果请求了 info 参数，返回频道信息
+	if req.Info != "" {
+		includeUserCount := false
+		infoParts := splitInfoParams(req.Info)
+		for _, info := range infoParts {
+			if info == "user_count" {
+				includeUserCount = true
+				break
+			}
+		}
+
+		if includeUserCount {
+			channelsInfo := make(map[string]system.PusherTriggerChannelAttributes)
+			for _, channel := range req.Channels {
+				attr := system.PusherTriggerChannelAttributes{}
+
+				// 只有 presence 频道才返回 user_count
+				if websocket.IsPresenceChannel(channel) {
+					members, err := websocket.GetPresenceMembers4Redis(ctx, channel)
+					if err != nil {
+						g.Log().Warning(ctx, "Events: Failed to get presence members:", err)
+					} else {
+						attr.UserCount = len(members)
+					}
+				}
+
+				channelsInfo[channel] = attr
+			}
+			res.Channels = channelsInfo
+		}
+	}
+
 	return
+}
+
+// splitInfoParams 分割 info 参数（与 pusher_channel.go 中的 splitInfo 功能相同）
+func splitInfoParams(info string) []string {
+	if info == "" {
+		return []string{}
+	}
+	result := make([]string, 0)
+	for _, part := range strings.Split(info, ",") {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
 }
 
 // BatchEvents Pusher HTTP Batch Events API - 批量推送事件
@@ -185,6 +233,112 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 
 	// 5. 返回成功响应
 	res = &system.PusherBatchEventsRes{}
+
+	// 6. 如果请求了 info 参数，返回频道信息
+	hasInfoRequest := false
+	for _, event := range req.Batch {
+		if event.Info != "" {
+			hasInfoRequest = true
+			break
+		}
+	}
+
+	if hasInfoRequest {
+		batchResults := make([]system.PusherBatchEventResult, len(req.Batch))
+		for i, event := range req.Batch {
+			result := system.PusherBatchEventResult{}
+
+			if event.Info != "" {
+				includeUserCount := false
+				infoParts := splitInfoParams(event.Info)
+				for _, info := range infoParts {
+					if info == "user_count" {
+						includeUserCount = true
+						break
+					}
+				}
+
+				// 只有 presence 频道才返回 user_count
+				if includeUserCount && websocket.IsPresenceChannel(event.Channel) {
+					members, err := websocket.GetPresenceMembers4Redis(ctx, event.Channel)
+					if err != nil {
+						g.Log().Warning(ctx, "BatchEvents: Failed to get presence members:", err)
+					} else {
+						userCount := len(members)
+						result.UserCount = &userCount
+					}
+				}
+			}
+
+			batchResults[i] = result
+		}
+		res.Batch = batchResults
+	}
+
+	return
+}
+
+// SendToUser Pusher HTTP Send to User API - 向特定用户发送事件
+// 实现原理：发送到特殊的用户频道 #private-user-{user_id}
+// 用户通过 pusher.signin() 认证后会自动订阅此频道
+func (c *cPusherEvents) SendToUser(ctx context.Context, req *system.PusherSendToUserReq) (res *system.PusherSendToUserRes, err error) {
+	r := g.RequestFromCtx(ctx)
+
+	// 1. 验证应用配置
+	config, err := getAppConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.AppId != config.AppID {
+		return nil, invalidAppIdError(r)
+	}
+
+	if req.AuthKey != config.Key {
+		return nil, invalidAppKeyError(r)
+	}
+
+	// 2. 验证时间戳
+	now := time.Now().Unix()
+	if abs(now-req.AuthTimestamp) > 600 {
+		return nil, timestampExpiredError(r)
+	}
+
+	// 3. 验证签名
+	bodyBytes := r.GetBody()
+	if !verifySignature(req.AuthKey, req.AuthTimestamp, req.AuthVersion, req.BodyMd5, req.AuthSignature, config.Secret, "POST", fmt.Sprintf("/apps/%s/users/%s/events", req.AppId, req.UserId), bodyBytes) {
+		return nil, signatureInvalidError(r)
+	}
+
+	// 4. 构建用户频道名称 - Pusher 标准格式：#private-user-{user_id}
+	userChannel := fmt.Sprintf("#private-user-%s", req.UserId)
+
+	g.Log().Infof(ctx, "HTTP Send to User API: user_id=%s, event=%s, channel=%s", req.UserId, req.Name, userChannel)
+
+	// 5. 推送事件到用户频道
+	pusherResponse := &websocket.PusherResponse{
+		Event:   req.Name,
+		Channel: userChannel,
+		Data:    req.Data,
+	}
+
+	// 1) 先发送给本地服务器的客户端
+	websocket.SendToChannelWithExclude(userChannel, pusherResponse, "")
+
+	// 2) 再发布到其他服务器（通过Redis PubSub）
+	topicMsg := &websocket.TopicWResponse{
+		Topic:           userChannel,
+		ExcludeSocketID: "",
+		PusherResponse:  pusherResponse,
+	}
+
+	err = websocket.PublishChannelMessage(ctx, userChannel, topicMsg)
+	if err != nil {
+		g.Log().Warning(ctx, "Failed to publish message to user channel:", userChannel, err)
+	}
+
+	// 6. 返回成功响应
+	res = &system.PusherSendToUserRes{}
 	return
 }
 

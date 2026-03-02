@@ -17,6 +17,8 @@ func BindController(group *ghttp.RouterGroup) {
 	// Pusher HTTP Events API (无需认证，通过HMAC签名验证)
 	group.Bind(
 		system.PusherEvents,
+		system.PusherWebhook, // Pusher Webhook 验证
+		system.PusherChannel, // Pusher Channel API (查询频道状态)
 	)
 
 	group.Group("/system", func(group *ghttp.RouterGroup) {
