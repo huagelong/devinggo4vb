@@ -14,8 +14,8 @@ import (
 	"devinggo/modules/system/pkg/websocket"
 	"devinggo/modules/system/service"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -110,14 +110,14 @@ func buildPusherUserData(ctx context.Context, userId int64) (map[string]interfac
 	}
 
 	userData := map[string]interface{}{
-		"id":       gconv.String(user.Id),
-		"name":     name,
-		"username": user.Username,
-		"nickname": user.Nickname,
-		"email":    user.Email,
-		"avatar":   user.Avatar,
+		"id":        gconv.String(user.Id),
+		"name":      name,
+		"username":  user.Username,
+		"nickname":  user.Nickname,
+		"email":     user.Email,
+		"avatar":    user.Avatar,
 		"user_type": user.UserType,
-		"status":   user.Status,
+		"status":    user.Status,
 	}
 
 	return userData, nil

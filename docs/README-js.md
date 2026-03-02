@@ -267,25 +267,6 @@ const pusher = new Pusher(APP_KEY, {
 });
 ```
 
-In this project, `user_data` returned by `/system/pusher/user-auth` is loaded from `system_user` and includes:
-
-- `id` (string)
-- `name`
-- `username`
-- `nickname`
-- `email`
-- `avatar`
-- `user_type`
-- `status`
-
-After `userAuthentication` succeeds, client can call:
-
-```js
-pusher.signin();
-```
-
-WebSocket server handles `pusher:signin` and replies with `pusher:signin_success`.
-
 
 For more information see [authenticating users](https://pusher.com/docs/channels/server_api/authenticating-users/).
 
