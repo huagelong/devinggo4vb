@@ -233,9 +233,9 @@ func SendToChannel(channel string, response *PusherResponse) {
 // SendToChannelWithExclude 发送某个频道（可排除指定socket_id）
 func SendToChannelWithExclude(channel string, response *PusherResponse, excludeSocketID string) {
 	channelRes := &TopicWResponse{
-		Topic:          channel,
+		Topic:           channel,
 		ExcludeSocketID: excludeSocketID,
-		PusherResponse: response,
+		PusherResponse:  response,
 	}
 	clientManager.ChannelBroadcast <- channelRes
 }

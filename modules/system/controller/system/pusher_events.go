@@ -104,9 +104,9 @@ func (c *cPusherEvents) Events(ctx context.Context, req *system.PusherEventsReq)
 
 		// 2) 再发布到其他服务器（通过Redis PubSub）
 		topicMsg := &websocket.TopicWResponse{
-			Topic:          channel,
+			Topic:           channel,
 			ExcludeSocketID: req.SocketId,
-			PusherResponse: pusherResponse,
+			PusherResponse:  pusherResponse,
 		}
 
 		// 排除特定socket_id（如果指定）
@@ -168,9 +168,9 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 
 		// 2) 再发布到其他服务器（通过Redis PubSub）
 		topicMsg := &websocket.TopicWResponse{
-			Topic:          event.Channel,
+			Topic:           event.Channel,
 			ExcludeSocketID: event.SocketId,
-			PusherResponse: pusherResponse,
+			PusherResponse:  pusherResponse,
 		}
 
 		if event.SocketId != "" {
