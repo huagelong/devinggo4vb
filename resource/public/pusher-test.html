@@ -1296,9 +1296,21 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             log('📤 已发送自定义事件: ' + JSON.stringify(data), 'event');
             document.getElementById('presenceClientEventLog').innerHTML = '<span style="color: #666;">等待其他成员响应...</span>';
         }
-        
-        // 页面初始化（立即执行，因为script在body底部，DOM已加载）
-        (function initializePage() {
+
+        // 页面初始化 - 使用 DOMContentLoaded 确保 DOM 完全加载
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+        });
+
+        function initializePage() {
+            // 检查 DOM 是否准备好
+            const logsEl = document.getElementById('logs');
+            if (!logsEl) {
+                console.error('❌ #logs 元素不存在，延迟 100ms 后重试');
+                setTimeout(initializePage, 100);
+                return;
+            }
+
             // 页面加载时的提示
             log('👋 欢迎使用Pusher Protocol v8.3.0测试客户端（完整版）', 'event');
             log('📖 使用说明:', 'event');
@@ -1310,7 +1322,7 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             log('', 'data');
             log('🔐 安全提示: 密码使用AES-ECB加密传输（密钥: 1234567890123456）', 'data');
             log('', 'data');
-            
+
             // 检查 NaCl 加密库
             if (typeof nacl !== 'undefined') {
                 log('✅ TweetNaCl 加密库已加载，支持 Encrypted Channels', 'data');
@@ -1320,7 +1332,7 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 console.error('❌ NaCl 未定义');
             }
             log('', 'data');
-            
+
             // 检查localStorage是否可用
             try {
                 const testKey = '__test_localStorage__';
@@ -1331,12 +1343,12 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 log('❌ localStorage不可用: ' + e.message, 'error');
                 log('⚠️ 请确保: 1) 不在隐私模式下浏览 2) 未禁用localStorage 3) 使用http://协议而非file://', 'error');
             }
-            
+
             // 恢复登录状态（从localStorage）
             try {
                 const savedToken = localStorage.getItem('pusher_test_token');
                 const savedUsername = localStorage.getItem('pusher_test_username');
-                
+
                 if (savedToken && savedUsername) {
                     document.getElementById('token').value = savedToken;
                     updateLoginStatus('● 已登录', true, `${savedUsername} (Token已从缓存恢复)`);
@@ -1348,7 +1360,7 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
             } catch (e) {
                 log('⚠️ 恢复登录状态失败: ' + e.message, 'error');
             }
-        })();
+        }
     </script>
 </body>
 </html>
