@@ -9,6 +9,7 @@ package websocket
 import (
 	"errors"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -106,7 +107,7 @@ func ValidateChannels(channels []string) error {
 
 	for i, channel := range channels {
 		if err := ValidateChannelName(channel); err != nil {
-			return errors.New("invalid channel name at index " + string(rune(i)) + ": " + err.Error())
+			return errors.New("invalid channel name at index " + strconv.Itoa(i) + ": " + err.Error())
 		}
 	}
 

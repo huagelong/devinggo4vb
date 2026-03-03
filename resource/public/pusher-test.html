@@ -856,21 +856,30 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                     log('📨 [' + channel + '] 收到事件: ' + event + ' => ' + JSON.stringify(data), 'data');
                 }
             });
+
+            // 监听频道错误（包括 Client Event 错误）
+            publicChannelObj.bind('pusher:error', function(err) {
+                log('❌ [' + channel + '] 频道错误: ' + JSON.stringify(err), 'error');
+            });
         }
-        
+
         function testPublicClientEvent() {
             if (!publicChannelObj) {
                 alert('请先订阅Public频道！');
                 return;
             }
-            
-            log('⚠️ 尝试在Public频道发送Client Event（应返回错误4301）', 'event');
-            
+
+            log('⚠️ 尝试在Public频道发送Client Event（应返回错误）', 'event');
+
+            // 先绑定错误监听器
+            publicChannelObj.bind('pusher:error', function errorHandler(err) {
+                log('✅ 收到预期的错误: ' + JSON.stringify(err), 'event');
+                // 移除监听器避免重复绑定
+                publicChannelObj.unbind('pusher:error', errorHandler);
+            });
+
+            // 尝试发送（服务器会拒绝）
             publicChannelObj.trigger('client-test', {message: 'This should fail'});
-            
-            setTimeout(() => {
-                log('⚠️ Public频道不允许Client Event，检查是否收到错误码4301', 'event');
-            }, 1000);
         }
         
         function subscribePrivate() {
@@ -1152,32 +1161,46 @@ Invoke-RestMethod -Uri "http://localhost:8070/apps/devinggo-app-id/events" `
                 alert('请先订阅Private频道！');
                 return;
             }
-            
+
             document.getElementById('rateLimitResult').textContent = '测试中...';
-            log('🧪 开始速率限制测试：快速发送11条Client Event', 'event');
-            
-            let successCount = 0;
-            let errorCount = 0;
-            
+            log('🧪 开始速率限制测试：快速发送11条Client Event（速率限制10条/秒）', 'event');
+
+            let sentCount = 0;
+            let rateLimitErrorCount = 0;
+
+            // 监听速率限制错误
+            function rateLimitErrorHandler(err) {
+                if (err && err.code === 4301) {
+                    rateLimitErrorCount++;
+                    log('❌ 收到速率限制错误: ' + JSON.stringify(err), 'error');
+                }
+            }
+
+            privateChannelObj.bind('pusher:error', rateLimitErrorHandler);
+
             for (let i = 0; i < 11; i++) {
                 setTimeout(() => {
-                    try {
-                        privateChannelObj.trigger('client-ratelimit-test', {seq: i + 1});
-                        successCount++;
-                        log('✅ 第' + (i + 1) + '条消息发送', 'data');
-                    } catch (e) {
-                        errorCount++;
-                        log('❌ 第' + (i + 1) + '条消息失败（速率限制）', 'error');
-                    }
-                    
+                    sentCount++;
+                    privateChannelObj.trigger('client-ratelimit-test', {seq: i + 1});
+                    log('📤 第' + (i + 1) + '条消息已发送', 'data');
+
                     if (i === 10) {
                         setTimeout(() => {
-                            const result = `成功: ${successCount}, 失败: ${errorCount}（预期：前10条成功，第11条失败）`;
+                            // 移除错误监听器
+                            privateChannelObj.unbind('pusher:error', rateLimitErrorHandler);
+
+                            const result = `已发送: ${sentCount}条, 速率限制错误: ${rateLimitErrorCount}个`;
                             document.getElementById('rateLimitResult').textContent = result;
                             log('🧪 速率限制测试完成: ' + result, 'event');
-                        }, 500);
+
+                            if (rateLimitErrorCount > 0) {
+                                log('✅ 速率限制生效（超出限制被拒绝）', 'event');
+                            } else {
+                                log('⚠️ 可能未触发速率限制（检查发送间隔）', 'data');
+                            }
+                        }, 1000);
                     }
-                }, i * 100); // 每100ms发送1条（10次/秒）
+                }, i * 80); // 每80ms发送1条（约12.5次/秒，确保触发限制）
             }
         }
         
