@@ -65,6 +65,16 @@ func (c *cPusherEvents) Events(ctx context.Context, req *system.PusherEventsReq)
 		return nil, nil
 	}
 
+	// 2.6. 验证事件数据大小（Pusher 标准：最大 10KB）
+	if err := websocket.ValidateEventData(req.Data); err != nil {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": fmt.Sprintf("Invalid event data: %s", err.Error()),
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
 	if err := websocket.ValidateChannels(req.Channels); err != nil {
 		r.Response.Status = 400
 		r.Response.WriteJson(g.Map{
@@ -253,6 +263,15 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 			r.ExitAll()
 			return nil, nil
 		}
+
+		if err := websocket.ValidateEventData(event.Data); err != nil {
+			r.Response.Status = 400
+			r.Response.WriteJson(g.Map{
+				"error": fmt.Sprintf("Invalid event data at index %d: %s", i, err.Error()),
+			})
+			r.ExitAll()
+			return nil, nil
+		}
 	}
 
 	// 3. 验证签名
@@ -337,8 +356,8 @@ func (c *cPusherEvents) BatchEvents(ctx context.Context, req *system.PusherBatch
 }
 
 // SendToUser Pusher HTTP Send to User API - 向特定用户发送事件
-// 实现原理：发送到特殊的用户频道 #private-user-{user_id}
-// 用户通过 pusher.signin() 认证后会自动订阅此频道
+// 实现原理：通过 user_id → socket_id 映射找到用户的连接，直接发送消息
+// 用户通过 pusher.signin() 认证后，会建立 user_id → socket_id 的映射关系
 func (c *cPusherEvents) SendToUser(ctx context.Context, req *system.PusherSendToUserReq) (res *system.PusherSendToUserRes, err error) {
 	r := g.RequestFromCtx(ctx)
 
@@ -372,40 +391,59 @@ func (c *cPusherEvents) SendToUser(ctx context.Context, req *system.PusherSendTo
 		return nil, nil
 	}
 
+	// 2.6. 验证事件数据大小（Pusher 标准：最大 10KB）
+	if err := websocket.ValidateEventData(req.Data); err != nil {
+		r.Response.Status = 400
+		r.Response.WriteJson(g.Map{
+			"error": fmt.Sprintf("Invalid event data: %s", err.Error()),
+		})
+		r.ExitAll()
+		return nil, nil
+	}
+
 	// 3. 验证签名
 	bodyBytes := r.GetBody()
 	if !verifySignature(req.AuthKey, req.AuthTimestamp, req.AuthVersion, req.BodyMd5, req.AuthSignature, config.Secret, "POST", fmt.Sprintf("/apps/%s/users/%s/events", req.AppId, req.UserId), bodyBytes) {
 		return nil, signatureInvalidError(r)
 	}
 
-	// 4. 构建用户频道名称 - Pusher 标准格式：#private-user-{user_id}
-	userChannel := fmt.Sprintf("#private-user-%s", req.UserId)
+	// 4. 通过 user_id 获取 socket_id（从 Redis 映射）
+	socketId := websocket.GetSocketIdByUserId(ctx, req.UserId)
+	if socketId == "" {
+		g.Log().Warning(ctx, "Send to User: user not found or not signed in, user_id=%s", req.UserId)
+		r.Response.Status = 404
+		r.Response.WriteJson(g.Map{
+			"error": "User not found or not authenticated",
+		})
+		r.ExitAll()
+		return nil, nil
+	}
 
-	g.Log().Infof(ctx, "HTTP Send to User API: user_id=%s, event=%s, channel=%s", req.UserId, req.Name, userChannel)
+	g.Log().Infof(ctx, "HTTP Send to User API: user_id=%s, socket_id=%s, event=%s", req.UserId, socketId, req.Name)
 
-	// 5. 推送事件到用户频道
+	// 5. 构建推送消息（⚠️ 不指定 channel，直接发送给 socket_id）
 	pusherResponse := &websocket.PusherResponse{
 		Event:   req.Name,
-		Channel: userChannel,
+		Channel: "", // Send to User 不需要 channel
 		Data:    req.Data,
 	}
 
-	// 1) 先发送给本地服务器的客户端
-	websocket.SendToChannelWithExclude(userChannel, pusherResponse, "")
-
-	// 2) 再发布到其他服务器（通过Redis PubSub）
-	topicMsg := &websocket.TopicWResponse{
-		Topic:           userChannel,
-		ExcludeSocketID: "",
-		PusherResponse:  pusherResponse,
-	}
-
-	err = websocket.PublishChannelMessage(ctx, userChannel, topicMsg)
+	// 6. 发送消息给指定 socket_id（支持跨服务器）
+	err = websocket.PublishSocketIdMessage(ctx, socketId, &websocket.ClientIdWResponse{
+		SocketID:       socketId,
+		PusherResponse: pusherResponse,
+	})
 	if err != nil {
-		g.Log().Warning(ctx, "Failed to publish message to user channel:", userChannel, err)
+		g.Log().Warning(ctx, "Failed to send message to user: user_id=%s, socket_id=%s, error=%v", req.UserId, socketId, err)
+		r.Response.Status = 500
+		r.Response.WriteJson(g.Map{
+			"error": "Failed to deliver message",
+		})
+		r.ExitAll()
+		return nil, nil
 	}
 
-	// 6. 返回成功响应
+	// 7. 返回成功响应
 	res = &system.PusherSendToUserRes{}
 	return
 }
@@ -535,4 +573,98 @@ func abs(x int64) int64 {
 		return -x
 	}
 	return x
+}
+
+// TerminateConnections Pusher HTTP Terminate Connections API - 终止用户的所有连接
+//
+// 用途：
+// - 强制断开指定用户的所有 WebSocket 连接
+// - 用于用户被封禁、登出等场景
+//
+// 文档：https://pusher.com/docs/channels/server_api/rest-api#terminate-user-connections
+func (c *cPusherEvents) TerminateConnections(ctx context.Context, req *system.PusherTerminateConnectionsReq) (res *system.PusherTerminateConnectionsRes, err error) {
+	r := g.RequestFromCtx(ctx)
+
+	// 1. 验证应用配置
+	config, err := getAppConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.AppId != config.AppID {
+		return nil, invalidAppIdError(r)
+	}
+
+	if req.AuthKey != config.Key {
+		return nil, invalidAppKeyError(r)
+	}
+
+	// 2. 验证时间戳
+	now := time.Now().Unix()
+	if abs(now-req.AuthTimestamp) > 600 {
+		return nil, timestampExpiredError(r)
+	}
+
+	// 3. 验证签名（POST 请求）
+	bodyBytes := r.GetBody()
+	path := fmt.Sprintf("/apps/%s/users/%s/terminate_connections", req.AppId, req.UserId)
+	if !verifySignature(req.AuthKey, req.AuthTimestamp, req.AuthVersion, req.BodyMd5, req.AuthSignature, config.Secret, "POST", path, bodyBytes) {
+		return nil, signatureInvalidError(r)
+	}
+
+	// 4. 获取用户的所有 socket_id（支持多设备）
+	socketIds := websocket.GetAllSocketIdsByUserId(ctx, req.UserId)
+	if len(socketIds) == 0 {
+		g.Log().Infof(ctx, "TerminateConnections: user has no active connections, user_id=%s", req.UserId)
+		res = &system.PusherTerminateConnectionsRes{}
+		return
+	}
+
+	g.Log().Infof(ctx, "TerminateConnections: user_id=%s, connections=%d", req.UserId, len(socketIds))
+
+	// 5. 向每个 socket_id 发送关闭连接消息
+	terminatedCount := 0
+	for _, socketId := range socketIds {
+		// 排除指定的 socket_id（如果提供了）
+		if req.SocketId != "" && socketId == req.SocketId {
+			g.Log().Debugf(ctx, "TerminateConnections: skipping excluded socket_id=%s", socketId)
+			continue
+		}
+
+		// 获取 socket_id 所在的服务器
+		serverName := websocket.GetServerNameBySocketId4Redis(ctx, socketId)
+		if serverName == "" {
+			g.Log().Warningf(ctx, "TerminateConnections: socket_id not found in Redis, socket_id=%s", socketId)
+			continue
+		}
+
+		// 如果是本地服务器的连接，直接关闭
+		if serverName == websocket.GetServerName() {
+			if websocket.TerminateLocalClient(socketId) {
+				terminatedCount++
+				g.Log().Debugf(ctx, "TerminateConnections: closed local connection, socket_id=%s", socketId)
+			}
+		} else {
+			// 跨服务器：通过 Redis PubSub 通知其他服务器关闭连接
+			topicMsg := &websocket.TopicTerminateConnection{
+				SocketID: socketId,
+			}
+			err := websocket.PublishTerminateConnectionMessage(ctx, socketId, topicMsg)
+			if err != nil {
+				g.Log().Warning(ctx, "TerminateConnections: failed to publish terminate message:", err)
+			} else {
+				terminatedCount++
+				g.Log().Debugf(ctx, "TerminateConnections: sent terminate message to remote server, socket_id=%s", socketId)
+			}
+		}
+
+		// 删除 socket_id 映射
+		websocket.RemoveUserIdSocketIdMapping(ctx, req.UserId, socketId)
+	}
+
+	g.Log().Infof(ctx, "TerminateConnections: terminated %d connections for user_id=%s", terminatedCount, req.UserId)
+
+	// 6. 返回成功响应
+	res = &system.PusherTerminateConnectionsRes{}
+	return
 }

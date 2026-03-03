@@ -26,8 +26,8 @@ type PusherEventsReq struct {
 
 	// Body参数
 	Name     string   `json:"name" dc:"事件名称" v:"required|max-length:200"`
-	Channels []string `json:"channels" dc:"频道列表" v:"required|length:1,10"`
-	Data     string   `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
+	Channels []string `json:"channels" dc:"频道列表" v:"required|length:1,100"`
+	Data     string   `json:"data" dc:"事件数据（JSON字符串，最大10KB）" v:"required|max-length:10240"`
 	SocketId string   `json:"socket_id" dc:"排除的socket_id（可选）"`
 	Info     string   `json:"info" dc:"要返回的频道信息（可选），如：user_count"`
 }
@@ -65,7 +65,7 @@ type PusherBatchEventsReq struct {
 type PusherBatchEvent struct {
 	Name     string `json:"name" dc:"事件名称" v:"required|max-length:200"`
 	Channel  string `json:"channel" dc:"频道名称" v:"required|max-length:200"`
-	Data     string `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
+	Data     string `json:"data" dc:"事件数据（JSON字符串，最大10KB）" v:"required|max-length:10240"`
 	SocketId string `json:"socket_id" dc:"排除的socket_id（可选）"`
 	Info     string `json:"info" dc:"要返回的频道信息（可选），如：user_count"`
 }
@@ -98,10 +98,34 @@ type PusherSendToUserReq struct {
 
 	// Body参数
 	Name string `json:"name" dc:"事件名称" v:"required|max-length:200"`
-	Data string `json:"data" dc:"事件数据（JSON字符串）" v:"required"`
+	Data string `json:"data" dc:"事件数据（JSON字符串，最大10KB）" v:"required|max-length:10240"`
 }
 
 // PusherSendToUserRes Pusher HTTP Send to User API响应
 type PusherSendToUserRes struct {
+	g.Meta `mime:"application/json" status:"200"`
+}
+
+// PusherTerminateConnectionsReq Pusher HTTP Terminate Connections API请求（终止用户的所有连接）
+type PusherTerminateConnectionsReq struct {
+	g.Meta `path:"/apps/:app_id/users/:user_id/terminate_connections" method:"post" tags:"WebSocket" summary:"Pusher Terminate Connections API - 终止用户的所有连接" x-exceptAuth:"true"`
+
+	// Path参数
+	AppId  string `json:"app_id" in:"path" dc:"应用ID" v:"required"`
+	UserId string `json:"user_id" in:"path" dc:"目标用户ID" v:"required"`
+
+	// Query参数（用于签名验证）
+	AuthKey       string `json:"auth_key" in:"query" dc:"应用Key" v:"required"`
+	AuthTimestamp int64  `json:"auth_timestamp" in:"query" dc:"时间戳" v:"required"`
+	AuthVersion   string `json:"auth_version" in:"query" dc:"认证版本" v:"required"`
+	BodyMd5       string `json:"body_md5" in:"query" dc:"请求体MD5" v:"required"`
+	AuthSignature string `json:"auth_signature" in:"query" dc:"HMAC-SHA256签名" v:"required"`
+
+	// Body参数（可选）
+	SocketId string `json:"socket_id" dc:"要排除的socket_id（可选）"`
+}
+
+// PusherTerminateConnectionsRes Pusher HTTP Terminate Connections API响应
+type PusherTerminateConnectionsRes struct {
 	g.Meta `mime:"application/json" status:"200"`
 }

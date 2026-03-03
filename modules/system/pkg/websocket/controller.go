@@ -64,6 +64,12 @@ func SigninController(ctx context.Context, client *Client, req *PusherRequest) {
 	client.UserID = userID
 	client.UserInfo = userDataMap
 
+	// 保存 user_id → socket_id 映射到 Redis（用于 Send to User API）
+	if err = SaveUserIdSocketIdMapping(ctx, userID, client.SocketID); err != nil {
+		glob.WithWsLog().Warning(ctx, "SigninController save user_id mapping failed:", err)
+		// 不阻塞登录流程，继续执行
+	}
+
 	// 返回用户级登录成功事件
 	// ⚠️ pusher-js 期望 user_data 为 JSON 字符串，而不是对象
 	if err = client.SendPusherEvent(EventSigninSuccess, "", SigninSuccessData{UserData: userDataJSON}); err != nil {

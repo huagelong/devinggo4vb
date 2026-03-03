@@ -7,6 +7,7 @@
 package websocket
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -209,10 +210,15 @@ func TestValidateChannels(t *testing.T) {
 			errorMsg:    "at least one channel is required",
 		},
 		{
-			name:        "超过10个频道",
-			channels:    []string{"ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9", "ch10", "ch11"},
+			name:        "超过100个频道",
+			channels:    generateChannels(101),
 			expectError: true,
-			errorMsg:    "cannot trigger events on more than 10 channels at once",
+			errorMsg:    "cannot trigger events on more than 100 channels at once",
+		},
+		{
+			name:        "最多100个频道",
+			channels:    generateChannels(100),
+			expectError: false,
 		},
 		{
 			name:        "包含无效频道名",
@@ -260,6 +266,15 @@ func BenchmarkValidateEventName(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ValidateEventName(eventName)
 	}
+}
+
+// generateChannels 生成指定数量的频道名称（用于测试）
+func generateChannels(count int) []string {
+	channels := make([]string, count)
+	for i := 0; i < count; i++ {
+		channels[i] = fmt.Sprintf("channel-%d", i)
+	}
+	return channels
 }
 
 // BenchmarkValidateChannels 频道列表验证性能测试

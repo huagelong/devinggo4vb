@@ -103,8 +103,14 @@ func WsPage(r *ghttp.Request) {
 	currentTime := int64(gtime.Now().Unix())
 
 	// ⚠️ v8.3.0要求：验证协议版本
+	// Pusher WebSocket 协议版本，默认为 7
 	protocol := r.GetQuery("protocol").String()
-	if protocol != "" && protocol != "7" {
+	if protocol == "" {
+		// 兼容没有指定 protocol 参数的客户端，默认使用协议版本 7
+		protocol = "7"
+		glob.WithWsLog().Debugf(ctx, "No protocol specified, defaulting to version 7")
+	}
+	if protocol != "7" {
 		glob.WithWsLog().Warning(ctx, "Unsupported protocol version:", protocol)
 		r.Response.WriteStatus(400)
 		r.Response.WriteJson(g.Map{"error": "Unsupported protocol version"})

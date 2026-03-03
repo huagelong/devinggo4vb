@@ -67,3 +67,22 @@ func PublishBroadcastMessage(ctx context.Context, msg *BroadcastWResponse) (err 
 	}
 	return
 }
+
+// PublishTerminateConnectionMessage 发布终止连接消息（跨服务器）
+func PublishTerminateConnectionMessage(ctx context.Context, socketId string, msg *TopicTerminateConnection) (err error) {
+	glob.WithWsLog().Debug(ctx, "PublishTerminateConnectionMessage:", msg)
+	serverName := GetServerNameBySocketId4Redis(ctx, socketId)
+	if serverName == "" {
+		glob.WithWsLog().Warning(ctx, "TerminateConnection: socket_id not found in Redis", socketId)
+		return
+	}
+
+	// 只发送给目标服务器
+	j := gjson.NewWithTag(msg, "tag")
+	if msgStr, err := j.ToJsonString(); err == nil {
+		NewPubSub().PublishMessage(ctx, serverName, msgStr)
+	} else {
+		glob.WithWsLog().Warning(ctx, "TerminateConnection json encode error:", err)
+	}
+	return
+}

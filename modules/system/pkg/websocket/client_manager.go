@@ -239,3 +239,29 @@ func SendToChannelWithExclude(channel string, response *PusherResponse, excludeS
 	}
 	clientManager.ChannelBroadcast <- channelRes
 }
+
+// GetClientManager 获取客户端管理器（用于外部访问）
+func GetClientManager() *ClientManager {
+	return clientManager
+}
+
+// GetServerName 获取当前服务器名称
+func GetServerName() string {
+	return clientManager.ServerName
+}
+
+// GetLocalClient 根据socket_id获取本地客户端
+func GetLocalClient(socketId string) *Client {
+	return clientManager.GetClient(socketId)
+}
+
+// TerminateLocalClient 终止本地客户端连接
+func TerminateLocalClient(socketId string) bool {
+	if client := clientManager.GetClient(socketId); client != nil {
+		// 发送关闭帧并关闭连接
+		client.SendClose = true
+		_ = client.Socket.Close()
+		return true
+	}
+	return false
+}

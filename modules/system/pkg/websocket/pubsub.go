@@ -37,8 +37,18 @@ func (s *sPubSub) SubscribeMessage(ctx context.Context, serverName string) (err 
 				select {
 				case msg := <-s.PubSub.Messages():
 					j := gjson.New(msg.Payload)
-					//send socket id
-					if j.Contains("socketId") {
+					// terminate connection（只包含 socketId 的消息）
+					if j.Contains("socketId") && !j.Contains("pusherResponse") {
+						glob.WithWsLog().Debug(ctx, "SubscribeMessage terminate connection:", j.String())
+						var msgData *TopicTerminateConnection
+						if err := j.Scan(&msgData); err == nil {
+							TerminateLocalClient(msgData.SocketID)
+						} else {
+							glob.WithWsLog().Warning(ctx, "TopicTerminateConnection parse error:", err)
+						}
+					}
+					// send socket id（包含 pusherResponse 的消息）
+					if j.Contains("pusherResponse") {
 						glob.WithWsLog().Debug(ctx, "SubscribeMessage socketId:", j.String())
 						var msgData *ClientIdWResponse
 						if err := j.Scan(&msgData); err == nil {

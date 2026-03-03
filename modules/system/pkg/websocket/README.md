@@ -88,7 +88,7 @@ const pusher = new Pusher('devinggo-app-key', {
 
 // 监听连接状态
 pusher.connection.bind('connected', function() {
-  console.log('✅ 连接成功！Socket ID:', pusher.connection.socket_id);
+  console.log('✅ 连接成功！Socket ID:', pusher.socket_id);
 });
 
 pusher.connection.bind('disconnected', function() {

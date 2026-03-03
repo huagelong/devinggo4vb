@@ -298,6 +298,147 @@ func isChannelExist(ctx context.Context, channel string) bool {
 	return gconv.Int(ls) == 1
 }
 
+// ========== User Authentication Redis操作 ==========
+// 用于 pusher:signin 用户认证和 Send to User API
+
+const (
+	KeyUserId2SocketId    = "UserId2SocketId:"    // user_id → socket_id 映射（用于 Send to User API，单值）
+	KeyUserId2SocketIds   = "UserId2SocketIds:"   // user_id → socket_ids 集合（用于多设备支持）
+	KeySocketId2UserId    = "SocketId2UserId:"    // socket_id → user_id 反向映射
+	UserAuthTTL           = 3600                  // 用户认证映射有效期 1小时
+)
+
+// SaveUserIdSocketIdMapping 保存 user_id → socket_id 映射
+// 用于 Send to User API 通过 user_id 找到对应的 socket_id
+func SaveUserIdSocketIdMapping(ctx context.Context, userID string, socketId string) error {
+	if g.IsEmpty(userID) || g.IsEmpty(socketId) {
+		return nil
+	}
+
+	// 1. 保存主映射（用于快速获取最新的 socket_id）
+	key := KeyUserId2SocketId + userID
+	err := getRedisClient().SetEX(ctx, key, socketId, UserAuthTTL)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketId SETEX error:", err)
+		return err
+	}
+
+	// 2. 添加到 socket_ids 集合（用于多设备支持）
+	sidsKey := KeyUserId2SocketIds + userID
+	_, err = getRedisClient().Do(ctx, "SADD", sidsKey, socketId)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketIds SADD error:", err)
+		return err
+	}
+	// 设置集合过期时间
+	getRedisClient().Expire(ctx, sidsKey, UserAuthTTL)
+
+	// 3. 保存反向映射 socket_id → user_id
+	suidKey := KeySocketId2UserId + socketId
+	err = getRedisClient().SetEX(ctx, suidKey, userID, UserAuthTTL)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "SocketId2UserId SETEX error:", err)
+		return err
+	}
+
+	glob.WithWsLog().Debugf(ctx, "Saved user_id mapping: user_id=%s, socket_id=%s", userID, socketId)
+	return nil
+}
+
+// GetSocketIdByUserId 根据 user_id 获取 socket_id
+// 用于 Send to User API
+func GetSocketIdByUserId(ctx context.Context, userID string) string {
+	if g.IsEmpty(userID) {
+		return ""
+	}
+
+	key := KeyUserId2SocketId + userID
+	socketId, err := getRedisClient().Get(ctx, key)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketId GET error:", err)
+		return ""
+	}
+
+	return gconv.String(socketId)
+}
+
+// DeleteUserIdSocketIdMapping 删除 user_id → socket_id 映射
+func DeleteUserIdSocketIdMapping(ctx context.Context, userID string) error {
+	if g.IsEmpty(userID) {
+		return nil
+	}
+
+	key := KeyUserId2SocketId + userID
+	_, err := getRedisClient().Del(ctx, key)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketId DEL error:", err)
+		return err
+	}
+
+	return nil
+}
+
+// GetAllSocketIdsByUserId 获取用户的所有 socket_id（用于多设备支持）
+// 用于 terminate_connections API
+func GetAllSocketIdsByUserId(ctx context.Context, userID string) []string {
+	if g.IsEmpty(userID) {
+		return nil
+	}
+
+	key := KeyUserId2SocketIds + userID
+	ls, err := getRedisClient().Do(ctx, "SMEMBERS", key)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketIds SMEMBERS error:", err)
+		return nil
+	}
+
+	socketIds := gconv.Strings(ls)
+	glob.WithWsLog().Debugf(ctx, "GetAllSocketIdsByUserId: user_id=%s, count=%d", userID, len(socketIds))
+	return socketIds
+}
+
+// RemoveUserIdSocketIdMapping 移除用户特定的 socket_id 映射
+func RemoveUserIdSocketIdMapping(ctx context.Context, userID string, socketId string) error {
+	if g.IsEmpty(userID) || g.IsEmpty(socketId) {
+		return nil
+	}
+
+	// 从集合中移除
+	sidsKey := KeyUserId2SocketIds + userID
+	_, err := getRedisClient().Do(ctx, "SREM", sidsKey, socketId)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "UserId2SocketIds SREM error:", err)
+		return err
+	}
+
+	// 删除反向映射
+	suidKey := KeySocketId2UserId + socketId
+	_, err = getRedisClient().Del(ctx, suidKey)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "SocketId2UserId DEL error:", err)
+		return err
+	}
+
+	glob.WithWsLog().Debugf(ctx, "Removed user_id mapping: user_id=%s, socket_id=%s", userID, socketId)
+	return nil
+}
+
+// GetUserIdBySocketId 根据 socket_id 获取 user_id（反向查询）
+func GetUserIdBySocketId(ctx context.Context, socketId string) string {
+	if g.IsEmpty(socketId) {
+		return ""
+	}
+
+	key := KeySocketId2UserId + socketId
+	userID, err := getRedisClient().Get(ctx, key)
+	if err != nil {
+		glob.WithWsLog().Warning(ctx, "SocketId2UserId GET error:", err)
+		return ""
+	}
+
+	return gconv.String(userID)
+}
+
 // ========== Presence Channel Redis操作 ==========
 
 const (

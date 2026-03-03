@@ -107,6 +107,11 @@ type BroadcastWResponse struct {
 	PusherResponse *PusherResponse `json:"pusherResponse"`
 }
 
+// TopicTerminateConnection 终止连接消息结构（用于跨服务器）
+type TopicTerminateConnection struct {
+	SocketID string `json:"socketId"`
+}
+
 // Pusher错误码常量（v8.3.0完整版）
 const (
 	CodeNormalClosure        = 4000 // 正常关闭

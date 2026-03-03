@@ -20,8 +20,11 @@ const (
 	// MaxEventNameLength 事件名称最大长度（Pusher 标准）
 	MaxEventNameLength = 200
 
-	// MaxChannelsPerTrigger 每次触发的最大频道数（Pusher 标准）
-	MaxChannelsPerTrigger = 10
+	// MaxChannelsPerTrigger 每次触发的最大频道数（Pusher 标准：最多 100 个频道）
+	MaxChannelsPerTrigger = 100
+
+	// MaxEventDataSize 事件数据最大大小（Pusher 标准：10KB）
+	MaxEventDataSize = 10 * 1024 // 10KB
 )
 
 // 频道名称验证正则表达式
@@ -90,7 +93,7 @@ func ValidateEventName(eventName string) error {
 // ValidateChannels 验证频道列表
 //
 // 验证规则：
-// - 频道数量不能超过 10 个（Pusher 标准）
+// - 频道数量不能超过 100 个（Pusher 标准）
 // - 每个频道名称必须有效
 func ValidateChannels(channels []string) error {
 	if len(channels) == 0 {
@@ -98,13 +101,32 @@ func ValidateChannels(channels []string) error {
 	}
 
 	if len(channels) > MaxChannelsPerTrigger {
-		return errors.New("cannot trigger events on more than 10 channels at once")
+		return errors.New("cannot trigger events on more than 100 channels at once")
 	}
 
 	for i, channel := range channels {
 		if err := ValidateChannelName(channel); err != nil {
 			return errors.New("invalid channel name at index " + string(rune(i)) + ": " + err.Error())
 		}
+	}
+
+	return nil
+}
+
+// ValidateEventData 验证事件数据
+//
+// 验证规则：
+// - 数据不能为空
+// - 数据大小不能超过 10KB（Pusher 标准）
+//
+// 参考：https://pusher.com/docs/channels/server_api/http-api#publishing-events
+func ValidateEventData(data string) error {
+	if data == "" {
+		return errors.New("event data cannot be empty")
+	}
+
+	if len(data) > MaxEventDataSize {
+		return errors.New("event data exceeds maximum size of 10KB")
 	}
 
 	return nil
