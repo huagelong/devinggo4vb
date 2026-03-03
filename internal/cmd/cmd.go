@@ -51,6 +51,7 @@ var (
 		>> 消息队列&定时任务  [go run main.go worker]
 		>> 创建新模块  [go run main.go module:create -name 模块名称]
 		>> 导出新模块  [go run main.go module:export -name 模块名称]
+		>> 创建Task/Cron  [go run main.go worker:create -name 任务名称 -module 模块名称 -type task|cron|both]
 		>> 查看帮助  [go run main.go help]
 		>> 查看版本  [go run main.go version]
     `,
@@ -85,7 +86,7 @@ var (
 )
 
 func init() {
-	if err := Main.AddCommand(All, cmd.Http, cmd.Version, cmd.Worker, cmd.Unpack, cmd.MigrateUp, cmd.MigrateDown, cmd.MigrateGoto, cmd.MigrateCreate, cmd.MigrateForce, cmd.CreateModule, cmd.ExportModule, cmd.ImportModule, Help); err != nil {
+	if err := Main.AddCommand(All, cmd.Http, cmd.Version, cmd.Worker, cmd.Unpack, cmd.MigrateUp, cmd.MigrateDown, cmd.MigrateGoto, cmd.MigrateCreate, cmd.MigrateForce, cmd.CreateModule, cmd.ExportModule, cmd.ImportModule, cmd.CreateWorker, Help); err != nil {
 		panic(err)
 	}
 }
