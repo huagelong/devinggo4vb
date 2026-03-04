@@ -11,6 +11,7 @@ import (
 	_ "devinggo/internal/logic"
 	_ "devinggo/internal/packed"
 	_ "devinggo/modules/_/logic"
+
 	_ "github.com/gogf/gf/contrib/drivers/pgsql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/os/gctx"

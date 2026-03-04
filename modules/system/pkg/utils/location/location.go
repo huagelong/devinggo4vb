@@ -10,6 +10,12 @@ import (
 	"context"
 	"devinggo/modules/system/pkg/utils/validate"
 	"fmt"
+	"io"
+	"net"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/gogf/gf/v2/encoding/gcharset"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -17,11 +23,6 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xiaoqidun/qqwry"
-	"io"
-	"net"
-	"net/http"
-	"strings"
-	"time"
 )
 
 const (

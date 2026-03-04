@@ -199,7 +199,8 @@ func HasEncryptionMasterKey() bool {
 // 使用 HMAC-SHA256 算法派生，确保同一频道总是得到相同的密钥
 //
 // 算法：
-//   channelKey = HMAC-SHA256(channelName, masterKey)
+//
+//	channelKey = HMAC-SHA256(channelName, masterKey)
 //
 // 参考：Pusher Server Library Reference Specification
 func DeriveSharedSecret(channelName string) (string, error) {

@@ -8,11 +8,12 @@ package excel
 
 import (
 	"bufio"
-	"github.com/xuri/excelize/v2"
 	"io"
 	"os"
 	"reflect"
 	"strconv"
+
+	"github.com/xuri/excelize/v2"
 )
 
 type excelModel[T any] struct {

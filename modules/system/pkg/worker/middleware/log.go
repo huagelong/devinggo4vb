@@ -10,9 +10,10 @@ import (
 	"context"
 	glob2 "devinggo/modules/system/pkg/worker/glob"
 	"devinggo/modules/system/service"
+	"time"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hibiken/asynq"
-	"time"
 )
 
 func LoggingMiddleware(h asynq.Handler) asynq.Handler {

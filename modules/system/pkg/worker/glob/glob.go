@@ -9,9 +9,10 @@ package glob
 import (
 	"context"
 	"devinggo/modules/system/pkg/utils/config"
+	"runtime"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/hibiken/asynq"
-	"runtime"
 )
 
 type Payload struct {

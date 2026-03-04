@@ -13,6 +13,7 @@ import (
 	"devinggo/modules/system/router/websocket"
 	"devinggo/modules/system/service"
 	_ "devinggo/modules/system/worker"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/genv"

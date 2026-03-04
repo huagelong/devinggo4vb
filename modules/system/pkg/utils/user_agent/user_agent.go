@@ -9,6 +9,7 @@ package user_agent
 import (
 	"context"
 	"devinggo/modules/system/pkg/utils/request"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/mileusna/useragent"
 )

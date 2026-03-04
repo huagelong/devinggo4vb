@@ -14,10 +14,11 @@ import (
 	"devinggo/modules/system/myerror"
 	"devinggo/modules/system/pkg/utils/slice"
 	"devinggo/modules/system/service"
+	"strings"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	"strings"
 )
 
 type sDataMaintain struct {

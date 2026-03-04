@@ -29,8 +29,9 @@ const (
 // 支持通过 pusher.logLevel 配置项设置日志级别
 //
 // 配置示例：
-//   pusher:
-//     logLevel: "info"  // debug, info, warning, error, none
+//
+//	pusher:
+//	  logLevel: "info"  // debug, info, warning, error, none
 func WithWsLog() *glog.Logger {
 	ctx := gctx.GetInitCtx()
 	logLevel := g.Cfg().MustGet(ctx, "pusher.logLevel", LogLevelInfo).String()

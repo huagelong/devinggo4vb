@@ -10,6 +10,10 @@ import (
 	"context"
 	"devinggo/modules/system/pkg/utils"
 	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -17,9 +21,6 @@ import (
 	"github.com/golang-migrate/migrate/v4/database"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"os"
-	"path/filepath"
-	"time"
 )
 
 var (

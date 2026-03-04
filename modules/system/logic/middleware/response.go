@@ -8,11 +8,12 @@ package middleware
 
 import (
 	"devinggo/modules/system/pkg/response"
+	"reflect"
+	"strings"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
-	"reflect"
-	"strings"
 )
 
 // ResponseHandler custom response format.

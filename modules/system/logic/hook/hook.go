@@ -8,9 +8,10 @@ package hook
 
 import (
 	"devinggo/modules/system/service"
+	"strings"
+
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
-	"strings"
 )
 
 type sHook struct {
