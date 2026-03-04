@@ -1,0 +1,22 @@
+{
+    "name": "testmod",
+    "author": "devinggo",
+    "version": "1.0.0",
+    "license": "MIT",
+    "goVersion": "1.23+",
+    "mod": {},
+    "files": {
+        "go": [
+            "modules/testmod",
+            "modules/_/worker/testmod.go",
+            "modules/_/modules/testmod.go",
+            "modules/_/logic/testmod.go"
+        ],
+        "other": [],
+        "sql": [
+            "resource\\migrations\\20260304100717_testmod_module.up.sql",
+            "resource\\migrations\\20260304100717_testmod_module.down.sql"
+        ],
+        "static": []
+    }
+}

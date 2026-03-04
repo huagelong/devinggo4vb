@@ -1,0 +1,22 @@
+{
+    "author": "devinggo",
+    "files": {
+        "go": [
+            "modules/clonedmod",
+            "modules/_/worker/clonedmod.go",
+            "modules/_/modules/clonedmod.go",
+            "modules/_/logic/clonedmod.go"
+        ],
+        "other": [],
+        "sql": [
+            "resource\\migrations\\20260304100717_clonedmod_module.up.sql",
+            "resource\\migrations\\20260304100717_clonedmod_module.down.sql"
+        ],
+        "static": []
+    },
+    "goVersion": "1.23+",
+    "license": "MIT",
+    "mod": {},
+    "name": "clonedmod",
+    "version": "1.0.0"
+}

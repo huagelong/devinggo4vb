@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"devinggo/hack/generator/cmd"
+
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gctx"
 )
@@ -26,11 +28,13 @@ var (
 			fmt.Println("  generator [COMMAND] [OPTIONS]")
 			fmt.Println("\n可用命令:")
 			fmt.Println("  module:create   - 创建新模块")
+			fmt.Println("  module:clone    - 从现有模块克隆新模块")
 			fmt.Println("  module:export   - 导出模块包")
 			fmt.Println("  module:import   - 导入模块包")
 			fmt.Println("  module:list     - 列出已安装模块")
-			fmt.Println("  worker:create   - 创建Worker任务")
-			fmt.Println("  crud:generate   - 生成CRUD代码")
+			fmt.Println("  module:validate - 验证模块完整性")
+			fmt.Println("  worker:create   - 创建Worker任务 (待实现)")
+			fmt.Println("  crud:generate   - 生成CRUD代码 (待实现)")
 			fmt.Println("\n提示: 使用 'generator [COMMAND] -h' 查看命令详细帮助")
 			fmt.Println()
 			return nil
@@ -39,8 +43,17 @@ var (
 )
 
 func init() {
-	// 后续在这里添加子命令
-	// Main.AddCommand(cmdModule.Command, cmdWorker.Command, cmdCrud.Command)
+	// 注册模块管理命令
+	if err := Main.AddCommand(
+		cmd.ModuleCreate,
+		cmd.ModuleClone,
+		cmd.ModuleExport,
+		cmd.ModuleImport,
+		cmd.ModuleList,
+		cmd.ModuleValidate,
+	); err != nil {
+		panic(err)
+	}
 }
 
 func main() {
