@@ -33,7 +33,7 @@ var (
 			fmt.Println("  module:import   - 导入模块包")
 			fmt.Println("  module:list     - 列出已安装模块")
 			fmt.Println("  module:validate - 验证模块完整性")
-			fmt.Println("  worker:create   - 创建Worker任务 (待实现)")
+			fmt.Println("  worker:create   - 创建Worker任务")
 			fmt.Println("  crud:generate   - 生成CRUD代码 (待实现)")
 			fmt.Println("\n提示: 使用 'generator [COMMAND] -h' 查看命令详细帮助")
 			fmt.Println()
@@ -51,6 +51,13 @@ func init() {
 		cmd.ModuleImport,
 		cmd.ModuleList,
 		cmd.ModuleValidate,
+	); err != nil {
+		panic(err)
+	}
+
+	// 注册Worker任务生成命令
+	if err := Main.AddCommand(
+		cmd.WorkerCreate,
 	); err != nil {
 		panic(err)
 	}
