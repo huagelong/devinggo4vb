@@ -237,7 +237,7 @@ func (w *WorkerGenerator) updateExistingConstFile(constPath, constName string) e
 
 	// 查找var声明块
 	var genDecl *ast.GenDecl
-	
+
 	ast.Inspect(node, func(n ast.Node) bool {
 		if decl, ok := n.(*ast.GenDecl); ok && decl.Tok == token.VAR {
 			genDecl = decl
@@ -369,9 +369,9 @@ func (w *WorkerGenerator) createTaskFile() error {
 	// 准备导入和数据类型别名
 	hasCron := w.workerType == WorkerTypeBoth
 	var importCron, dataTypeAlias string
-	
+
 	structName := gstr.CaseCamel(w.name) + "Data"
-	
+
 	if hasCron {
 		importCron = fmt.Sprintf("\t\"devinggo/modules/%s/worker/cron\"\n", w.moduleName)
 		dataTypeAlias = fmt.Sprintf("// 复用 Cron 的数据结构\ntype %s = cron.%s\n", structName, structName)
