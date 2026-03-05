@@ -9,11 +9,6 @@ package generator
 import (
 	"context"
 	"fmt"
-	"go/ast"
-	"go/parser"
-	"go/printer"
-	"go/token"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -228,99 +223,51 @@ var (
 
 // updateExistingConstFile 使用AST更新现有常量文件
 func (w *WorkerGenerator) updateExistingConstFile(constPath, constName string) error {
-	// 解析源文件
-	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, constPath, nil, parser.ParseComments)
-	if err != nil {
-		return gerror.Wrapf(err, "解析文件失败")
+	// 读取原始文件内容
+	content := gfile.GetContents(constPath)
+	if content == "" {
+		return gerror.New("常量文件为空")
 	}
 
-	// 查找var声明块
-	var genDecl *ast.GenDecl
-
-	ast.Inspect(node, func(n ast.Node) bool {
-		if decl, ok := n.(*ast.GenDecl); ok && decl.Tok == token.VAR {
-			genDecl = decl
-			return false
-		}
-		return true
-	})
-
-	if genDecl == nil {
-		// 如果没有找到var声明块，创建一个新的
-		return w.createNewConstFile(constPath, constName)
-	}
-
-	// 准备要添加的常量
-	var newSpecs []ast.Spec
+	// 准备要添加的常量行
+	var newConstants []string
 
 	if w.workerType == WorkerTypeCron || w.workerType == WorkerTypeBoth {
 		cronConstName := fmt.Sprintf("%s_CRON", constName)
-		if w.constExists(node, cronConstName) {
+		if strings.Contains(content, cronConstName) {
 			return gerror.Newf("常量 %s 已存在，请检查是否重复创建", cronConstName)
 		}
-		newSpecs = append(newSpecs, w.createConstSpec(cronConstName, fmt.Sprintf("%s_cron", w.name), w.description))
+		newConstants = append(newConstants, fmt.Sprintf("\t%s = \"%s_cron\" // %s", cronConstName, w.name, w.description))
 	}
 
 	if w.workerType == WorkerTypeTask || w.workerType == WorkerTypeBoth {
 		taskConstName := fmt.Sprintf("%s_TASK", constName)
-		if w.constExists(node, taskConstName) {
+		if strings.Contains(content, taskConstName) {
 			return gerror.Newf("常量 %s 已存在，请检查是否重复创建", taskConstName)
 		}
-		newSpecs = append(newSpecs, w.createConstSpec(taskConstName, fmt.Sprintf("%s_task", w.name), w.description))
+		newConstants = append(newConstants, fmt.Sprintf("\t%s = \"%s_task\" // %s", taskConstName, w.name, w.description))
 	}
 
-	// 添加新的常量到声明块
-	genDecl.Specs = append(genDecl.Specs, newSpecs...)
+	// 找到最后一个 ) 的位置
+	lastParen := strings.LastIndex(content, ")")
+	if lastParen == -1 {
+		return gerror.New("常量文件格式错误：未找到右括号")
+	}
+
+	// 在右括号前插入新常量
+	newContent := content[:lastParen]
+	for _, constLine := range newConstants {
+		newContent += constLine + "\n"
+	}
+	newContent += content[lastParen:]
 
 	// 写回文件
-	file, err := os.Create(constPath)
-	if err != nil {
-		return gerror.Wrapf(err, "打开文件失败")
-	}
-	defer file.Close()
-
-	if err := printer.Fprint(file, fset, node); err != nil {
+	if err := gfile.PutContents(constPath, newContent); err != nil {
 		return gerror.Wrapf(err, "写入文件失败")
 	}
 
 	g.Log().Debugf(w.ctx, "更新常量文件: %s", constPath)
 	return nil
-}
-
-// constExists 检查常量是否已存在
-func (w *WorkerGenerator) constExists(node *ast.File, constName string) bool {
-	exists := false
-	ast.Inspect(node, func(n ast.Node) bool {
-		if spec, ok := n.(*ast.ValueSpec); ok {
-			for _, name := range spec.Names {
-				if name.Name == constName {
-					exists = true
-					return false
-				}
-			}
-		}
-		return true
-	})
-	return exists
-}
-
-// createConstSpec 创建常量规范
-func (w *WorkerGenerator) createConstSpec(name, value, comment string) *ast.ValueSpec {
-	return &ast.ValueSpec{
-		Names: []*ast.Ident{ast.NewIdent(name)},
-		Values: []ast.Expr{
-			&ast.BasicLit{
-				Kind:  token.STRING,
-				Value: fmt.Sprintf(`"%s"`, value),
-			},
-		},
-		Comment: &ast.CommentGroup{
-			List: []*ast.Comment{
-				{Text: fmt.Sprintf("// %s", comment)},
-			},
-		},
-	}
 }
 
 // createCronFile 创建Cron文件
