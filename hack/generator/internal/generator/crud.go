@@ -46,8 +46,9 @@ func NewCRUDGenerator(moduleName, tableName, chineseName string) (*CRUDGenerator
 	}
 
 	// 如果当前目录是 hack/generator，则需要回到项目根目录
-	if strings.HasSuffix(workDir, "hack"+string(filepath.Separator)+"generator") ||
-		strings.HasSuffix(workDir, "hack/generator") {
+	// 统一使用正斜杠进行比较，兼容 Windows
+	normalizedPath := filepath.ToSlash(workDir)
+	if strings.HasSuffix(normalizedPath, "hack/generator") {
 		workDir = filepath.Join(workDir, "..", "..")
 	}
 

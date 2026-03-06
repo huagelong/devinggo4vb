@@ -3,9 +3,11 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"devinggo/hack/generator/internal/generator"
 	"devinggo/hack/generator/internal/scanner"
+	"devinggo/hack/generator/internal/utils"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -18,7 +20,12 @@ var (
 		Brief: "创建新模块",
 		Description: `
 创建一个新的模块，包含基本的目录结构和文件
-用法: go run hack/generator/main.go module:create -name 模块名称
+
+用法（命令行模式）:
+  go run hack/generator/main.go module:create -name 模块名称
+
+用法（交互式模式）:
+  go run hack/generator/main.go module:create
 `,
 		Arguments: []gcmd.Argument{
 			{
@@ -31,8 +38,12 @@ var (
 		},
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			moduleName := parser.GetOpt("name").String()
+
+			// 交互式模式：未提供模块名称时
 			if moduleName == "" {
-				return fmt.Errorf("模块名称必须输入，使用 -name 参数指定")
+				fmt.Println("\n🚀 DevingGo 模块创建向导")
+				fmt.Println("=" + strings.Repeat("=", 40))
+				moduleName = utils.PromptRequiredString("请输入模块名称")
 			}
 
 			g.Log().Infof(ctx, "开始创建模块: %s", moduleName)
@@ -159,7 +170,12 @@ var (
 		Brief: "从zip包导入模块",
 		Description: `
 从zip压缩包导入模块
-用法: go run hack/generator/main.go module:import -file 模块zip文件路径
+
+用法（命令行模式）:
+  go run hack/generator/main.go module:import -file 模块zip文件路径
+
+用法（交互式模式）:
+  go run hack/generator/main.go module:import
 `,
 		Arguments: []gcmd.Argument{
 			{
@@ -172,8 +188,12 @@ var (
 		},
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			zipPath := parser.GetOpt("file").String()
+
+			// 交互式模式：未提供文件路径时
 			if zipPath == "" {
-				return fmt.Errorf("模块文件路径必须输入，使用 -file 参数指定")
+				fmt.Println("\n📦 DevingGo 模块导入向导")
+				fmt.Println("=" + strings.Repeat("=", 40))
+				zipPath = utils.PromptRequiredString("请输入模块zip文件路径")
 			}
 
 			g.Log().Infof(ctx, "开始导入模块: %s", zipPath)

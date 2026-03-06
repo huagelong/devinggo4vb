@@ -194,9 +194,9 @@ gen-crud:
 		exit 1; \
 	fi
 	@if [ -z "$(module)" ]; then \
-		go run ./hack/generator/main.go crud:create -table $(table); \
+		go run ./hack/generator/main.go crud:generate -table $(table) -name $(table); \
 	else \
-		go run ./hack/generator/main.go crud:create -table $(table) -module $(module); \
+		go run ./hack/generator/main.go crud:generate -table $(table) -module $(module) -name $(table); \
 	fi
 	@echo "CRUD代码生成成功！"
 	@echo "请运行以下命令更新代码："

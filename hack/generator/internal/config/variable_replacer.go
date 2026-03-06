@@ -150,10 +150,21 @@ func (r *VariableReplacer) ValidateVariables(template string) []string {
 
 // BuildDefaultVariables 构建默认变量集
 func BuildDefaultVariables(moduleName string) map[string]string {
+	// 处理空字符串，避免 panic
+	if moduleName == "" {
+		moduleName = "module"
+	}
+
+	// 使用 gstr.UcFirst 更安全地处理首字母大写
+	moduleNameCap := moduleName
+	if len(moduleName) > 0 {
+		moduleNameCap = strings.ToUpper(moduleName[:1]) + moduleName[1:]
+	}
+
 	return map[string]string{
 		"moduleName":    moduleName,
-		"moduleNameCap": strings.ToUpper(moduleName[:1]) + moduleName[1:],
-		"ModuleName":    strings.ToUpper(moduleName[:1]) + moduleName[1:],
+		"moduleNameCap": moduleNameCap,
+		"ModuleName":    moduleNameCap,
 		"MODULE_NAME":   strings.ToUpper(moduleName),
 		"module_name":   strings.ToLower(moduleName),
 	}
