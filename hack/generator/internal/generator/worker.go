@@ -125,7 +125,7 @@ func (w *WorkerGenerator) printInfo() {
 	fmt.Printf("📂 所属模块: %s\n", w.moduleName)
 	fmt.Printf("🔖 任务类型: %s\n", w.workerType)
 	fmt.Printf("📝 任务描述: %s\n", w.description)
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 }
 
 // printSuccess 打印成功信息
