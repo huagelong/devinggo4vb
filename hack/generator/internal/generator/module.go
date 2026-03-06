@@ -13,7 +13,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/os/gvar"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // getString 从 map 中获取字符串值
