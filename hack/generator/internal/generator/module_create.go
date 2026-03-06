@@ -131,15 +131,15 @@ func (c *ModuleCreator) createModuleFiles(moduleName string) error {
 		},
 		{
 			tplPath:  "worker.tpl",
-			filePath: filepath.Join("modules", "_", "worker", moduleName+".go"),
+			filePath: filepath.Join("modules", "bootstrap", "worker", moduleName+".go"),
 		},
 		{
 			tplPath:  "modules.tpl",
-			filePath: filepath.Join("modules", "_", "modules", moduleName+".go"),
+			filePath: filepath.Join("modules", "bootstrap", "modules", moduleName+".go"),
 		},
 		{
 			tplPath:  "logic_import.go.tpl",
-			filePath: filepath.Join("modules", "_", "logic", moduleName+".go"),
+			filePath: filepath.Join("modules", "bootstrap", "logic", moduleName+".go"),
 		},
 	}
 
