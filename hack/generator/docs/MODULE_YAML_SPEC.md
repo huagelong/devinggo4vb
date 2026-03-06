@@ -35,7 +35,7 @@ modules:                         # DevingGo模块依赖
 files:
   go:                           # Go源码文件/目录
     - modules/mymodule
-    - modules/_/worker/mymodule.go
+    - modules/bootstrap/worker/mymodule.go
   sql:                          # SQL迁移文件
     - resource/migrations/xxx.up.sql
     - resource/migrations/xxx.down.sql
@@ -189,7 +189,7 @@ modules:
 files:
   go:
     - modules/blog
-    - modules/_/worker/blog.go
+    - modules/bootstrap/worker/blog.go
   sql:
     - resource/migrations/20260304_blog_module.up.sql
     - resource/migrations/20260304_blog_module.down.sql

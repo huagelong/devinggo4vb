@@ -9,7 +9,7 @@ package cmd
 import (
 	"context"
 	"devinggo/internal/router"
-	_ "devinggo/modules/_/modules"
+	_ "devinggo/modules/bootstrap/modules"
 	"devinggo/modules/system/pkg/modules"
 	"devinggo/modules/system/pkg/redis"
 	"devinggo/modules/system/pkg/response"

@@ -8,7 +8,7 @@ package cmd
 
 import (
 	"context"
-	_ "devinggo/modules/_/worker"
+	_ "devinggo/modules/bootstrap/worker"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/pkg/worker"
 	_ "devinggo/modules/system/worker"

@@ -8,7 +8,7 @@
 
 系统使用了分层的自动加载架构：
 
-1. **模块加载层** (`modules/_/worker/system.go`)
+1. **模块加载层** (`modules/bootstrap/worker/system.go`)
    - 通过 `import _ "devinggo/modules/system/worker"` 自动加载system模块的worker
    - 支持多模块扩展，新模块只需添加对应的加载文件
 
@@ -37,7 +37,7 @@ Worker服务会通过以下链路自动启动：
 ```
 cmd/worker.go 
   ↓ import
-modules/_/worker/system.go 
+modules/bootstrap/worker/system.go 
   ↓ import  
 modules/system/worker (package)
   ↓ init()

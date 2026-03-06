@@ -237,9 +237,9 @@ func (c *ModuleCreator) createModuleConfigFile(moduleName string, sqlFiles []str
 	// 设置文件列表
 	moduleConfig.Files.Go = []string{
 		fmt.Sprintf("modules/%s", moduleName),
-		fmt.Sprintf("modules/_/worker/%s.go", moduleName),
-		fmt.Sprintf("modules/_/modules/%s.go", moduleName),
-		fmt.Sprintf("modules/_/logic/%s.go", moduleName),
+		fmt.Sprintf("modules/bootstrap/worker/%s.go", moduleName),
+		fmt.Sprintf("modules/bootstrap/modules/%s.go", moduleName),
+		fmt.Sprintf("modules/bootstrap/logic/%s.go", moduleName),
 	}
 	moduleConfig.Files.SQL = sqlFiles
 
@@ -301,7 +301,7 @@ func (c *ModuleCloner) Clone(sourceModule, targetModule string) error {
 		return fmt.Errorf("替换模块名称失败: %w", err)
 	}
 
-	// 复制并更新 modules/_/ 下的文件
+	// 复制并更新 modules/bootstrap/ 下的文件
 	if err := c.cloneBootstrapFiles(sourceModule, targetModule); err != nil {
 		return fmt.Errorf("克隆引导文件失败: %w", err)
 	}
