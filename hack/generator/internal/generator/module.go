@@ -301,18 +301,8 @@ func (i *ModuleImporter) parseHooks(hookData interface{}) []utils.HookCommand {
 		return nil
 	}
 
-	// 尝试转换为 *gvar.Var 再获取值
-	var hooksArray []interface{}
-	if gv, ok := hookData.(*gvar.Var); ok {
-		if gv.IsNil() {
-			return nil
-		}
-		if arr, ok := gv.Val().([]interface{}); ok {
-			hooksArray = arr
-		}
-	} else if arr, ok := hookData.([]interface{}); ok {
-		hooksArray = arr
-	}
+	// 使用 gconv 转换为 []interface{}
+	hooksArray := gconv.SliceAny(hookData)
 
 	if len(hooksArray) == 0 {
 		return nil
@@ -356,18 +346,8 @@ func (i *ModuleImporter) parseStaticDeploy(deployData interface{}) *StaticDeploy
 		return nil
 	}
 
-	// 尝试转换为 map[string]interface{}
-	var deployMap map[string]interface{}
-	if gv, ok := deployData.(*gvar.Var); ok {
-		if gv.IsNil() {
-			return nil
-		}
-		if m, ok := gv.Val().(map[string]interface{}); ok {
-			deployMap = m
-		}
-	} else if m, ok := deployData.(map[string]interface{}); ok {
-		deployMap = m
-	}
+	// 使用 gconv 转换为 map[string]interface{}
+	deployMap := gconv.Map(deployData)
 
 	if len(deployMap) == 0 {
 		return nil
