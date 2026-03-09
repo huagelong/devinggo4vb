@@ -48,15 +48,8 @@ var (
 		  [go run main.go migrate:down [-n N]]     	应用所有或 N 个 down 迁移
 		  [go run main.go migrate:force -v 版本]  	设置版本为 V 但不运行迁移（忽略脏状态）
 		>> HTTP服务  [go run main.go http]
-		>> 消息队列&定时任务  [go run main.go worker]
 		>> 查看帮助  [go run main.go help]
 		>> 查看版本  [go run main.go version]
-		
-		代码生成命令（请使用 Makefile）：
-		>> 查看所有生成命令  [make gen-help]
-		>> 创建新模块  [make gen-module name=模块名称]
-		>> 创建Worker  [make gen-worker module=模块名称 worker=Worker名称]
-		>> 生成CRUD代码  [make gen-crud table=表名称]
     `,
 	}
 
