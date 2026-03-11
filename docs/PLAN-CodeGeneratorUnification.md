@@ -337,8 +337,8 @@ variables:
 install:
   # 静态文件部署策略
   static:
-    - source: static/web/admin
-      target: web/admin/modules/blog
+    - source: admin-ui
+      target: admin-ui/modules/blog
       merge: true  # 合并而非覆盖
       
     - source: static/uploads
@@ -429,9 +429,9 @@ if [ "$INIT_DEFAULT_DATA" = "true" ]; then
 fi
 
 # 4. 编译前端资源（如果需要）
-if [ -d "static/web/admin/src" ]; then
+if [ -d "admin-ui/src" ]; then
     echo "🎨 编译前端资源..."
-    cd static/web/admin && npm install && npm run build
+    cd admin-ui && npm install && npm run build
 fi
 
 echo "✅ 博客模块安装完成！"
@@ -553,7 +553,7 @@ $ go run hack/generator/main.go module:import
     查看差异
 
 📁 静态文件部署:
-   → static/web/admin → web/admin/modules/blog
+   → admin-ui → admin-ui/modules/blog
    → static/uploads → resource/public/uploads/blog
 
 📝 配置文件:
@@ -583,7 +583,7 @@ $ go run hack/generator/main.go module:import
 📊 安装摘要:
    模块: blog v2.1.0
    安装路径: modules/blog/
-   静态资源: web/admin/modules/blog/
+   静态资源: admin-ui/modules/blog/
    配置文件: hack/config/blog.yaml
    
 📋 下一步操作:
@@ -654,7 +654,7 @@ type StaticDeployment struct {
    - 适用于共享资源
 
 // 前端资源部署示例
-static/web/admin/ → web/admin/modules/blog/
+admin-ui/ → admin-ui/modules/blog/
 ├── components/     # 合并到共享组件
 ├── views/          # 独立的视图目录
 ├── assets/         # 合并到全局assets
@@ -905,7 +905,7 @@ $ go run hack/generator/main.go module:uninstall -name=blog
    
 📁 移除文件:
    ✓ modules/blog/
-   ✓ web/admin/modules/blog/
+   ✓ admin-ui/modules/blog/
    
 🗄️  数据库清理:
    ? 是否删除数据表: No (保留)
