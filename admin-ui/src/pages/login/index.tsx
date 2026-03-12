@@ -12,6 +12,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const setToken = useAuthStore((state) => state.setToken);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
+  const setRouters = useAuthStore((state) => state.setRouters);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: any) => {
@@ -27,9 +28,14 @@ const LoginPage: React.FC = () => {
       if (res.token) {
         setToken(res.token);
         
-        // 可选：登录成功后立刻拉取个人信息
-        const userInfoRes = await getInfo();
-        setUserInfo(userInfoRes);
+        // 登录成功后立刻拉取个人信息与权限菜单
+        const infoRes: any = await getInfo();
+        if (infoRes) {
+          setUserInfo(infoRes.user || infoRes);
+          if (infoRes.routers) {
+            setRouters(infoRes.routers);
+          }
+        }
 
         message.success('登录成功');
         navigate({ to: '/' });
@@ -74,7 +80,7 @@ const LoginPage: React.FC = () => {
               size: 'large',
               prefix: <UserOutlined className="text-gray-400" />,
             }}
-            placeholder={'用户名 : admin'}
+            placeholder={'用户名 : superAdmin'}
             rules={[{ required: true, message: '请输入用户名!' }]}
           />
           <ProFormText.Password
@@ -83,7 +89,7 @@ const LoginPage: React.FC = () => {
               size: 'large',
               prefix: <LockOutlined className="text-gray-400" />,
             }}
-            placeholder={'密码 : 默认密码'}
+            placeholder={'密码 : admin123'}
             rules={[{ required: true, message: '请输入密码!' }]}
           />
           <div style={{ marginBlockEnd: 24 }}>

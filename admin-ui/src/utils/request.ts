@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 
 // 创建 axios 实例
 const request: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // 根据实际情况调整
+  baseURL: import.meta.env.VITE_API_BASE_URL || '', // 去掉默认的 /api 前缀，直接使用实际路径
   timeout: 10000,
 });
 

@@ -1,15 +1,15 @@
-import React from 'react';
-import { ProLayout } from '@ant-design/pro-components';
+import React, { useMemo } from 'react';
+import { ProLayout, MenuDataItem } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation } from '@tanstack/react-router';
 import { Dropdown, MenuProps, Space } from 'antd';
-import { LogoutOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, SettingFilled, AppstoreOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/authStore';
 import { useTranslation } from 'react-i18next';
 
 export const BasicLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userInfo, logout } = useAuthStore();
+  const { userInfo, routers, logout } = useAuthStore();
   const { t } = useTranslation();
 
   const handleLogout = () => {
@@ -39,6 +39,43 @@ export const BasicLayout: React.FC = () => {
       danger: true,
     },
   ];
+
+  // 动态将后端菜单数据转换为 ProLayout 所需的 Route 结构
+  const menuData = useMemo(() => {
+    const mapRoutersToMenuData = (apiRouters: any[], parentPath = ''): MenuDataItem[] => {
+      if (!apiRouters) return [];
+      return apiRouters.map(r => {
+        let currentPath = parentPath ? `${parentPath}${r.path.startsWith('/') ? r.path : '/' + r.path}` : r.path;
+        currentPath = currentPath.replace(/\/+/g, '/'); 
+        
+        // 适配本地临时路由结构: 将接口返回的 systemMg 统一映射到本地的 system 主干路由
+        currentPath = currentPath.replace(/^\/systemMg/, '/system');
+
+        return {
+          path: currentPath,
+          name: r.meta?.title || r.name,
+          // 根据 type=='B' 判断是否为按钮级别权限，不需要渲染为侧边栏菜单
+          hideInMenu: r.meta?.hidden === true || r.meta?.type === 'B',
+          routes: r.children && r.children.length > 0 ? mapRoutersToMenuData(r.children, currentPath) : undefined,
+        };
+      });
+    };
+
+    const dynamicMenus = routers ? mapRoutersToMenuData(routers) : [];
+
+    // 添加固定的看板导航
+    return {
+      path: '/',
+      routes: [
+        {
+          path: '/dashboard',
+          name: '工作台',
+          icon: <DashboardOutlined />
+        },
+        ...dynamicMenus,
+      ],
+    };
+  }, [routers]);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -93,25 +130,7 @@ export const BasicLayout: React.FC = () => {
             <span className="text-gray-500 hover:text-gray-900 cursor-pointer text-sm">EN</span>
           </div>
         ]}
-        route={{
-          path: '/',
-          routes: [
-            {
-              path: '/dashboard',
-              name: t('menu.dashboard'),
-            },
-            {
-              path: '/system',
-              name: t('menu.system'),
-              routes: [
-                { path: '/system/user', name: t('menu.user') },
-                { path: '/system/role', name: t('menu.role') },
-                { path: '/system/dept', name: '部门管理' },
-                { path: '/system/menu', name: t('menu.menu') },
-              ],
-            },
-          ],
-        }}
+        route={menuData}
         location={{
           pathname: location.pathname,
         }}

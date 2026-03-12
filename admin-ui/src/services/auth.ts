@@ -1,21 +1,21 @@
 import request from '../utils/request';
 
-// API: /login POST
+// API: /system/login POST
 export const login = (data: any) => {
-  return request.post('/login', data);
+  return request.post('/system/login', data);
 };
 
-// API: /logout POST
+// API: /system/logout POST
 export const logout = () => {
-  return request.post('/logout');
+  return request.post('/system/logout');
 };
 
-// API: /refresh POST
+// API: /system/refresh POST
 export const refreshToken = () => {
-  return request.post('/refresh');
+  return request.post('/system/refresh');
 };
 
-// API: /getInfo GET (对应 user.go 获取自身信息)
+// API: /system/getInfo GET (对应 user.go 获取自身信息及菜单路由)
 export const getInfo = () => {
-  return request.get('/getInfo');
+  return request.get('/system/getInfo');
 };
