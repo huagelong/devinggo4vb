@@ -3,7 +3,7 @@
 该计划基于 `docs/admin.md` 的需求，按照功能优先级分类，旨在有条理、分阶段地推进商业化管理后台前端的开发任务。
 
 ## 阶段一：项目初始化与基础设施建设 (P0)
-- [ ] 初始化 `admin-ui` 目录，并确定具体技术栈核心版本：
+- [x] 初始化 `admin-ui` 目录，并确定具体技术栈核心版本：
   - **核心框架**: React `^18.3.1` + Vite `^5.2.0` + TypeScript `^5.4.5`
   - **路由与状态**: TanStack Router `^1.80.0` + Zustand `^5.0.0`
   - **网络与实时**: Axios `^1.7.0` + Pusher-js `^8.3.0`
@@ -12,27 +12,27 @@
   - **国际化 (18n)**: i18next `^23.11.0` + react-i18next `^14.1.0`
   - **编辑器插件**: `@uiw/react-codemirror` `^4.23.0` + `react-quill` `^2.0.0`
   - **构建与质量规范**: ESLint `^9.0.0` + Prettier `^3.2.0` + Yarn `1.22.x` (或 4.x Berry)
-- [ ] 按照确定的版本清单安装核心依赖。
-- [ ] 配置代码规范环境 (`ESLint`、`Prettier` 相关规则)。
-- [ ] 搭建项目标准目录结构 (`assets`, `components`, `configs`, `hooks`, `pages`, `services`, `stores`, `types`, `utils`)。
-- [ ] 配置 `Axios` 拦截器 (统一处理 Token 携带、过期刷新、请求响应错误提示)。
-- [ ] 实现基础系统布局 (`ProLayout`)：侧边双栏菜单、顶级导航、用户头像、面包屑。
-- [ ] 配置初始化多语言环境 (`i18next`)，支持中英文切换。
+- [x] 按照确定的版本清单安装核心依赖。
+- [x] 配置代码规范环境 (`ESLint`、`Prettier` 相关规则)。
+- [x] 搭建项目标准目录结构 (`assets`, `components`, `configs`, `hooks`, `pages`, `services`, `stores`, `types`, `utils`)。
+- [x] 配置 `Axios` 拦截器 (统一处理 Token 携带、过期刷新、请求响应错误提示)。
+- [x] 实现基础系统布局 (`ProLayout`)：侧边双栏菜单、顶级导航、用户头像、面包屑。
+- [x] 配置初始化多语言环境 (`i18next`)，支持中英文切换。
 
 ## 阶段二：认证与看板核心模块 (P0)
-- [ ] **登录认证 (login.go)** 
-  - [ ] 登录页面开发及交互。
-  - [ ] 集成 `/login`、`/logout`、`/refresh` 接口。
-  - [ ] 使用 `Zustand` 管理全局应用鉴权状态及持久化。
-- [ ] **仪表板 (dashboard.go)**
-  - [ ] 开发工作台响应式图表与数据看板。
-  - [ ] 数据集成： `/dashboard/statistics`与 `/dashboard/loginChart`。
+- [x] **登录认证 (login.go)** 
+  - [x] 登录页面开发及交互。
+  - [x] 集成 `/login`、`/logout`、`/refresh` 接口。
+  - [x] 使用 `Zustand` 管理全局应用鉴权状态及持久化。
+- [x] **仪表板 (dashboard.go)**
+  - [x] 开发工作台响应式图表与数据看板。
+  - [x] 数据集成： `/dashboard/statistics`与 `/dashboard/loginChart`。
 
 ## 阶段三：RBAC 核心权限体系 (P0)
-- [ ] **菜单管理 (menu.go)**： 树状表格及 CRUD 处理。
-- [ ] **部门管理 (dept.go)**： 树状表格关联 CRUD，支持添加/分离部门负责人。
-- [ ] **角色管理 (role.go)**： 角色基础 CRUD，分配菜单使用树结构钩子、管理数据权限配置项。
-- [ ] **用户管理 (user.go)**： 人员列表展现、分配角色/部门视图、在线人员与强退操作融合、管理被删至回收站的用户。
+- [x] **菜单管理 (menu.go)**： 树状表格及 CRUD 处理。
+- [x] **部门管理 (dept.go)**： 树状表格关联 CRUD，支持添加/分离部门负责人。
+- [x] **角色管理 (role.go)**： 角色基础 CRUD，分配菜单使用树结构钩子、管理数据权限配置项。
+- [x] **用户管理 (user.go)**： 人员列表展现、分配角色/部门视图、在线人员与强退操作融合、管理被删至回收站的用户。
 
 ## 阶段四：扩展系统管理功能 (P1)
 - [ ] **岗位管理 (post.go)**：列表展示、绑定及 CRUD，支持回收站。
