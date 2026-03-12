@@ -449,3 +449,7 @@ admin-ui/
 3. 不修改后端代码
 4. 使用TypeScript类型检查
 5. 遵循ESLint规则
+
+## 十，其他
+
+ 1. 数据结构等文档在resource\migrations目录下的sql文件中
