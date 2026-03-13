@@ -17,28 +17,28 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           colorPrimary: '#1677ff',
           colorBgContainer: '#ffffff',
           borderRadius: 4,
-          fontSize: 13,
+          fontSize: 17,
           wireframe: true,
           fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
         },
         components: {
           Button: {
-            controlHeight: 28,
-            controlHeightSM: 24,
-            controlHeightLG: 32,
-            paddingInline: 12,
+            controlHeight: 38,
+            controlHeightSM: 34,
+            controlHeightLG: 43,
+            paddingInline: 17,
           },
           Input: {
-            controlHeight: 28,
-            controlHeightLG: 32,
+            controlHeight: 38,
+            controlHeightLG: 43,
           },
           Select: {
-            controlHeight: 28,
-            controlHeightLG: 32,
+            controlHeight: 38,
+            controlHeightLG: 43,
           },
           Table: {
-            padding: 12,
-            paddingSM: 8,
+            padding: 14,
+            paddingSM: 10,
           },
         },
       }}
