@@ -1,8 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ProLayout, MenuDataItem } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation } from '@tanstack/react-router';
-import { Dropdown, MenuProps, Space } from 'antd';
-import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, SettingFilled, AppstoreOutlined } from '@ant-design/icons';
+import { Dropdown, MenuProps, Avatar, Badge } from 'antd';
+import { 
+  LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, 
+  HomeOutlined, AppstoreOutlined, SearchOutlined, LockOutlined, 
+  FullscreenOutlined, BellOutlined, CloseOutlined, MenuUnfoldOutlined, MenuFoldOutlined
+} from '@ant-design/icons';
 import { useAuthStore } from '../../stores/authStore';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +15,8 @@ export const BasicLayout: React.FC = () => {
   const location = useLocation();
   const { userInfo, routers, logout } = useAuthStore();
   const { t } = useTranslation();
+  
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -18,141 +24,178 @@ export const BasicLayout: React.FC = () => {
   };
 
   const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: '个人中心',
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '个人设置',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: t('system.logout'),
-      onClick: handleLogout,
-      danger: true,
-    },
+    { key: 'profile', icon: <UserOutlined />, label: '个人中心' },
+    { key: 'settings', icon: <SettingOutlined />, label: '个人设置' },
+    { type: 'divider' },
+    { key: 'logout', icon: <LogoutOutlined />, label: t('system.logout'), onClick: handleLogout, danger: true },
   ];
 
-  // 动态将后端菜单数据转换为 ProLayout 所需的 Route 结构
-  const menuData = useMemo(() => {
+  const fullMenuData = useMemo(() => {
     const mapRoutersToMenuData = (apiRouters: any[], parentPath = ''): MenuDataItem[] => {
       if (!apiRouters) return [];
       return apiRouters.map(r => {
         let currentPath = parentPath ? `${parentPath}${r.path.startsWith('/') ? r.path : '/' + r.path}` : r.path;
-        currentPath = currentPath.replace(/\/+/g, '/'); 
-        
-        // 适配本地临时路由结构: 将接口返回的 systemMg 统一映射到本地的 system 主干路由
+        currentPath = currentPath.replace(/\/+/g, '/');
         currentPath = currentPath.replace(/^\/systemMg/, '/system');
 
         return {
           path: currentPath,
           name: r.meta?.title || r.name,
-          // 根据 type=='B' 判断是否为按钮级别权限，不需要渲染为侧边栏菜单
           hideInMenu: r.meta?.hidden === true || r.meta?.type === 'B',
           routes: r.children && r.children.length > 0 ? mapRoutersToMenuData(r.children, currentPath) : undefined,
+          icon: <AppstoreOutlined />,
         };
       });
     };
 
     const dynamicMenus = routers ? mapRoutersToMenuData(routers) : [];
 
-    // 添加固定的看板导航
-    return {
-      path: '/',
-      routes: [
-        {
-          path: '/dashboard',
-          name: '工作台',
-          icon: <DashboardOutlined />
-        },
-        ...dynamicMenus,
-      ],
-    };
+    return [
+      {
+        path: '/dashboard', name: '首页', icon: <HomeOutlined />,
+        routes: [{ path: '/dashboard', name: '工作台', icon: <DashboardOutlined /> }]
+      },
+      ...dynamicMenus.map(m => {
+        if (m.path.includes('/system')) m.icon = <SettingOutlined />;
+        return m;
+      }),
+    ];
   }, [routers]);
 
+  const rootPath = `/${location.pathname.split('/')[1] || 'dashboard'}`;
+  
+  const currentSubMenu = useMemo(() => {
+    const found = fullMenuData.find(m => m.path === rootPath || (m.path === '/' && rootPath === '/dashboard'));
+    if (!found) return { path: '/', routes: fullMenuData };
+    return { path: found.path, routes: found.routes || [found] };
+  }, [fullMenuData, rootPath]);
+
+  const activeLevel1MenuContext = fullMenuData.find(m => m.path === rootPath || (m.path === '/' && rootPath === '/dashboard')) || fullMenuData[0];
+
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <ProLayout
-        title="Admin Pro"
-        logo={<img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo" />}
-        layout="mix"
-        splitMenus={false}
-        fixSiderbar
-        fixedHeader
-        siderMenuType="group"
-        token={{
-          bgLayout: '#f0f2f5',
-          header: {
-            colorBgHeader: '#fff',
-            colorHeaderTitle: '#141414',
-            colorTextMenu: '#dfdfdf',
-            colorTextMenuSecondary: '#dfdfdf',
-            colorTextMenuSelected: '#fff',
-            colorBgMenuItemSelected: '#22272b',
-            colorTextMenuActive: '#rgba(255,255,255,0.85)',
-          },
-          sider: {
-            colorMenuBackground: '#fff',
-            colorMenuItemDivider: '#dfdfdf',
-            colorTextMenu: '#595959',
-            colorTextMenuSelected: '#1677ff',
-            colorBgMenuItemSelected: '#e6f4ff',
-          },
-          pageContainer: {
-            colorBgPageContainer: '#f0f2f5',
-            paddingBlockPageContainerContent: 24,
-            paddingInlinePageContainerContent: 24,
-          }
-        }}
-        avatarProps={{
-          src: userInfo?.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-          title: userInfo?.username || 'Admin',
-          size: 'small',
-          render: (_props, dom) => {
-            return (
-              <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
-                <div className="flex items-center cursor-pointer hover:bg-gray-100 px-3 rounded transition-colors h-full">
-                  {dom}
-                </div>
-              </Dropdown>
-            );
-          },
-        }}
-        actionsRender={() => [
-          <div key="actions" className="flex items-center pr-4">
-            <span className="text-gray-500 hover:text-gray-900 cursor-pointer text-sm">EN</span>
-          </div>
-        ]}
-        route={menuData}
-        location={{
-          pathname: location.pathname,
-        }}
-        menuItemRender={(item, dom) => (
-          <a
-            onClick={(e) => {
-              e.preventDefault();
-              if (item.path) {
-                navigate({ to: item.path });
-              }
-            }}
-          >
-            {dom}
-          </a>
-        )}
+    <div className="flex w-full h-screen overflow-hidden bg-[#f0f2f5]" style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      {/* 1. 左侧第一级极简主导航 */}
+      <div 
+         className="bg-[#001529] flex flex-col items-center py-3 z-50 shrink-0 shadow-sm relative"
+         style={{ width: '80px', backgroundColor: '#001529', flexShrink: 0, height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 100 }}
       >
-        <div style={{ minHeight: 'calc(100vh - 110px)', padding: '24px' }}>
-          <Outlet />
+        <div className="w-11 h-11 bg-transparent text-white rounded-xl flex items-center justify-center font-black text-2xl mb-6 mt-2" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold' }}>
+          <span style={{ color: '#1677ff' }}>D</span><span style={{ color: '#fff' }}>G</span>
         </div>
-      </ProLayout>
+        <div className="flex-1 w-full flex flex-col items-center gap-3 overflow-y-auto" style={{ flex: 1, width: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', scrollbarWidth: 'none' }}>
+          {fullMenuData.map(menu => {
+            const isActive = menu.path === rootPath || (menu.path === '/' && rootPath === '/dashboard');
+            return (
+              <div 
+                key={menu.path}
+                onClick={() => navigate({ to: menu.routes?.[0]?.path ? menu.routes[0].path : menu.path })}
+                className={`w-[60px] h-[60px] rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
+                  isActive ? 'bg-[#1677ff] text-white font-medium shadow-md' : 'text-gray-400 hover:text-white hover:bg-[#ffffff14]'
+                }`}
+                style={{
+                    width: '60px', height: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
+                    borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s',
+                    backgroundColor: isActive ? '#1677ff' : 'transparent',
+                    color: isActive ? '#fff' : '#9ca3af',
+                }}
+              >
+                <div className="text-[20px] mb-1" style={{ fontSize: '20px', marginBottom: '4px' }}>{menu.icon}</div>
+                <span className="text-[12px] transform scale-90" style={{ fontSize: '12px', transform: 'scale(0.9)', whiteSpace: 'nowrap' }}>{menu.name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 2. 右侧 ProLayout 内容区 */}
+      <div className="flex-1 w-full relative flex flex-col min-w-0 bg-[#f0f2f5]" style={{ flex: 1, height: '100vh', minWidth: 0, position: 'relative' }}>
+        <ProLayout
+          layout="side"
+          fixedHeader={false}
+          fixSiderbar={false}
+          logo={null}
+          title={false}
+          splitMenus={false}
+          siderMenuType="group"
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          menuHeaderRender={() => (
+             <div className="h-[48px] flex items-center px-4 text-[15px] font-bold text-gray-800 tracking-wide border-b border-gray-100 bg-white shadow-sm w-full truncate">
+                {activeLevel1MenuContext?.name || '菜单'}
+             </div>
+          )}
+          headerRender={false} 
+          route={currentSubMenu}
+          location={{ pathname: location.pathname }}
+          menuItemRender={(item, dom) => (
+            <a onClick={(e) => { e.preventDefault(); if (item.path) navigate({ to: item.path }); }}>{dom}</a>
+          )}
+          token={{
+            bgLayout: '#f0f2f5',
+            sider: {
+              colorMenuBackground: '#fff', colorTextMenu: '#595959', colorTextMenuSelected: '#1677ff', colorBgMenuItemSelected: '#e6f4ff',
+            },
+            pageContainer: {
+              paddingBlockPageContainerContent: 24, paddingInlinePageContainerContent: 24
+            }
+          }}
+        >
+          <div className="flex flex-col absolute inset-0 w-full h-full bg-[#f0f2f5]">
+           {/* --- A. 完全自定义 Header --- */}
+           <div 
+             className="bg-white flex items-center justify-between px-4 shrink-0 z-10 w-full shadow-sm"
+             style={{ height: '48px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', flexShrink: 0, zIndex: 10, width: '100%', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.03)' }}
+           >
+              <div className="flex items-center gap-4" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div onClick={() => setCollapsed(!collapsed)} className="cursor-pointer" style={{ cursor: 'pointer' }}>
+                    {collapsed ? <MenuUnfoldOutlined className="text-gray-500 text-lg hover:text-[#1677ff]" style={{ fontSize: '18px' }} /> : <MenuFoldOutlined className="text-gray-500 text-lg hover:text-[#1677ff]" style={{ fontSize: '18px' }} />}
+                </div>
+                <div className="text-gray-600 font-medium text-sm select-none" style={{ color: '#4b5563', fontSize: '14px', fontWeight: 500 }}>
+                    {activeLevel1MenuContext?.name || '首页'} / {(currentSubMenu.routes?.find(r=>r.path===location.pathname) || currentSubMenu.routes?.[0])?.name || '工作台'}
+                </div>
+              </div>
+              <div className="flex items-center gap-5 text-gray-500 text-[17px]" style={{ display: 'flex', alignItems: 'center', gap: '20px', color: '#6b7280', fontSize: '17px' }}>
+                <SearchOutlined className="cursor-pointer hover:text-[#1677ff] transition-colors" style={{ cursor: 'pointer' }} />
+                <LockOutlined className="cursor-pointer hover:text-[#1677ff] transition-colors" style={{ cursor: 'pointer' }} />
+                <FullscreenOutlined className="cursor-pointer hover:text-[#1677ff] transition-colors" style={{ cursor: 'pointer' }} />
+                <Badge dot offset={[-2, 6]}><BellOutlined className="cursor-pointer hover:text-[#1677ff] transition-colors text-[17px]" style={{ cursor: 'pointer', fontSize: '17px' }} /></Badge>
+                <div className="h-4 w-[1px] bg-gray-300 mx-2" style={{ height: '16px', width: '1px', backgroundColor: '#d1d5db', margin: '0 8px' }}></div>
+                <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
+                  <div className="flex items-center cursor-pointer ml-1" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginLeft: '4px' }}>
+                    <Avatar size="small" src={userInfo?.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg'} />
+                    <span className="ml-2 text-sm text-gray-600 font-medium" style={{ marginLeft: '8px', fontSize: '14px', color: '#4b5563', fontWeight: 500 }}>{userInfo?.username || 'Admin'}</span>
+                  </div>
+                </Dropdown>
+                <SettingOutlined className="cursor-pointer hover:text-[#1677ff] transition-colors" style={{ cursor: 'pointer' }} />
+              </div>
+            </div>
+
+            {/* --- B. 多标签页 (Tag Views) --- */}
+            <div 
+              className="bg-white border-b border-gray-200 flex items-center px-4 gap-2 overflow-x-auto shrink-0 z-0 w-full"
+              style={{ height: '40px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px', overflowX: 'auto', flexShrink: 0, width: '100%' }}
+            >
+               <div className="bg-[#e6f4ff] text-[#1677ff] border border-[#91caff] px-4 py-1.5 rounded flex items-center text-[13px] cursor-pointer whitespace-nowrap shadow-sm" style={{ backgroundColor: '#e6f4ff', color: '#1677ff', border: '1px solid #91caff', padding: '4px 16px', borderRadius: '4px', display: 'flex', alignItems: 'center', fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                 仪表盘
+               </div>
+            </div>
+            
+            {/* --- C. 内容插槽 (带水印) --- */}
+            <div className="flex-1 overflow-auto p-4 w-full relative">
+               <div className="absolute inset-0 pointer-events-none opacity-[0.02] z-[9999]" style={{
+                  backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"350\" height=\"250\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Ctext x=\"50%25\" y=\"50%25\" font-size=\"18\" fill=\"black\" font-family=\"sans-serif\" text-anchor=\"middle\" transform=\"rotate(-20 175 125)\"%3E%E8%B6%85%E7%BA%A7%E7%AE%A1%E7%90%86%E5%91%98 2026-03-12%3C/text%3E%3C/svg%3E')",
+                  backgroundRepeat: 'repeat'
+               }}></div>
+               <div className="relative z-20 h-full">
+                 <Outlet />
+               </div>
+            </div>
+          </div>
+        </ProLayout>
+      </div>
     </div>
   );
 };
 
 export default BasicLayout;
+
