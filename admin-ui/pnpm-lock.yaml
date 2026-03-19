@@ -602,7 +602,7 @@ importers:
         specifier: 'catalog:'
         version: 1.15.6
 
-  apps/web-tdesign:
+  apps/backend:
     dependencies:
       '@vben/access':
         specifier: workspace:*

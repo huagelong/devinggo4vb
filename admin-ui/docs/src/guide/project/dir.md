@@ -11,7 +11,7 @@
 │   ├── web-antdv-next # 基于 Ant Design Vue Next 的前端应用
 │   ├── web-ele # 基于 Element Plus 的前端应用
 │   ├── web-naive # 基于 Naive UI 的前端应用
-│   └── web-tdesign # 基于 TDesign 的前端应用
+│   └── backend # 基于 TDesign 的前端应用
 ├── cspell.json # CSpell 配置文件
 ├── docs # 项目文档目录
 ├── eslint.config.mjs # ESLint 配置文件

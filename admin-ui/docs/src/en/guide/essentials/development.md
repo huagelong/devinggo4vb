@@ -62,8 +62,8 @@ The execution command is: `pnpm run [script]` or `npm run [script]`.
     "build:ele": "pnpm run build --filter=@vben/web-ele",
     // Build the web-naive application separately
     "build:naive": "pnpm run build --filter=@vben/web-naive",
-    // Build the web-tdesign application separately
-    "build:tdesign": "pnpm run build --filter=@vben/web-tdesign",
+    // Build the backend application separately
+    "build:backend": "pnpm run build --filter=@vben/backend",
     // Build the playground application separately
     "build:play": "pnpm run build --filter=@vben/playground",
     // Changeset version management
@@ -94,8 +94,8 @@ The execution command is: `pnpm run [script]` or `npm run [script]`.
     "dev:ele": "pnpm -F @vben/web-ele run dev",
     // Start the web-naive application
     "dev:naive": "pnpm -F @vben/web-naive run dev",
-    // Start the web-tdesign application
-    "dev:tdesign": "pnpm -F @vben/web-tdesign run dev",
+    // Start the backend application
+    "dev:backend": "pnpm -F @vben/backend run dev",
     // Start the playground application
     "dev:play": "pnpm -F @vben/playground run dev",
     // Format code
@@ -160,10 +160,10 @@ To run the `web-ele` application:
 pnpm dev:ele
 ```
 
-To run the `web-tdesign` application:
+To run the `backend` application:
 
 ```bash
-pnpm dev:tdesign
+pnpm dev:backend
 ```
 
 To run the `docs` application:

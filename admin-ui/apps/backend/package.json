@@ -1,12 +1,12 @@
 {
-  "name": "@vben/web-tdesign",
+  "name": "@vben/backend",
   "version": "5.7.0",
   "homepage": "https://vben.pro",
   "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vbenjs/vue-vben-admin.git",
-    "directory": "apps/web-tdesign"
+    "directory": "apps/backend"
   },
   "license": "MIT",
   "author": {

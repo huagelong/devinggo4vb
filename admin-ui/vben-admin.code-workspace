@@ -21,8 +21,8 @@
       "path": "apps/web-naive"
     },
     {
-      "name": "@vben/web-tdesign",
-      "path": "apps/web-tdesign"
+      "name": "@vben/backend",
+      "path": "apps/backend"
     },
     {
       "name": "@vben/docs",
