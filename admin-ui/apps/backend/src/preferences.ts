@@ -9,8 +9,8 @@ export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
     name: import.meta.env.VITE_APP_TITLE,
-    // 使用后端接口动态生成菜单路由
-    accessMode: 'backend',
+    // 使用 mixed 模式，既保留前端内置路由（/analytics），也加载后端动态路由
+    accessMode: 'mixed',
     // 登录后默认跳转首页（与后端第一个可访问菜单路径保持一致）
     defaultHomePath: '/analytics',
   },

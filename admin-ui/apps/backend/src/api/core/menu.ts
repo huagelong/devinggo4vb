@@ -48,8 +48,11 @@ function transformBackendRouters(
       component = 'IFrameView';
     } else if (router.component) {
       // 页面组件路径，如 "system/user/index"
-      // generateRoutesByBackend 内部 normalizeViewPath 会转换为 /system/user/index.vue
-      component = router.component;
+      // Vben 要求 component 匹配 import.meta.glob('../views/**/*.vue')
+      // 因此 key 需要以 views/ 开头
+      component = router.component.startsWith('views/') 
+        ? router.component 
+        : `views/${router.component}`;
     } else {
       // 无 component 的目录/分组节点，作为布局容器
       component = 'BasicLayout';

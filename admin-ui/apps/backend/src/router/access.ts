@@ -4,7 +4,6 @@ import type {
 } from '@vben/types';
 
 import { generateAccessible } from '@vben/access';
-import { preferences } from '@vben/preferences';
 
 import { message } from '#/adapter/tdesign';
 import { getAllMenusApi } from '#/api';
@@ -16,12 +15,16 @@ const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 async function generateAccess(options: GenerateMenuAndRoutesOptions) {
   const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
 
+  // 修复 Vben5 generateRoutesByBackend 中 fallback 组件路径没有带 views/ 导致的 undefined
+  // 导致在加载未实现的后端路由组件时 vue-router 崩溃，菜单整个空白
+  pageMap['/_core/fallback/not-found.vue'] = pageMap['../views/_core/fallback/not-found.vue'];
+
   const layoutMap: ComponentRecordType = {
     BasicLayout,
     IFrameView,
   };
 
-  return await generateAccessible(preferences.app.accessMode, {
+  return await generateAccessible('mixed', {
     ...options,
     fetchMenuListAsync: async () => {
       message.loading({
