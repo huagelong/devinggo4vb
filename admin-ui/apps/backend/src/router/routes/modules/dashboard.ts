@@ -40,6 +40,15 @@ const routes: RouteRecordRaw[] = [
           title: '个人信息',
         },
       },
+      {
+        name: 'DashboardMessage',
+        path: '/dashboard/message',
+        component: () => import('#/views/dashboard/message/index.vue'),
+        meta: {
+          icon: 'lucide:bell',
+          title: '消息中心',
+        },
+      },
     ],
   },
 ];
