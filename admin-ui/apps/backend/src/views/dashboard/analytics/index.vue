@@ -2,8 +2,9 @@
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
+import { onMounted, ref } from 'vue';
+
 import {
-  AnalysisChartCard,
   AnalysisChartsTabs,
   AnalysisOverview,
 } from '@vben/common-ui';
@@ -14,53 +15,89 @@ import {
   SvgDownloadIcon,
 } from '@vben/icons';
 
-import AnalyticsTrends from './analytics-trends.vue';
-import AnalyticsVisitsData from './analytics-visits-data.vue';
-import AnalyticsVisitsSales from './analytics-visits-sales.vue';
-import AnalyticsVisitsSource from './analytics-visits-source.vue';
-import AnalyticsVisits from './analytics-visits.vue';
+import { getDashboardStatisticsApi } from '#/api/core/dashboard';
 
-const overviewItems: AnalysisOverviewItem[] = [
+import AnalyticsTrends from './analytics-trends.vue';
+
+const overviewItems = ref<AnalysisOverviewItem[]>([
   {
     icon: SvgCardIcon,
-    title: '用户量',
-    totalTitle: '总用户量',
-    totalValue: 120_000,
-    value: 2000,
-  },
-  {
-    icon: SvgCakeIcon,
-    title: '访问量',
-    totalTitle: '总访问量',
-    totalValue: 500_000,
-    value: 20_000,
+    title: '用户总人数',
+    totalTitle: '用户新增数',
+    totalValue: 0,
+    value: 0,
   },
   {
     icon: SvgDownloadIcon,
-    title: '下载量',
-    totalTitle: '总下载量',
-    totalValue: 120_000,
-    value: 8000,
+    title: '附件总数',
+    totalTitle: '附件新增数',
+    totalValue: 0,
+    value: 0,
+  },
+  {
+    icon: SvgCakeIcon,
+    title: '总登录数',
+    totalTitle: '新增登录数',
+    totalValue: 0,
+    value: 0,
   },
   {
     icon: SvgBellIcon,
-    title: '使用量',
-    totalTitle: '总使用量',
-    totalValue: 50_000,
-    value: 5000,
+    title: '总操作数',
+    totalTitle: '新增操作数',
+    totalValue: 0,
+    value: 0,
   },
-];
+]);
 
 const chartTabs: TabOption[] = [
   {
-    label: '流量趋势',
+    label: '登录统计',
     value: 'trends',
   },
-  {
-    label: '月访问量',
-    value: 'visits',
-  },
 ];
+
+async function initData() {
+  try {
+    const data = await getDashboardStatisticsApi();
+    overviewItems.value = [
+      {
+        icon: SvgCardIcon,
+        title: '用户数',
+        totalTitle: '总用户数',
+        totalValue: data.userStats?.total || 0,
+        value: data.userStats?.new || 0,
+      },
+      {
+        icon: SvgDownloadIcon,
+        title: '附件数',
+        totalTitle: '总附件数',
+        totalValue: data.attachmentStats?.total || 0,
+        value: data.attachmentStats?.new || 0,
+      },
+      {
+        icon: SvgCakeIcon,
+        title: '登录数',
+        totalTitle: '总登录数',
+        totalValue: data.loginStats?.total || 0,
+        value: data.loginStats?.new || 0,
+      },
+      {
+        icon: SvgBellIcon,
+        title: '操作数',
+        totalTitle: '总操作数',
+        totalValue: data.operationStats?.total || 0,
+        value: data.operationStats?.new || 0,
+      },
+    ];
+  } catch (error) {
+    console.error('Failed to load dashboard statistics', error);
+  }
+}
+
+onMounted(() => {
+  initData();
+});
 </script>
 
 <template>
@@ -70,21 +107,6 @@ const chartTabs: TabOption[] = [
       <template #trends>
         <AnalyticsTrends />
       </template>
-      <template #visits>
-        <AnalyticsVisits />
-      </template>
     </AnalysisChartsTabs>
-
-    <div class="mt-5 w-full md:flex">
-      <AnalysisChartCard class="mt-5 md:mt-0 md:mr-4 md:w-1/3" title="访问数量">
-        <AnalyticsVisitsData />
-      </AnalysisChartCard>
-      <AnalysisChartCard class="mt-5 md:mt-0 md:mr-4 md:w-1/3" title="访问来源">
-        <AnalyticsVisitsSource />
-      </AnalysisChartCard>
-      <AnalysisChartCard class="mt-5 md:mt-0 md:w-1/3" title="访问来源">
-        <AnalyticsVisitsSales />
-      </AnalysisChartCard>
-    </div>
   </div>
 </template>

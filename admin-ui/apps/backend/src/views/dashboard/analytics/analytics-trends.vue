@@ -5,91 +5,84 @@ import { onMounted, ref } from 'vue';
 
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 
+import { getDashboardLoginChartApi } from '#/api/core/dashboard';
+
 const chartRef = ref<EchartsUIType>();
 const { renderEcharts } = useEcharts(chartRef);
 
-onMounted(() => {
-  renderEcharts({
-    grid: {
-      bottom: 0,
-      containLabel: true,
-      left: '1%',
-      right: '1%',
-      top: '2 %',
-    },
-    series: [
-      {
-        areaStyle: {},
-        data: [
-          111, 2000, 6000, 16_000, 33_333, 55_555, 64_000, 33_333, 18_000,
-          36_000, 70_000, 42_444, 23_222, 13_000, 8000, 4000, 1200, 333, 222,
-          111,
-        ],
-        itemStyle: {
-          color: '#5ab1ef',
-        },
-        smooth: true,
-        type: 'line',
-      },
-      {
-        areaStyle: {},
-        data: [
-          33, 66, 88, 333, 3333, 6200, 20_000, 3000, 1200, 13_000, 22_000,
-          11_000, 2221, 1201, 390, 198, 60, 30, 22, 11,
-        ],
-        itemStyle: {
-          color: '#019680',
-        },
-        smooth: true,
-        type: 'line',
-      },
-    ],
-    tooltip: {
-      axisPointer: {
-        lineStyle: {
-          color: '#019680',
-          width: 1,
+onMounted(async () => {
+  try {
+    // 默认获取过去10天的登录数据
+    const data = await getDashboardLoginChartApi(10);
+    
+    renderEcharts({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          lineStyle: {
+            color: '#5ab1ef',
+            width: 1,
+          },
         },
       },
-      trigger: 'axis',
-    },
-    // xAxis: {
-    //   axisTick: {
-    //     show: false,
-    //   },
-    //   boundaryGap: false,
-    //   data: Array.from({ length: 18 }).map((_item, index) => `${index + 6}:00`),
-    //   type: 'category',
-    // },
-    xAxis: {
-      axisTick: {
-        show: false,
+      grid: {
+        bottom: 0,
+        containLabel: true,
+        left: '1%',
+        right: '1%',
+        top: '10%',
       },
-      boundaryGap: false,
-      data: Array.from({ length: 18 }).map((_item, index) => `${index + 6}:00`),
-      splitLine: {
-        lineStyle: {
-          type: 'solid',
-          width: 1,
-        },
-        show: true,
-      },
-      type: 'category',
-    },
-    yAxis: [
-      {
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: data.xAxis || [],
         axisTick: {
           show: false,
         },
-        max: 80_000,
-        splitArea: {
+        splitLine: {
           show: true,
+          lineStyle: {
+            type: 'solid',
+            width: 1,
+            color: 'rgba(0,0,0,0.05)',
+          },
         },
-        splitNumber: 4,
-        type: 'value',
       },
-    ],
-  });
+      yAxis: [
+        {
+          type: 'value',
+          axisTick: {
+            show: false,
+          },
+          splitArea: {
+            show: true,
+          },
+          splitNumber: 4,
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(0,0,0,0.05)',
+            },
+          },
+        },
+      ],
+      series: [
+        {
+          name: '登录次数',
+          type: 'line',
+          smooth: true,
+          data: data.chartsData || [],
+          areaStyle: {
+            opacity: 0.1,
+          },
+          itemStyle: {
+            color: '#5ab1ef',
+          },
+        },
+      ],
+    });
+  } catch (error) {
+    console.error('Failed to load dashboard login chart', error);
+  }
 });
 </script>
 
