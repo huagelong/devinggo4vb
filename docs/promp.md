@@ -1,3 +1,5 @@
+前端代码目录admin-ui/apps/backend；
+-----------------------------------------------
 我现在要完成登录功能
 1. 前端代码路径admin-ui/apps/backend/src/views/_core/authentication
 2. 后端代码路径modules/system/api/system/login.go
