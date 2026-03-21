@@ -29,11 +29,14 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   theme: {
     mode: "light",
-    semiDarkHeader: true,
+    semiDarkHeader: false,
     semiDarkSidebar: true,
     semiDarkSidebarSub: true
   },
   transition: {
     enable: false
-  }
+  },
+  widget: {
+    timezone: false,
+  },
 });

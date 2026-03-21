@@ -5,7 +5,7 @@ import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
-import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
+
 import { useWatermark } from '@vben/hooks';
 import { BookOpenText, CircleHelp, SvgGithubIcon } from '@vben/icons';
 import {
@@ -87,14 +87,14 @@ const showDot = computed(() =>
 const menus = computed(() => [
   {
     handler: () => {
-      router.push({ name: 'Profile' });
+      router.push('/dashboard/profile');
     },
     icon: 'lucide:user',
     text: $t('page.auth.profile'),
   },
   {
     handler: () => {
-      openWindow(VBEN_DOC_URL, {
+      openWindow('https://devinggo.devinghub.com', {
         target: '_blank',
       });
     },
@@ -103,7 +103,7 @@ const menus = computed(() => [
   },
   {
     handler: () => {
-      openWindow(VBEN_GITHUB_URL, {
+      openWindow('https://github.com/huagelong/devinggo', {
         target: '_blank',
       });
     },
@@ -112,7 +112,7 @@ const menus = computed(() => [
   },
   {
     handler: () => {
-      openWindow(`${VBEN_GITHUB_URL}/issues`, {
+      openWindow('https://github.com/huagelong/devinggo/issues', {
         target: '_blank',
       });
     },
@@ -176,7 +176,7 @@ watch(
         :avatar
         :menus
         :text="userStore.userInfo?.realName"
-        description="ann.vben@gmail.com"
+        :description="userStore.userInfo?.email ?? ''"
         tag-text="Pro"
         @logout="handleLogout"
       />
