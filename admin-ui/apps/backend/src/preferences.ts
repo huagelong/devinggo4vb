@@ -15,7 +15,7 @@ export const overridesPreferences = defineOverridesPreferences({
     defaultHomePath: '/analytics',
     enablePreferences: import.meta.env.VITE_SHOW_PREFERENCES_BUTTON !== 'false',
     enableStickyPreferencesNavigationBar: false,
-    layout: "mixed-nav",
+    layout: "sidebar-nav",
     watermark: true
   },
     sidebar: {
@@ -41,9 +41,9 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   theme: {
     mode: "light",
-    semiDarkHeader: true,
+    semiDarkHeader: false,
     semiDarkSidebar: true,
-    semiDarkSidebarSub: true
+    semiDarkSidebarSub: false
   },
   transition: {
     enable: false
