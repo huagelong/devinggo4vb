@@ -14,4 +14,26 @@ export const overridesPreferences = defineOverridesPreferences({
     // 登录后默认跳转首页（与后端第一个可访问菜单路径保持一致）
     defaultHomePath: '/analytics',
   },
+  breadcrumb: {
+    showHome: true
+  },
+  copyright: {
+    companyName: "devinggo",
+    companySiteLink: "https://devinggo.devinghub.com"
+  },
+  footer: {
+    enable: true
+  },
+  logo: {
+    source: "/logo.png"
+  },
+  theme: {
+    mode: "light",
+    semiDarkHeader: true,
+    semiDarkSidebar: true,
+    semiDarkSidebarSub: true
+  },
+  transition: {
+    enable: false
+  }
 });
