@@ -41,6 +41,7 @@ export async function getUserInfoApi(): Promise<UserInfo> {
   return {
     avatar: info.user.avatar || '',
     desc: info.user.signed || '',
+    email: info.user.email || '',
     homePath: info.user.dashboard || '/analytics',
     realName: info.user.nickname || info.user.username,
     roles: info.roles,
