@@ -189,11 +189,11 @@ onMounted(() => {
           <DateRangePicker v-model="searchForm.created_at" allow-input clearable class="w-64" />
         </div>
         <Button theme="primary" @click="onSearch">
-          <template #icon><search-icon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
+          <template #icon><SearchIcon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
           搜索
         </Button>
         <Button theme="default" @click="onReset">
-          <template #icon><refresh-icon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
+          <template #icon><RefreshIcon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
           重置
         </Button>
       </div>
@@ -202,7 +202,7 @@ onMounted(() => {
       <div class="flex justify-between items-center mb-4">
         <div class="flex gap-3 items-center">
           <Button theme="danger" @click="handleBatchDelete">
-            <template #icon><delete-icon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
+            <template #icon><DeleteIcon fill-color="transparent" stroke-color="currentColor" :stroke-width="2" /></template>
             删除
           </Button>
           <RadioGroup v-model="searchForm.read_status" variant="outline" @change="handleChangeStatus as any">
@@ -214,7 +214,7 @@ onMounted(() => {
         <div class="flex gap-2">
            <Button theme="default" variant="outline" shape="square" @click="onSearch">
              <template #icon>
-<refresh-icon
+<RefreshIcon
 fill-color="transparent" stroke-color="currentColor" 
                 :stroke-width="2"
 />

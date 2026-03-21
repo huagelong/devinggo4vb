@@ -18,6 +18,7 @@ import App from './app.vue';
 import { router } from './router';
 
 import 'tdesign-vue-next/es/style/index.css';
+import * as TDesignIcons from 'tdesign-icons-vue-next';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
@@ -62,6 +63,9 @@ async function bootstrap(namespace: string) {
   // 配置Motion插件
   const { MotionPlugin } = await import('@vben/plugins/motion');
   app.use(MotionPlugin);
+
+  // 注册 TDesign 全局图标
+  app.use(TDesignIcons);
 
   // 动态更新标题
   watchEffect(() => {

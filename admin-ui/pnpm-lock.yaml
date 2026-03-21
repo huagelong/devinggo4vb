@@ -378,6 +378,9 @@ catalogs:
     tailwindcss:
       specifier: ^4.2.1
       version: 4.2.1
+    tdesign-icons-vue-next:
+      specifier: ^0.4.2
+      version: 0.4.2
     tdesign-vue-next:
       specifier: ^1.18.5
       version: 1.18.5
@@ -583,25 +586,6 @@ importers:
         specifier: 'catalog:'
         version: 3.2.5(typescript@5.9.3)
 
-  apps/backend-mock:
-    dependencies:
-      '@faker-js/faker':
-        specifier: 'catalog:'
-        version: 10.3.0
-      jsonwebtoken:
-        specifier: 'catalog:'
-        version: 9.0.3
-      nitropack:
-        specifier: 'catalog:'
-        version: 2.13.1(rolldown@1.0.0-rc.9)
-    devDependencies:
-      '@types/jsonwebtoken':
-        specifier: 'catalog:'
-        version: 9.0.10
-      h3:
-        specifier: 'catalog:'
-        version: 1.15.6
-
   apps/backend:
     dependencies:
       '@vben/access':
@@ -658,6 +642,9 @@ importers:
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3))
+      tdesign-icons-vue-next:
+        specifier: 'catalog:'
+        version: 0.4.2(vue@3.5.30(typescript@5.9.3))
       tdesign-vue-next:
         specifier: 'catalog:'
         version: 1.18.5(vue@3.5.30(typescript@5.9.3))
@@ -667,6 +654,25 @@ importers:
       vue-router:
         specifier: 'catalog:'
         version: 5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
+
+  apps/backend-mock:
+    dependencies:
+      '@faker-js/faker':
+        specifier: 'catalog:'
+        version: 10.3.0
+      jsonwebtoken:
+        specifier: 'catalog:'
+        version: 9.0.3
+      nitropack:
+        specifier: 'catalog:'
+        version: 2.13.1(rolldown@1.0.0-rc.9)
+    devDependencies:
+      '@types/jsonwebtoken':
+        specifier: 'catalog:'
+        version: 9.0.10
+      h3:
+        specifier: 'catalog:'
+        version: 1.15.6
 
   docs:
     dependencies:
@@ -1007,6 +1013,9 @@ importers:
       lucide-vue-next:
         specifier: 'catalog:'
         version: 0.577.0(vue@3.5.30(typescript@5.9.3))
+      tdesign-icons-vue-next:
+        specifier: ^0.4.2
+        version: 0.4.2(vue@3.5.30(typescript@5.9.3))
       vue:
         specifier: ^3.5.30
         version: 3.5.30(typescript@5.9.3)

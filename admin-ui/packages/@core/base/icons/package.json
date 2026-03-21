@@ -36,6 +36,7 @@
   "dependencies": {
     "@iconify/vue": "catalog:",
     "lucide-vue-next": "catalog:",
+    "tdesign-icons-vue-next": "^0.4.2",
     "vue": "catalog:"
   }
 }
