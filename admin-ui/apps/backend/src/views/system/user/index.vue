@@ -1,13 +1,32 @@
 ﻿<script lang="ts" setup>
-import { defineOptions, ref } from 'vue';
+import { ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import { Button, MessagePlugin, Popconfirm, Switch } from 'tdesign-vue-next';
+import {
+  AddIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  MoreIcon,
+  UploadIcon,
+} from 'tdesign-icons-vue-next';
+import {
+  Button,
+  DialogPlugin,
+  Dropdown,
+  MessagePlugin,
+  Popconfirm,
+  Switch,
+} from 'tdesign-vue-next';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { getDeptTree } from '#/api/system/dept';
+import { getPostList } from '#/api/system/post';
+import { getRoleList } from '#/api/system/role';
 import {
   changeUserStatus,
+  clearUserCache,
   deleteUser,
   getRecycleUserList,
   getUserList,
@@ -19,8 +38,6 @@ import {
 import DeptTree from './dept-tree.vue';
 import UserModal from './user-modal.vue';
 
-defineOptions({ name: 'SystemUser' });
-
 const currentDeptId = ref<number | string>('');
 const isRecycleBin = ref(false);
 
@@ -28,6 +45,8 @@ const userModalRef = ref();
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
+    // 强制三列布局，跟设计图保持一致
+    wrapperClass: 'grid-cols-3',
     handleReset: () => {
       currentDeptId.value = '';
       gridApi.reload();
@@ -40,10 +59,56 @@ const [Grid, gridApi] = useVbenVxeGrid({
         componentProps: { placeholder: '请输入账户' },
       },
       {
+        fieldName: 'dept_id',
+        label: '所属部门',
+        component: 'ApiTreeSelect',
+        componentProps: {
+          api: getDeptTree,
+          labelField: 'name',
+          valueField: 'id',
+          childrenField: 'children',
+          placeholder: '请选择所属部门',
+        },
+      },
+      {
+        fieldName: 'role_id',
+        label: '角色',
+        component: 'ApiSelect',
+        componentProps: {
+          api: async () => {
+            const res = await getRoleList();
+            return res?.items || res || [];
+          },
+          labelField: 'name',
+          valueField: 'id',
+          placeholder: '请选择角色',
+        },
+      },
+      {
         fieldName: 'phone',
         label: '手机',
         component: 'Input',
         componentProps: { placeholder: '请输入手机' },
+      },
+      {
+        fieldName: 'post_id',
+        label: '岗位',
+        component: 'ApiSelect',
+        componentProps: {
+          api: async () => {
+            const res = await getPostList();
+            return res?.items || res || [];
+          },
+          labelField: 'name',
+          valueField: 'id',
+          placeholder: '请选择岗位',
+        },
+      },
+      {
+        fieldName: 'email',
+        label: '邮箱',
+        component: 'Input',
+        componentProps: { placeholder: '请输入邮箱' },
       },
       {
         fieldName: 'status',
@@ -57,6 +122,23 @@ const [Grid, gridApi] = useVbenVxeGrid({
           ],
         },
       },
+      {
+        fieldName: 'user_type',
+        label: '用户类型',
+        component: 'Select',
+        componentProps: {
+          placeholder: '请选择用户类型',
+          options: [{ label: '系统用户', value: '100' }],
+        },
+      },
+      {
+        fieldName: 'created_at',
+        label: '注册时间',
+        component: 'RangePicker',
+        componentProps: {
+          placeholder: ['请选择开始时间', '请选择结束时间'],
+        },
+      },
     ],
   },
   gridOptions: {
@@ -67,7 +149,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     proxyConfig: {
       ajax: {
-        query: async ({ page }, formValues) => {
+        query: async ({ page }: any, formValues: any) => {
           const params = {
             page: page.currentPage,
             limit: page.pageSize,
@@ -89,29 +171,32 @@ const [Grid, gridApi] = useVbenVxeGrid({
         field: 'avatar',
         title: '头像',
         width: 80,
-        cellRender: { name: 'CellImage' },
         align: 'center',
+        cellRender: { name: 'CellImage' },
       },
-      { fieldName: 'username', title: '账户', minWidth: 100, align: 'center' },
+      { field: 'username', title: '账户', minWidth: 100, align: 'center' },
+      { field: 'dept_name', title: '所属部门', minWidth: 100, align: 'center' },
       { field: 'nickname', title: '昵称', minWidth: 100, align: 'center' },
-      { fieldName: 'phone', title: '手机', minWidth: 120, align: 'center' },
+      { field: 'role_name', title: '角色', minWidth: 100, align: 'center' },
+      { field: 'phone', title: '手机', minWidth: 120, align: 'center' },
+      { field: 'post_name', title: '岗位', minWidth: 100, align: 'center' },
       { field: 'email', title: '邮箱', minWidth: 150, align: 'center' },
       {
         field: 'status',
         title: '状态',
         width: 100,
-        slots: { default: 'status' },
         align: 'center',
+        slots: { default: 'status' },
       },
       { field: 'user_type', title: '用户类型', width: 100, align: 'center' },
       { field: 'created_at', title: '注册时间', width: 160, align: 'center' },
       {
         field: 'action',
         title: '操作',
-        width: 220,
+        width: 200,
         fixed: 'right',
-        slots: { default: 'action' },
         align: 'center',
+        slots: { default: 'action' },
       },
     ],
   },
@@ -204,6 +289,15 @@ async function handleResetPassword(row: any) {
   }
 }
 
+async function handleClearCache(row: any) {
+  try {
+    await clearUserCache({ id: row.id });
+    MessagePlugin.success('清除缓存成功');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function handleSuccess() {
   gridApi.reload();
 }
@@ -212,18 +306,48 @@ function toggleRecycleBin() {
   isRecycleBin.value = !isRecycleBin.value;
   gridApi.reload();
 }
+
+const actionDropdownOptions = [
+  { content: '重置密码', value: 'reset_password' },
+  { content: '更新缓存', value: 'clear_cache' },
+];
+
+function handleActionDropdownClick(data: any, row: any) {
+  if (data.value === 'reset_password') {
+    const dialog = DialogPlugin.confirm({
+      header: '提示',
+      body: '确认重置该用户密码吗？',
+      onConfirm: () => {
+        handleResetPassword(row);
+        dialog.hide();
+      },
+      onClose: () => dialog.hide(),
+    });
+  } else if (data.value === 'clear_cache') {
+    const dialog = DialogPlugin.confirm({
+      header: '提示',
+      body: '确认更新该用户缓存吗？',
+      onConfirm: () => {
+        handleClearCache(row);
+        dialog.hide();
+      },
+      onClose: () => dialog.hide(),
+    });
+  }
+}
 </script>
 
 <template>
-  <Page auto-content-height class="p-4 bg-gray-100">
-    <div class="flex flex-row gap-4 h-full layout-container">
-      <div class="h-full bg-white shadow-sm rounded flex-shrink-0">
+  <Page auto-content-height>
+    <div class="flex h-full flex-row gap-4">
+      <div class="h-full rounded-md bg-background p-2">
         <DeptTree @select="handleDeptSelect" />
       </div>
-      <div class="flex-1 min-w-0 h-full">
+      <div class="h-full min-w-0 flex-1 overflow-hidden p-2">
         <Grid>
           <template #toolbar-tools>
             <Button v-if="!isRecycleBin" theme="primary" @click="handleAdd">
+              <template #icon><AddIcon /></template>
               新增
             </Button>
             <Button
@@ -232,10 +356,17 @@ function toggleRecycleBin() {
               variant="outline"
               @click="handleBatchDelete"
             >
+              <template #icon><DeleteIcon /></template>
               删除
             </Button>
-            <Button v-if="!isRecycleBin" variant="outline"> 导入 </Button>
-            <Button v-if="!isRecycleBin" variant="outline"> 导出 </Button>
+            <Button v-if="!isRecycleBin" variant="outline">
+              <template #icon><UploadIcon /></template>
+              导入
+            </Button>
+            <Button v-if="!isRecycleBin" variant="outline">
+              <template #icon><DownloadIcon /></template>
+              导出
+            </Button>
 
             <Button
               v-if="isRecycleBin"
@@ -247,59 +378,62 @@ function toggleRecycleBin() {
             <Button
               v-if="isRecycleBin"
               theme="danger"
-              variant="outline"
               @click="handleBatchDelete"
             >
               彻底删除
             </Button>
 
-            <Button variant="outline" @click="toggleRecycleBin" class="ml-2">
+            <Button variant="outline" class="ml-2" @click="toggleRecycleBin">
               {{ isRecycleBin ? '返回列表' : '显示回收站' }}
             </Button>
           </template>
 
           <template #status="{ row }">
             <Switch
+              :disabled="isRecycleBin"
               :value="row.status === 1"
               @change="(val) => handleStatusChange(row, val as boolean)"
-              :disabled="isRecycleBin"
             />
           </template>
 
           <template #action="{ row }">
-            <div class="flex gap-2">
+            <div class="flex items-center justify-center gap-2">
               <template v-if="!isRecycleBin">
                 <Button
+                  size="small"
                   theme="primary"
                   variant="text"
-                  size="small"
                   @click="handleEdit(row)"
                 >
+                  <template #icon><EditIcon /></template>
                   编辑
                 </Button>
                 <Popconfirm
                   content="确认删除该用户吗？"
                   @confirm="handleDelete(row)"
                 >
-                  <Button theme="danger" variant="text" size="small">
+                  <Button size="small" theme="danger" variant="text">
+                    <template #icon><DeleteIcon /></template>
                     删除
                   </Button>
                 </Popconfirm>
-                <Popconfirm
-                  content="确认重置该用户密码吗？"
-                  @confirm="handleResetPassword(row)"
+                <Dropdown
+                  :options="actionDropdownOptions"
+                  trigger="click"
+                  @click="(dropdownItem) => handleActionDropdownClick(dropdownItem, row)"
                 >
-                  <Button theme="warning" variant="text" size="small">
-                    重置密码
+                  <Button size="small" theme="default" variant="text">
+                    <template #icon><MoreIcon /></template>
+                    更多
                   </Button>
-                </Popconfirm>
+                </Dropdown>
               </template>
               <template v-else>
                 <Popconfirm
                   content="确认恢复该用户吗？"
                   @confirm="handleRecovery(row)"
                 >
-                  <Button theme="primary" variant="text" size="small">
+                  <Button size="small" theme="primary" variant="text">
                     恢复
                   </Button>
                 </Popconfirm>
@@ -307,7 +441,7 @@ function toggleRecycleBin() {
                   content="确认彻底删除该用户吗？"
                   @confirm="handleDelete(row)"
                 >
-                  <Button theme="danger" variant="text" size="small">
+                  <Button size="small" theme="danger" variant="text">
                     彻底删除
                   </Button>
                 </Popconfirm>
@@ -331,3 +465,4 @@ function toggleRecycleBin() {
   height: 100%;
 }
 </style>
+

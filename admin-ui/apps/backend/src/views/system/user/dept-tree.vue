@@ -4,23 +4,27 @@ import { onMounted, ref } from 'vue';
 import {
   CaretDownSmallIcon,
   CaretRightSmallIcon,
+  SearchIcon,
 } from 'tdesign-icons-vue-next';
-import { Tree } from 'tdesign-vue-next';
+import { Input, Tree } from 'tdesign-vue-next';
 
 import { getDeptTree } from '#/api/system/dept';
 
 const emit = defineEmits(['select']);
 
 const treeData = ref<any[]>([]);
+const searchText = ref('');
+const treeRef = ref();
 
 const treeKeys = {
   value: 'id',
-  label: 'name',
+  label: 'label',
   children: 'children',
 };
 
 // 展开的节点
 const expanded = ref<Array<number | string>>([-1]);
+const isFolding = ref(false);
 
 async function fetchDeptTree() {
   try {
@@ -28,7 +32,7 @@ async function fetchDeptTree() {
     treeData.value = [
       {
         id: -1,
-        name: '所有部门',
+        label: '所有部门',
         children: res || [],
       },
     ];
@@ -42,34 +46,64 @@ function handleNodeClick(context: any) {
   emit('select', node.value === -1 ? '' : node.value);
 }
 
+function toggleExpand() {
+  if (isFolding.value) {
+    expanded.value = [-1]; // Root node id is usually needed, fallback to root
+  } else {
+    // Collect all ids
+    const ids: Array<number | string> = [];
+    const traverse = (nodes: any[]) => {
+      nodes.forEach((node) => {
+        ids.push(node.id);
+        if (node.children) {
+          traverse(node.children);
+        }
+      });
+    };
+    traverse(treeData.value);
+    expanded.value = ids;
+  }
+  isFolding.value = !isFolding.value;
+}
+
 onMounted(() => {
   fetchDeptTree();
 });
 </script>
 
 <template>
-  <div class="h-full w-56 flex flex-col bg-white">
-    <div class="p-3 flex items-center justify-between border-b border-gray-100">
-      <div class="text-[14px] text-gray-700 font-medium">搜索部门</div>
-      <div class="text-[14px] text-blue-500 cursor-pointer hover:text-blue-600">
-        折叠
+  <div class="flex h-full w-56 flex-col bg-white">
+    <div
+      class="flex items-center justify-between gap-2 border-b border-gray-100 p-3"
+    >
+      <Input v-model="searchText" placeholder="搜索部门" class="flex-1">
+        <template #prefixIcon>
+          <SearchIcon />
+        </template>
+      </Input>
+      <div
+        class="cursor-pointer whitespace-nowrap text-[14px] text-blue-500 hover:text-blue-600"
+        @click="toggleExpand"
+      >
+        {{ isFolding ? '展开' : '折叠' }}
       </div>
     </div>
-    <div class="flex-1 overflow-auto p-2 custom-tree-wrap">
+    <div class="custom-tree-wrap flex-1 overflow-auto p-2">
       <Tree
+        ref="treeRef"
+        v-model:expanded="expanded"
         :data="treeData"
+        :filter="(node: any) => !searchText || node.label.includes(searchText)"
         :keys="treeKeys"
         hover
-        :expanded="expanded"
+        activable
+        expand-all
         line
         @click="handleNodeClick"
       >
         <template #icon="{ node }">
           <CaretDownSmallIcon v-if="node.expanded" />
-          <CaretRightSmallIcon
-            v-else-if="node.children && node.children.length > 0"
-          />
-          <span v-else class="w-4 h-4 inline-block"></span>
+          <CaretRightSmallIcon v-else />
         </template>
       </Tree>
     </div>
@@ -77,20 +111,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.custom-tree-wrap :deep(.t-tree) {
-  --td-tree-hover-color: #f3f4f6;
-  --td-tree-active-color: #f3f4f6;
-
-  color: #333;
-}
-
-.custom-tree-wrap :deep(.t-tree__item) {
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.custom-tree-wrap :deep(.t-tree__item--active) {
-  font-weight: 500;
-  color: #165dff;
+.custom-tree-wrap {
+  :deep(.t-tree) {
+    --td-tree-hover-color: #f3f4f6;
+  }
 }
 </style>
