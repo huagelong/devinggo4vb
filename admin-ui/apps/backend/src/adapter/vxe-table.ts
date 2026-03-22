@@ -35,6 +35,7 @@ setupVbenVxeTable({
         round: true,
         showOverflow: true,
         size: 'small',
+        pagerConfig: {},
       } as VxeTableGridOptions,
     });
 
@@ -43,7 +44,12 @@ setupVbenVxeTable({
       renderTableDefault(renderOpts, params) {
         const { props } = renderOpts;
         const { column, row } = params;
-        return h(Image, { src: row[column.field], ...props });
+        return h(Image, {
+          src: row[column.field],
+          style: 'width:36px;height:36px;border-radius:50%;object-fit:cover',
+          fit: 'cover',
+          ...props,
+        });
       },
     });
 

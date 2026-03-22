@@ -64,7 +64,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         component: 'ApiTreeSelect',
         componentProps: {
           api: getDeptTree,
-          labelField: 'name',
+          labelField: 'label',
           valueField: 'id',
           childrenField: 'children',
           placeholder: '请选择所属部门',
@@ -135,6 +135,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         fieldName: 'created_at',
         label: '注册时间',
         component: 'RangePicker',
+        formItemClass: 'col-span-2',
         componentProps: {
           placeholder: ['请选择开始时间', '请选择结束时间'],
         },
@@ -345,7 +346,7 @@ function handleActionDropdownClick(data: any, row: any) {
       </div>
       <div class="h-full min-w-0 flex-1 overflow-hidden p-2">
         <Grid>
-          <template #toolbar-tools>
+          <template #toolbar-actions>
             <Button v-if="!isRecycleBin" theme="primary" @click="handleAdd">
               <template #icon><AddIcon /></template>
               新增
@@ -383,7 +384,7 @@ function handleActionDropdownClick(data: any, row: any) {
               彻底删除
             </Button>
 
-            <Button variant="outline" class="ml-2" @click="toggleRecycleBin">
+            <Button variant="outline" @click="toggleRecycleBin">
               {{ isRecycleBin ? '返回列表' : '显示回收站' }}
             </Button>
           </template>
