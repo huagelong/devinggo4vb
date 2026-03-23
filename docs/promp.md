@@ -3024,4 +3024,7 @@
     "takeUpTime": 275
 }
 ```
-
+-----------------
+参考文档 https://doc.vben.pro/components/common-ui/vben-vxe-table.html；https://doc.vben.pro/components/common-ui/vben-form.html； 将表格“	
+所属部门”，“角色”，“岗位” 字段补全，编辑时可展示选择的“	
+所属部门”，“角色”，“岗位” ；搜索时可多选，可树型选择；接口分析参考 modules/system/api/system 目录
