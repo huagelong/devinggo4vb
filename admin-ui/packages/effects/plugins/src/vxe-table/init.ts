@@ -34,9 +34,6 @@ import {
   // VxeSwitch,
   // VxeTextarea,
 } from 'vxe-pc-ui';
-import enUS from 'vxe-pc-ui/lib/language/en-US';
-// 导入默认的语言
-import zhCN from 'vxe-pc-ui/lib/language/zh-CN';
 import {
   VxeColgroup,
   VxeColumn,
@@ -107,6 +104,12 @@ export function initVxeTable() {
   isInit = true;
 }
 
+import { merge } from '@vben-core/shared/utils';
+import enUSUi from 'vxe-pc-ui/lib/language/en-US';
+import zhCNUi from 'vxe-pc-ui/lib/language/zh-CN';
+import enUSTable from 'vxe-table/lib/locale/lang/en-US';
+import zhCNTable from 'vxe-table/lib/locale/lang/zh-CN';
+
 export function setupVbenVxeTable(setupOptions: SetupVxeTable) {
   const { configVxeTable, useVbenForm } = setupOptions;
 
@@ -115,7 +118,10 @@ export function setupVbenVxeTable(setupOptions: SetupVxeTable) {
 
   const { isDark, locale } = usePreferences();
 
-  const localMap = {
+  const zhCN = merge(zhCNTable, zhCNUi);
+  const enUS = merge(enUSTable, enUSUi);
+
+  const localMap: Record<string, any> = {
     'zh-CN': zhCN,
     'en-US': enUS,
   };

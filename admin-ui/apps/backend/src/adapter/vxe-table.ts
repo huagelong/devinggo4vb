@@ -59,7 +59,7 @@ setupVbenVxeTable({
         const { props } = renderOpts;
         return h(
           Button,
-          { size: 'small', theme: 'primary', variant: 'text' },
+          { size: 'small', theme: 'primary', variant: 'base' },
           { default: () => props?.text },
         );
       },

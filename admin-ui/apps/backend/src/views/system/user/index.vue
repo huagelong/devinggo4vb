@@ -9,6 +9,7 @@ import {
   DownloadIcon,
   EditIcon,
   MoreIcon,
+  RollbackIcon,
   UploadIcon,
 } from 'tdesign-icons-vue-next';
 import {
@@ -18,6 +19,7 @@ import {
   MessagePlugin,
   Popconfirm,
   Switch,
+  Tooltip,
 } from 'tdesign-vue-next';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -347,46 +349,55 @@ function handleActionDropdownClick(data: any, row: any) {
       <div class="h-full min-w-0 flex-1 overflow-hidden p-2">
         <Grid>
           <template #toolbar-actions>
-            <Button v-if="!isRecycleBin" theme="primary" @click="handleAdd">
-              <template #icon><AddIcon /></template>
-              新增
-            </Button>
-            <Button
-              v-if="!isRecycleBin"
-              theme="danger"
-              variant="outline"
-              @click="handleBatchDelete"
-            >
-              <template #icon><DeleteIcon /></template>
-              删除
-            </Button>
-            <Button v-if="!isRecycleBin" variant="outline">
-              <template #icon><UploadIcon /></template>
-              导入
-            </Button>
-            <Button v-if="!isRecycleBin" variant="outline">
-              <template #icon><DownloadIcon /></template>
-              导出
-            </Button>
+            <div class="flex gap-2">
+              <Button v-if="!isRecycleBin" theme="primary" @click="handleAdd">
+                <template #icon><AddIcon /></template>
+                新增
+              </Button>
+              <Button
+                v-if="!isRecycleBin"
+                theme="danger"
+                variant="outline"
+                @click="handleBatchDelete"
+              >
+                <template #icon><DeleteIcon /></template>
+                删除
+              </Button>
+              <Button v-if="!isRecycleBin" variant="outline">
+                <template #icon><UploadIcon /></template>
+                导入
+              </Button>
+              <Button v-if="!isRecycleBin" variant="outline">
+                <template #icon><DownloadIcon /></template>
+                导出
+              </Button>
 
-            <Button
-              v-if="isRecycleBin"
-              theme="success"
-              @click="handleBatchRecovery"
-            >
-              恢复
-            </Button>
-            <Button
-              v-if="isRecycleBin"
-              theme="danger"
-              @click="handleBatchDelete"
-            >
-              彻底删除
-            </Button>
+              <Button
+                v-if="isRecycleBin"
+                theme="success"
+                @click="handleBatchRecovery"
+              >
+                恢复
+              </Button>
+              <Button
+                v-if="isRecycleBin"
+                theme="danger"
+                @click="handleBatchDelete"
+              >
+                彻底删除
+              </Button>
+            </div>
+          </template>
 
-            <Button variant="outline" @click="toggleRecycleBin">
-              {{ isRecycleBin ? '返回列表' : '显示回收站' }}
-            </Button>
+          <template #toolbar-tools>
+            <Tooltip :content="isRecycleBin ? '返回列表' : '显示回收站'">
+              <Button shape="square" variant="outline" @click="toggleRecycleBin">
+                <template #icon>
+                  <RollbackIcon v-if="isRecycleBin" />
+                  <DeleteIcon v-else />
+                </template>
+              </Button>
+            </Tooltip>
           </template>
 
           <template #status="{ row }">
@@ -403,7 +414,7 @@ function handleActionDropdownClick(data: any, row: any) {
                 <Button
                   size="small"
                   theme="primary"
-                  variant="text"
+                  variant="outline"
                   @click="handleEdit(row)"
                 >
                   <template #icon><EditIcon /></template>
@@ -413,7 +424,7 @@ function handleActionDropdownClick(data: any, row: any) {
                   content="确认删除该用户吗？"
                   @confirm="handleDelete(row)"
                 >
-                  <Button size="small" theme="danger" variant="text">
+                  <Button size="small" theme="danger" variant="outline">
                     <template #icon><DeleteIcon /></template>
                     删除
                   </Button>
@@ -423,7 +434,7 @@ function handleActionDropdownClick(data: any, row: any) {
                   trigger="click"
                   @click="(dropdownItem) => handleActionDropdownClick(dropdownItem, row)"
                 >
-                  <Button size="small" theme="default" variant="text">
+                  <Button size="small" theme="default" variant="outline">
                     <template #icon><MoreIcon /></template>
                     更多
                   </Button>
@@ -434,7 +445,7 @@ function handleActionDropdownClick(data: any, row: any) {
                   content="确认恢复该用户吗？"
                   @confirm="handleRecovery(row)"
                 >
-                  <Button size="small" theme="primary" variant="text">
+                  <Button size="small" theme="primary" variant="outline">
                     恢复
                   </Button>
                 </Popconfirm>
@@ -442,7 +453,7 @@ function handleActionDropdownClick(data: any, row: any) {
                   content="确认彻底删除该用户吗？"
                   @confirm="handleDelete(row)"
                 >
-                  <Button size="small" theme="danger" variant="text">
+                  <Button size="small" theme="danger" variant="outline">
                     彻底删除
                   </Button>
                 </Popconfirm>
