@@ -74,6 +74,17 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     }),
   );
 
+  // 处理业务 code 1000：未登录或 token 过期，直接跳转登录页
+  client.addResponseInterceptor({
+    rejected: async (error) => {
+      const responseData = error?.response?.data ?? {};
+      if (responseData?.code === 1000) {
+        await doReAuthenticate();
+      }
+      throw error;
+    },
+  });
+
   // token过期的处理
   client.addResponseInterceptor(
     authenticateResponseInterceptor({

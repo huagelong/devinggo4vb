@@ -21,7 +21,7 @@ internal/packed/build_pack_data.go
 /logs/
 **/*.log
 .init.lock
-
+.claude/worktrees/
 /resource/public/admin/
 /resource/public/uploads/image/
 /resource/public/uploads/text/
