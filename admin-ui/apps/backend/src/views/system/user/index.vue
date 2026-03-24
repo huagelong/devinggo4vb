@@ -8,7 +8,10 @@ import {
   DeleteIcon,
   DownloadIcon,
   EditIcon,
+  FullscreenExitIcon,
+  FullscreenIcon,
   MoreIcon,
+  RefreshIcon,
   RollbackIcon,
   SearchIcon,
   SettingIcon,
@@ -55,6 +58,22 @@ import UserModal from './user-modal.vue';
 const currentDeptId = ref<number | string>('');
 const isRecycleBin = ref(false);
 const userModalRef = ref();
+const isFullscreen = ref(false);
+const tableContainerRef = ref<HTMLElement>();
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+    isFullscreen.value = false;
+  } else {
+    tableContainerRef.value?.requestFullscreen();
+    isFullscreen.value = true;
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  isFullscreen.value = !!document.fullscreenElement;
+});
 
 const searchForm = reactive({
   username: '',
@@ -464,7 +483,7 @@ onMounted(() => {
           </Form>
         </div>
 
-        <div class="flex min-h-0 flex-1 flex-col rounded-md bg-white p-4">
+        <div ref="tableContainerRef" class="flex min-h-0 flex-1 flex-col rounded-md bg-white p-4">
           <div class="mb-3 flex items-center justify-between">
             <Space>
               <template v-if="!isRecycleBin">
@@ -491,6 +510,19 @@ onMounted(() => {
               </template>
             </Space>
             <div class="flex items-center gap-2">
+              <Tooltip content="刷新">
+                <Button shape="square" variant="outline" @click="fetchTableData">
+                  <template #icon><RefreshIcon /></template>
+                </Button>
+              </Tooltip>
+              <Tooltip :content="isFullscreen ? '退出全屏' : '全屏'">
+                <Button shape="square" variant="outline" @click="toggleFullscreen">
+                  <template #icon>
+                    <FullscreenExitIcon v-if="isFullscreen" />
+                    <FullscreenIcon v-else />
+                  </template>
+                </Button>
+              </Tooltip>
               <Tooltip :content="isRecycleBin ? '返回列表' : '显示回收站'">
                 <Button shape="square" variant="outline" @click="toggleRecycleBin">
                   <template #icon>
