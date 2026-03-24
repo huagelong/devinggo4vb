@@ -64,7 +64,7 @@ func (c *roleController) Recycle(ctx context.Context, in *system.RecycleRoleReq)
 
 func (c *roleController) List(ctx context.Context, in *system.ListRoleReq) (out *system.ListRoleRes, err error) {
 	out = &system.ListRoleRes{}
-	rs, err := service.SystemRole().GetList(ctx, &req.SystemRoleSearch{}, true)
+	rs, err := service.SystemRole().GetList(ctx, &req.SystemRoleSearch{}, false)
 	if err != nil {
 		return
 	}
