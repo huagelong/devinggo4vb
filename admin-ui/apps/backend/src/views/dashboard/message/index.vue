@@ -43,8 +43,8 @@ const tableData = ref([]);
 const tableLoading = ref(false);
 const selectedRowKeys = ref<any[]>([]);
 
-const columns = [
-  { colKey: 'row-select', type: 'multiple', width: 50 },
+const columns: any[] = [
+  { colKey: 'row-select', type: 'multiple' as const, width: 50 },
   { title: '发送人', colKey: 'send_user.nickname', width: 120 },
   { title: '消息标题', colKey: 'title', ellipsis: true },
   { title: '消息类型', colKey: 'content_type', width: 100 },

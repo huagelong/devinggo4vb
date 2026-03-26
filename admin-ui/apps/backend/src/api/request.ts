@@ -45,7 +45,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   /**
    * 刷新token逻辑（enableRefreshToken 默认关闭，此函数暂不使用）
    */
-  async function doRefreshToken() {
+  async function doRefreshToken(): Promise<string> {
     // enableRefreshToken 默认为 false，此处不会被调用
     throw new Error('Refresh token is not supported');
   }

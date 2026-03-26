@@ -1,5 +1,5 @@
 ﻿<script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
@@ -12,24 +12,19 @@ import {
   FullscreenIcon,
   MoreIcon,
   RefreshIcon,
-  RollbackIcon,
   SearchIcon,
-  SettingIcon,
   UploadIcon,
 } from 'tdesign-icons-vue-next';
 import {
   Button,
-  Checkbox,
-  CheckboxGroup,
   DateRangePicker,
-  DialogPlugin,
+  Dialog,
   Dropdown,
   Form,
   FormItem,
   Input,
   MessagePlugin,
   Popconfirm,
-  Popup,
   Select,
   Space,
   Switch,
@@ -38,170 +33,125 @@ import {
   TreeSelect,
 } from 'tdesign-vue-next';
 
+import CrudToolbar from '#/components/crud/crud-toolbar.vue';
 import { getDeptTree } from '#/api/system/dept';
-import { getDictList } from '#/api/system/dict';
 import { getPostList } from '#/api/system/post';
 import { getRoleList } from '#/api/system/role';
-import {
-  changeUserStatus,
-  clearUserCache,
-  deleteUser,
-  getRecycleUserList,
-  getUserList,
-  realDeleteUser,
-  recoveryUser,
-  resetPassword,
-} from '#/api/system/user';
+import { useDictOptions } from '#/composables/crud/use-dict-options';
 
-import DeptTree from './dept-tree.vue';
-import UserModal from './user-modal.vue';
+import DeptTree from './components/dept-tree.vue';
+import UserModal from './components/user-modal.vue';
+import { createUserColumnOptions, createUserTableColumns, userActionDropdownOptions } from './schemas';
+import { useUserActions } from './use-user-actions';
+import { useUserCrud } from './use-user-crud';
 
 const currentDeptId = ref<number | string>('');
-const isRecycleBin = ref(false);
 const userModalRef = ref();
-const isFullscreen = ref(false);
 const tableContainerRef = ref<HTMLElement>();
-
-function toggleFullscreen() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
-    isFullscreen.value = false;
-  } else {
-    tableContainerRef.value?.requestFullscreen();
-    isFullscreen.value = true;
-  }
-}
-
-document.addEventListener('fullscreenchange', () => {
-  isFullscreen.value = !!document.fullscreenElement;
-});
-
-const searchForm = reactive({
-  username: '',
-  dept_id: undefined as number | undefined,
-  role_id: undefined as number | undefined,
-  phone: '',
-  post_id: undefined as number | undefined,
-  email: '',
-  status: undefined as number | undefined,
-  user_type: undefined as string | undefined,
-  created_at: [] as string[],
-});
-
-const tableData = ref<any[]>([]);
-const loading = ref(false);
-const selectedRowKeys = ref<Array<number | string>>([]);
-const selectOnRowClick = ref(false);
-
-const pagination = reactive({
-  current: 1,
-  pageSize: 20,
-  total: 0,
-  showJumper: true,
-  showPageSize: true,
-  pageSizeOptions: [10, 20, 50, 100],
-});
+const isFullscreen = ref(false);
 
 const roleOptions = ref<any[]>([]);
 const postOptions = ref<any[]>([]);
 const deptTreeData = ref<any[]>([]);
 const statusOptions = ref<any[]>([]);
 const userTypeOptions = ref<any[]>([]);
+const homePageOptions = ref<any[]>([]);
 
-function dictToOptions(list: any[]) {
-  return (list || []).map((item) => ({ label: item.title, value: item.key }));
+const columns: any[] = createUserTableColumns();
+const columnOptions = createUserColumnOptions(columns);
+const allColumnKeys = columnOptions.map((item) => item.value);
+const visibleColumns = ref<string[]>([...allColumnKeys]);
+
+const displayColumns = computed({
+  get: () => ['row-select', ...visibleColumns.value],
+  set: (value: string[]) => {
+    visibleColumns.value = value.filter((item) => item !== 'row-select');
+  },
+});
+
+const {
+  buildRequestParams,
+  clearSelectedRowKeys,
+  fetchTableData,
+  handleDeptSelect,
+  handlePageChange,
+  handleResetWithDept,
+  handleSearch,
+  handleSelectChange,
+  isRecycleBin,
+  loading,
+  pagination,
+  searchForm,
+  selectedRowKeys,
+  tableData,
+  toggleRecycleBin,
+} = useUserCrud(currentDeptId);
+
+const {
+  exportLoading,
+  handleActionDropdownClick,
+  handleBatchDelete,
+  handleBatchRecovery,
+  handleClearCache,
+  handleDelete,
+  handleDownloadTemplate,
+  handleExport,
+  handleImportChange,
+  handleRecovery,
+  handleSetHomePage,
+  handleStatusChange,
+  importInputRef,
+  importLoading,
+  isSuperAdmin,
+  selectedHomePage,
+  setHomePageLoading,
+  setHomePageVisible,
+  templateLoading,
+  triggerImport,
+} = useUserActions({
+  buildRequestParams,
+  clearSelectedRowKeys,
+  fetchTableData,
+  isRecycleBin,
+  selectedRowKeys,
+});
+
+void importInputRef;
+
+const { getDictOptions } = useDictOptions();
+
+function handleFullscreenChange() {
+  isFullscreen.value = !!document.fullscreenElement;
+}
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+    return;
+  }
+  tableContainerRef.value?.requestFullscreen();
 }
 
 async function fetchOptions() {
   try {
-    const [roleRes, postRes, deptRes, statusRes, userTypeRes] = await Promise.all([
+    const [roleRes, postRes, deptRes, statusDict, userTypeDict, dashboardDict] = await Promise.all([
       getRoleList().catch(() => null),
       getPostList().catch(() => null),
       getDeptTree().catch(() => null),
-      getDictList('data_status').catch(() => null),
-      getDictList('user_type').catch(() => null),
+      getDictOptions('data_status'),
+      getDictOptions('user_type'),
+      getDictOptions('dashboard'),
     ]);
+
     roleOptions.value = roleRes?.items || roleRes || [];
     postOptions.value = postRes?.items || postRes || [];
     deptTreeData.value = deptRes || [];
-    statusOptions.value = dictToOptions(statusRes);
-    userTypeOptions.value = dictToOptions(userTypeRes);
+    statusOptions.value = statusDict || [];
+    userTypeOptions.value = userTypeDict || [];
+    homePageOptions.value = dashboardDict || [];
   } catch (error) {
     console.error(error);
   }
-}
-
-async function fetchTableData() {
-  loading.value = true;
-  try {
-    const params: any = {
-      page: pagination.current,
-      limit: pagination.pageSize,
-    };
-    if (searchForm.username) params.username = searchForm.username;
-    if (searchForm.role_id !== undefined) params.role_id = searchForm.role_id;
-    if (searchForm.phone) params.phone = searchForm.phone;
-    if (searchForm.post_id !== undefined) params.post_id = searchForm.post_id;
-    if (searchForm.email) params.email = searchForm.email;
-    if (searchForm.status !== undefined) params.status = searchForm.status;
-    if (searchForm.user_type) params.user_type = searchForm.user_type;
-    if (searchForm.created_at?.length === 2 && searchForm.created_at[0]) {
-      params.created_at = searchForm.created_at;
-    }
-    if (currentDeptId.value) {
-      params.dept_id = currentDeptId.value;
-    } else if (searchForm.dept_id !== undefined) {
-      params.dept_id = searchForm.dept_id;
-    }
-
-    const res = isRecycleBin.value
-      ? await getRecycleUserList(params)
-      : await getUserList(params);
-
-    tableData.value = res?.items || [];
-    pagination.total = res?.total || 0;
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-}
-
-function handleSearch() {
-  pagination.current = 1;
-  fetchTableData();
-}
-
-function handleReset() {
-  searchForm.username = '';
-  searchForm.dept_id = undefined;
-  searchForm.role_id = undefined;
-  searchForm.phone = '';
-  searchForm.post_id = undefined;
-  searchForm.email = '';
-  searchForm.status = undefined;
-  searchForm.user_type = undefined;
-  searchForm.created_at = [];
-  currentDeptId.value = '';
-  pagination.current = 1;
-  fetchTableData();
-}
-
-function handlePageChange(pageInfo: { current: number; pageSize: number }) {
-  pagination.current = pageInfo.current;
-  pagination.pageSize = pageInfo.pageSize;
-  fetchTableData();
-}
-
-function handleSelectChange(value: Array<number | string>, ctx: any) {
-  selectedRowKeys.value = value;
-  console.log(value, ctx);
-}
-
-function handleDeptSelect(deptId: number | string) {
-  currentDeptId.value = deptId;
-  pagination.current = 1;
-  fetchTableData();
 }
 
 function handleAdd() {
@@ -209,182 +159,25 @@ function handleAdd() {
 }
 
 function handleEdit(row: any) {
+  if (isSuperAdmin(row)) {
+    MessagePlugin.warning('超级管理员不可编辑');
+    return;
+  }
   userModalRef.value?.open(row);
-}
-
-async function handleDelete(row: any) {
-  try {
-    await (isRecycleBin.value ? realDeleteUser([row.id]) : deleteUser([row.id]));
-    MessagePlugin.success('删除成功');
-    fetchTableData();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleBatchDelete() {
-  if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请选择需要操作的数据');
-    return;
-  }
-  try {
-    await (isRecycleBin.value
-      ? realDeleteUser(selectedRowKeys.value as number[])
-      : deleteUser(selectedRowKeys.value as number[]));
-    MessagePlugin.success('操作成功');
-    selectedRowKeys.value = [];
-    fetchTableData();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleRecovery(row: any) {
-  try {
-    await recoveryUser([row.id]);
-    MessagePlugin.success('恢复成功');
-    fetchTableData();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleBatchRecovery() {
-  if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请选择需要操作的数据');
-    return;
-  }
-  try {
-    await recoveryUser(selectedRowKeys.value as number[]);
-    MessagePlugin.success('恢复成功');
-    selectedRowKeys.value = [];
-    fetchTableData();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleStatusChange(row: any, val: boolean) {
-  const status = val ? 1 : 2;
-  try {
-    await changeUserStatus({ id: row.id, status });
-    MessagePlugin.success('更新状态成功');
-    fetchTableData();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleResetPassword(row: any) {
-  try {
-    await resetPassword({ id: row.id });
-    MessagePlugin.success('密码重置成功');
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function handleClearCache(row: any) {
-  try {
-    await clearUserCache({ id: row.id });
-    MessagePlugin.success('清除缓存成功');
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 function handleSuccess() {
   fetchTableData();
 }
 
-function toggleRecycleBin() {
-  isRecycleBin.value = !isRecycleBin.value;
-  selectedRowKeys.value = [];
-  pagination.current = 1;
-  fetchTableData();
-}
-
-const actionDropdownOptions = [
-  { content: '重置密码', value: 'reset_password' },
-  { content: '更新缓存', value: 'clear_cache' },
-];
-
-function handleActionDropdownClick(data: any, row: any) {
-  if (data.value === 'reset_password') {
-    const dialog = DialogPlugin.confirm({
-      header: '提示',
-      body: '确认重置该用户密码吗？',
-      onConfirm: () => {
-        handleResetPassword(row);
-        dialog.hide();
-      },
-      onClose: () => dialog.hide(),
-    });
-  } else if (data.value === 'clear_cache') {
-    const dialog = DialogPlugin.confirm({
-      header: '提示',
-      body: '确认更新该用户缓存吗？',
-      onConfirm: () => {
-        handleClearCache(row);
-        dialog.hide();
-      },
-      onClose: () => dialog.hide(),
-    });
-  }
-}
-
-const columns: any[] = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-    width: 50,
-    align: 'center',
-  },
-  { colKey: 'avatar', title: '头像', width: 80, align: 'center' },
-  { colKey: 'username', title: '账户', minWidth: 100, align: 'center' },
-  { colKey: 'dept_name', title: '所属部门', minWidth: 100, align: 'center' },
-  { colKey: 'nickname', title: '昵称', minWidth: 100, align: 'center' },
-  { colKey: 'role_name', title: '角色', minWidth: 100, align: 'center' },
-  { colKey: 'phone', title: '手机', minWidth: 120, align: 'center' },
-  { colKey: 'post_name', title: '岗位', minWidth: 100, align: 'center' },
-  { colKey: 'email', title: '邮箱', minWidth: 150, align: 'center' },
-  { colKey: 'status', title: '状态', width: 100, align: 'center' },
-  { colKey: 'user_type', title: '用户类型', width: 100, align: 'center' },
-  { colKey: 'created_at', title: '注册时间', width: 160, align: 'center' },
-  { colKey: 'action', title: '操作', width: 220, fixed: 'right', align: 'center' },
-];
-
-const _displayColumns = ref<string[]>(
-  columns
-    .filter((c) => c.colKey !== 'row-select')
-    .map((c) => c.colKey as string),
-);
-
-// 始终在最前面保留 row-select 列
-const displayColumns = computed({
-  get: () => ['row-select', ..._displayColumns.value],
-  set: (val: string[]) => {
-    _displayColumns.value = val.filter((k) => k !== 'row-select');
-  },
-});
-
-const columnOptions = columns
-  .filter((c) => c.colKey !== 'row-select' && c.title)
-  .map((c) => ({ label: c.title as string, value: c.colKey as string }));
-
-const allColumnKeys = columnOptions.map((c) => c.value);
-const isAllSelected = computed(() => _displayColumns.value.length === allColumnKeys.length);
-const isIndeterminate = computed(
-  () => _displayColumns.value.length > 0 && _displayColumns.value.length < allColumnKeys.length,
-);
-
-function toggleSelectAll(checked: boolean) {
-  _displayColumns.value = checked ? [...allColumnKeys] : [];
-}
-
 onMounted(() => {
   fetchOptions();
   fetchTableData();
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
 });
 </script>
 
@@ -478,7 +271,7 @@ onMounted(() => {
               </FormItem>
             </div>
             <div class="flex justify-end gap-2 pt-2">
-              <Button theme="default" @click="handleReset">重置</Button>
+              <Button theme="default" @click="handleResetWithDept">重置</Button>
               <Button theme="primary" @click="handleSearch">
                 <template #icon><SearchIcon /></template>
                 查询
@@ -499,11 +292,19 @@ onMounted(() => {
                   <template #icon><DeleteIcon /></template>
                   删除
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" :loading="importLoading" @click="triggerImport">
                   <template #icon><UploadIcon /></template>
                   导入
                 </Button>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  :loading="templateLoading"
+                  @click="handleDownloadTemplate"
+                >
+                  <template #icon><DownloadIcon /></template>
+                  导入模板
+                </Button>
+                <Button variant="outline" :loading="exportLoading" @click="handleExport">
                   <template #icon><DownloadIcon /></template>
                   导出
                 </Button>
@@ -513,12 +314,8 @@ onMounted(() => {
                 <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
               </template>
             </Space>
+
             <div class="flex items-center gap-2">
-              <Tooltip content="刷新">
-                <Button shape="square" variant="outline" @click="fetchTableData">
-                  <template #icon><RefreshIcon /></template>
-                </Button>
-              </Tooltip>
               <Tooltip :content="isFullscreen ? '退出全屏' : '全屏'">
                 <Button shape="square" variant="outline" @click="toggleFullscreen">
                   <template #icon>
@@ -527,38 +324,14 @@ onMounted(() => {
                   </template>
                 </Button>
               </Tooltip>
-              <Tooltip :content="isRecycleBin ? '返回列表' : '显示回收站'">
-                <Button shape="square" variant="outline" @click="toggleRecycleBin">
-                  <template #icon>
-                    <RollbackIcon v-if="isRecycleBin" />
-                    <DeleteIcon v-else />
-                  </template>
-                </Button>
-              </Tooltip>
-              <Tooltip content="列配置">
-                <Popup placement="bottom-right" trigger="click">
-                  <Button shape="square" variant="outline">
-                    <template #icon><SettingIcon /></template>
-                  </Button>
-                  <template #content>
-                    <div class="min-w-[120px] p-3">
-                      <Checkbox
-                        :checked="isAllSelected"
-                        :indeterminate="isIndeterminate"
-                        @change="(val: any) => toggleSelectAll(val as boolean)"
-                      >
-                        全选
-                      </Checkbox>
-                      <t-divider style="margin: 8px 0" />
-                      <CheckboxGroup
-                        v-model="_displayColumns"
-                        :options="columnOptions"
-                        layout="vertical"
-                      />
-                    </div>
-                  </template>
-                </Popup>
-              </Tooltip>
+
+              <CrudToolbar
+                v-model="visibleColumns"
+                :column-options="columnOptions"
+                :is-recycle-bin="isRecycleBin"
+                @refresh="fetchTableData"
+                @toggle-recycle="toggleRecycleBin"
+              />
             </div>
           </div>
 
@@ -569,12 +342,11 @@ onMounted(() => {
             :loading="loading"
             :pagination="pagination"
             :selected-row-keys="selectedRowKeys"
-            :select-on-row-click="selectOnRowClick"
             row-key="id"
             hover
             stripe
             @page-change="handlePageChange"
-            @select-change="handleSelectChange"
+            @select-change="(keys: any) => handleSelectChange(keys as Array<number | string>)"
           >
             <template #avatar="{ row }">
               <img
@@ -588,44 +360,58 @@ onMounted(() => {
 
             <template #status="{ row }">
               <Switch
-                :disabled="isRecycleBin"
+                :disabled="isRecycleBin || isSuperAdmin(row)"
                 :value="row.status === 1"
-                @change="(val: any) => handleStatusChange(row, val as boolean)"
+                @change="(value: any) => handleStatusChange(row, Boolean(value))"
               />
             </template>
 
             <template #action="{ row }">
               <div class="flex items-center justify-center gap-1">
                 <template v-if="!isRecycleBin">
-                  <Button
-                    size="small"
-                    theme="primary"
-                    variant="outline"
-                    @click="handleEdit(row)"
-                  >
-                    <template #icon><EditIcon /></template>
-                    编辑
-                  </Button>
-                  <Popconfirm
-                    content="确认删除该用户吗？"
-                    @confirm="handleDelete(row)"
-                  >
-                    <Button size="small" theme="danger" variant="outline">
-                      <template #icon><DeleteIcon /></template>
-                      删除
+                  <template v-if="isSuperAdmin(row)">
+                    <Button
+                      size="small"
+                      theme="default"
+                      variant="outline"
+                      @click="handleClearCache(row)"
+                    >
+                      <template #icon><RefreshIcon /></template>
+                      更新缓存
                     </Button>
-                  </Popconfirm>
-                  <Dropdown
-                    :options="actionDropdownOptions"
-                    trigger="click"
-                    @click="(item: any) => handleActionDropdownClick(item, row)"
-                  >
-                    <Button size="small" theme="default" variant="outline">
-                      <template #icon><MoreIcon /></template>
-                      更多
+                  </template>
+                  <template v-else>
+                    <Button
+                      size="small"
+                      theme="primary"
+                      variant="outline"
+                      @click="handleEdit(row)"
+                    >
+                      <template #icon><EditIcon /></template>
+                      编辑
                     </Button>
-                  </Dropdown>
+                    <Popconfirm
+                      content="确认删除该用户吗？"
+                      @confirm="handleDelete(row)"
+                    >
+                      <Button size="small" theme="danger" variant="outline">
+                        <template #icon><DeleteIcon /></template>
+                        删除
+                      </Button>
+                    </Popconfirm>
+                    <Dropdown
+                      :options="userActionDropdownOptions"
+                      trigger="click"
+                      @click="(item: any) => handleActionDropdownClick(item, row)"
+                    >
+                      <Button size="small" theme="default" variant="outline">
+                        <template #icon><MoreIcon /></template>
+                        更多
+                      </Button>
+                    </Dropdown>
+                  </template>
                 </template>
+
                 <template v-else>
                   <Popconfirm
                     content="确认恢复该用户吗？"
@@ -651,8 +437,41 @@ onMounted(() => {
       </div>
     </div>
 
+    <input
+      ref="importInputRef"
+      type="file"
+      accept=".xlsx,.xls,.csv"
+      class="hidden"
+      @change="handleImportChange"
+    />
+
+    <Dialog
+      v-model:visible="setHomePageVisible"
+      width="520px"
+      header="设置用户后台首页"
+      destroy-on-close
+    >
+      <Form label-width="90px">
+        <FormItem label="用户首页">
+          <Select
+            v-model="selectedHomePage"
+            :options="homePageOptions"
+            placeholder="请选择用户首页"
+            clearable
+            class="w-full"
+          />
+        </FormItem>
+      </Form>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <Button theme="default" @click="setHomePageVisible = false">取消</Button>
+          <Button theme="primary" :loading="setHomePageLoading" @click="handleSetHomePage">
+            保存
+          </Button>
+        </div>
+      </template>
+    </Dialog>
+
     <UserModal ref="userModalRef" @success="handleSuccess" />
   </Page>
 </template>
-
-

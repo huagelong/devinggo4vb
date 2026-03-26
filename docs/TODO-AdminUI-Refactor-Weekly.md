@@ -5,6 +5,15 @@
 
 ---
 
+## 执行进度（2026-03-26）
+
+- 已完成：Week 1 除 `user` 页冒烟测试外全部项（`typecheck` 已通过）。
+- 已完成：Week 2 5 项 ToDo 全部落地（`user + post` 双页已接入统一模式）。
+- 已补充文档：`docs/ADMIN-Common-CRUD-Guide.md`。
+- 当前阻塞：`user` 页冒烟测试尚未在联调环境执行完成。
+
+---
+
 ## 执行边界（固定）
 
 - 不迁移页面：`system/module`、`system/code`。
@@ -19,14 +28,14 @@
 
 ToDo：
 
-- [ ] 修复 `system/user` 分页参数统一为 `page/pageSize`。
-- [ ] 补齐 `system/user` 与旧版对齐项：
-- [ ] 超级管理员保护逻辑（禁删/禁用等）。
-- [ ] 设置首页能力。
-- [ ] 导入/导出能力。
-- [ ] 编辑回填一致性（必要时补读详情）。
-- [ ] 产出页面模板说明（`index + modal + schemas + api` 标准结构）。
-- [ ] 完成一次 `typecheck` 与 `user` 页冒烟测试。
+- [x] 修复 `system/user` 分页参数统一为 `page/pageSize`。
+- [x] 补齐 `system/user` 与旧版对齐项：
+- [x] 超级管理员保护逻辑（禁删/禁用等）。
+- [x] 设置首页能力。
+- [x] 导入/导出能力。
+- [x] 编辑回填一致性（必要时补读详情）。
+- [x] 产出页面模板说明（`index + modal + schemas + api` 标准结构）。
+- [ ] 完成一次 `typecheck` 与 `user` 页冒烟测试。（已完成 `typecheck`，冒烟测试待联调环境执行）
 
 本周输出：
 
@@ -45,11 +54,11 @@ ToDo：
 
 ToDo：
 
-- [ ] 新增 `use-crud-page.ts`（查询、分页、loading、刷新、批量选中）。
-- [ ] 新增 `use-dict-options.ts`（字典请求、缓存、options 转换）。
-- [ ] 新增通用工具栏组件（刷新、回收站切换、列显隐）。
-- [ ] 在 `user` 页接入公共能力，完成第一轮去重。
-- [ ] 选 1 个占位页试接入模板（建议 `post`）。
+- [x] 新增 `use-crud-page.ts`（查询、分页、loading、刷新、批量选中）。
+- [x] 新增 `use-dict-options.ts`（字典请求、缓存、options 转换）。
+- [x] 新增通用工具栏组件（刷新、回收站切换、列显隐）。
+- [x] 在 `user` 页接入公共能力，完成第一轮去重。
+- [x] 选 1 个占位页试接入模板（建议 `post`）。
 
 本周输出：
 
@@ -233,4 +242,3 @@ ToDo：
 - 里程碑 M3：Week 6 结束，P1 页面闭环。  
 - 里程碑 M4：Week 8 结束，范围内页面全部完成。  
 - 里程碑 M5：Week 9 结束，进入稳态开发模式。  
-

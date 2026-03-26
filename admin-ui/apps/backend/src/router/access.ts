@@ -17,8 +17,10 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
 
   // 修复 Vben5 generateRoutesByBackend 中 fallback 组件路径没有带 views/ 导致的 undefined
   // 导致在加载未实现的后端路由组件时 vue-router 崩溃，菜单整个空白
-  pageMap['/_core/fallback/not-found.vue'] =
-    pageMap['../views/_core/fallback/not-found.vue'];
+  const fallbackNotFound = pageMap['../views/_core/fallback/not-found.vue'];
+  if (fallbackNotFound) {
+    pageMap['/_core/fallback/not-found.vue'] = fallbackNotFound;
+  }
 
   const layoutMap: ComponentRecordType = {
     BasicLayout,

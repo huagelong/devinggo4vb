@@ -14,7 +14,6 @@ const emit = defineEmits(['select']);
 
 const treeData = ref<any[]>([]);
 const searchText = ref('');
-const treeRef = ref();
 
 const treeKeys = {
   value: 'id',
@@ -90,7 +89,6 @@ onMounted(() => {
     </div>
     <div class="custom-tree-wrap flex-1 overflow-auto p-2">
       <Tree
-        ref="treeRef"
         v-model:expanded="expanded"
         :data="treeData"
         :filter="(node: any) => !searchText || node.label.includes(searchText)"

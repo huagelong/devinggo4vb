@@ -49,5 +49,8 @@
     "tdesign-vue-next": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "vue-tsc": "^3.2.6"
   }
 }

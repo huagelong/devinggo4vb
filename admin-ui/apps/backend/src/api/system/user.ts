@@ -8,6 +8,10 @@ export function getRecycleUserList(params: any) {
   return requestClient.get('/system/user/recycle', { params });
 }
 
+export function getUserDetail(id: number) {
+  return requestClient.get(`/system/user/read/${id}`);
+}
+
 export function saveUser(data: any) {
   return requestClient.post('/system/user/save', data);
 }
@@ -43,4 +47,25 @@ export function clearUserCache(data: { id: number }) {
 // Set home page
 export function setHomePage(data: { dashboard: string; id: number }) {
   return requestClient.post('/system/user/setHomePage', data);
+}
+
+export function importUserFile(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return requestClient.post('/system/user/import', formData);
+}
+
+export function exportUserList(data: Record<string, any>) {
+  return requestClient.download('/system/user/export', {
+    data,
+    method: 'POST',
+    responseReturn: 'raw',
+  });
+}
+
+export function downloadUserImportTemplate() {
+  return requestClient.download('/system/user/downloadTemplate', {
+    method: 'GET',
+    responseReturn: 'raw',
+  });
 }

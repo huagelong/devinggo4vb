@@ -10,7 +10,7 @@ import { uploadImageFileApi } from '#/api/core/profile';
 import { getDeptTree } from '#/api/system/dept';
 import { getPostList } from '#/api/system/post';
 import { getRoleList } from '#/api/system/role';
-import { saveUser, updateUser } from '#/api/system/user';
+import { getUserDetail, saveUser, updateUser } from '#/api/system/user';
 
 const emit = defineEmits(['success']);
 
@@ -123,13 +123,16 @@ const [Form, formApi] = useVbenForm({
     {
       fieldName: 'password',
       label: '密码',
-      component: 'InputPassword',
+      component: 'Input',
       dependencies: {
         show: (values) => !values?.id,
         triggerFields: ['id'],
       },
       rules: 'required',
-      componentProps: { placeholder: '请输入密码' },
+      componentProps: {
+        placeholder: '请输入密码',
+        type: 'password',
+      },
     },
     {
       fieldName: 'nickname',
@@ -259,7 +262,30 @@ async function open(data?: any) {
   ]);
 
   await formApi.resetForm();
-  if (data) {
+  if (data?.id) {
+    const detail = await getUserDetail(data.id).catch(() => null);
+    const detailValues = detail
+      ? {
+          ...detail,
+          dept_ids:
+            detail?.dept_ids ??
+            detail?.deptList?.map((item: any) => item.id) ??
+            data?.dept_ids ??
+            [],
+          role_ids:
+            detail?.role_ids ??
+            detail?.roleList?.map((item: any) => item.id) ??
+            data?.role_ids ??
+            [],
+          post_ids:
+            detail?.post_ids ??
+            detail?.postList?.map((item: any) => item.id) ??
+            data?.post_ids ??
+            [],
+        }
+      : data;
+    formApi.setValues(detailValues);
+  } else if (data) {
     formApi.setValues(data);
   }
   await nextTick();
