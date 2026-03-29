@@ -1,10 +1,399 @@
 <script lang="ts" setup>
+import type { AttachmentListItem, AttachmentTreeItem } from './model';
+
+import { computed, onMounted, ref } from 'vue';
+
+import { Page } from '@vben/common-ui';
+
+import { message } from '#/adapter/tdesign';
+import {
+  deleteAttachment,
+  realDeleteAttachment,
+  recoveryAttachment,
+} from '#/api/system/attachment';
+import CrudToolbar from '#/components/crud/crud-toolbar.vue';
+import type { OptionItem } from '#/types/common';
+
+import {
+  AppsIcon,
+  DeleteIcon,
+  ListIcon,
+  SearchIcon,
+} from 'tdesign-icons-vue-next';
+import {
+  Button,
+  DateRangePicker,
+  Form,
+  FormItem,
+  Input,
+  Space,
+  Table,
+  Tag,
+  Tree,
+} from 'tdesign-vue-next';
+
+import type { AttachmentColumnOptionItem, AttachmentTableColumn } from './model';
+import {
+  createAttachmentColumnOptions,
+  createAttachmentSearchForm,
+  createAttachmentTableColumns,
+  defaultAttachmentTreeData,
+} from './schemas';
+import { useAttachmentCrud } from './use-attachment-crud';
+
 defineOptions({ name: 'SystemAttachment' });
+
+const viewMode = ref<'list' | 'window'>('list');
+const selectedTreeKey = ref<string[]>(['all']);
+const treeData = ref<AttachmentTreeItem[]>(defaultAttachmentTreeData);
+
+const searchForm = ref(createAttachmentSearchForm());
+
+const columns: AttachmentTableColumn[] = createAttachmentTableColumns();
+const columnOptions = createAttachmentColumnOptions(columns);
+const allColumnKeys = columnOptions.map((item) => item.value);
+const visibleColumns = ref<string[]>(
+  allColumnKeys.filter((key) => key !== 'url')
+);
+
+const displayColumns = computed({
+  get: () => ['row-select', ...visibleColumns.value],
+  set: (value: string[]) => {
+    visibleColumns.value = value.filter((item) => item !== 'row-select');
+  },
+});
+
+const {
+  clearSelectedRowKeys,
+  fetchTableData,
+  handleReset,
+  handleSearch,
+  handleSelectChange,
+  isRecycleBin,
+  loading,
+  selectedRowKeys,
+  tableData,
+  toggleRecycleBin,
+} = useAttachmentCrud();
+
+function toIds(keys: Array<number | string>) {
+  return keys.map((key) => Number(key));
+}
+
+function handleTreeClick(value: string[]) {
+  selectedTreeKey.value = value;
+  const key = value[0];
+  if (key === 'all') {
+    searchForm.value.mime_type = undefined;
+  } else {
+    searchForm.value.mime_type = key;
+  }
+}
+
+function handleDownload(row: AttachmentListItem) {
+  // In a real implementation, this would trigger file download
+  message.success(`下载文件: ${row.origin_name}`);
+}
+
+async function handleDelete(row: AttachmentListItem) {
+  try {
+    await (isRecycleBin.value
+      ? realDeleteAttachment([row.id])
+      : deleteAttachment([row.id]));
+    message.success('操作成功');
+    await fetchTableData();
+  } catch (error) {
+    console.error(error);
+    message.error('删除失败，请稍后重试');
+  }
+}
+
+async function handleBatchDelete() {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning('请选择需要操作的数据');
+    return;
+  }
+
+  const ids = toIds(selectedRowKeys.value);
+  try {
+    await (isRecycleBin.value
+      ? realDeleteAttachment(ids)
+      : deleteAttachment(ids));
+    message.success('操作成功');
+    clearSelectedRowKeys();
+    await fetchTableData();
+  } catch (error) {
+    console.error(error);
+    message.error('批量删除失败，请稍后重试');
+  }
+}
+
+async function handleRecovery(row: AttachmentListItem) {
+  try {
+    await recoveryAttachment([row.id]);
+    message.success('恢复成功');
+    await fetchTableData();
+  } catch (error) {
+    console.error(error);
+    message.error('恢复失败，请稍后重试');
+  }
+}
+
+async function handleBatchRecovery() {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning('请选择需要操作的数据');
+    return;
+  }
+
+  const ids = toIds(selectedRowKeys.value);
+  try {
+    await recoveryAttachment(ids);
+    message.success('恢复成功');
+    clearSelectedRowKeys();
+    await fetchTableData();
+  } catch (error) {
+    console.error(error);
+    message.error('批量恢复失败，请稍后重试');
+  }
+}
+
+function switchViewMode() {
+  viewMode.value = viewMode.value === 'list' ? 'window' : 'list';
+}
+
+function isImageType(mimeType: string): boolean {
+  return /^image\//.test(mimeType);
+}
+
+function getFileExtension(mimeType: string): string {
+  const map: Record<string, string> = {
+    'application/pdf': 'PDF',
+    'application/zip': 'ZIP',
+    'application/x-rar': 'RAR',
+    'text/plain': 'TXT',
+    'application/vnd.ms-excel': 'XLS',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
+  };
+  return map[mimeType] || mimeType.split('/')[1]?.toUpperCase() || 'FILE';
+}
+
+onMounted(() => {
+  void fetchTableData();
+});
 </script>
 
 <template>
-  <div class="p-4">
-    <h2 class="text-xl font-semibold">附件管理</h2>
-    <p class="mt-2 text-gray-500">附件管理页面（开发中）</p>
-  </div>
+  <Page auto-content-height>
+    <div class="flex h-full gap-3">
+      <!-- Left Tree Slider -->
+      <div class="w-48 flex-shrink-0 rounded-md bg-white p-2">
+        <div class="mb-2 px-2 text-sm font-medium text-gray-500">文件类型</div>
+        <Tree
+          v-model="selectedTreeKey"
+          :data="treeData"
+          hover
+          expand-all
+          @click="handleTreeClick"
+        />
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex min-h-0 flex-1 flex-col gap-3">
+        <div class="rounded-md bg-white p-4">
+          <Form :data="searchForm" label-width="80px" colon>
+            <div class="grid grid-cols-4 gap-x-4">
+              <FormItem label="原文件名" name="origin_name">
+                <Input
+                  v-model="searchForm.origin_name"
+                  placeholder="请输入原文件名"
+                  clearable
+                />
+              </FormItem>
+              <FormItem label="存储模式" name="storage_mode">
+                <Input
+                  v-model="searchForm.storage_mode"
+                  placeholder="请选择存储模式"
+                  clearable
+                />
+              </FormItem>
+              <FormItem label="创建时间" name="created_at" class="col-span-2">
+                <DateRangePicker
+                  v-model="searchForm.created_at"
+                  :placeholder="['开始时间', '结束时间']"
+                  clearable
+                  class="w-full"
+                />
+              </FormItem>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <Button theme="default" @click="handleReset">重置</Button>
+              <Button theme="primary" @click="handleSearch">
+                <template #icon><SearchIcon /></template>
+                查询
+              </Button>
+            </div>
+          </Form>
+        </div>
+
+        <div class="flex min-h-0 flex-1 flex-col rounded-md bg-white p-4">
+          <div class="mb-3 flex items-center justify-between">
+            <Space>
+              <template v-if="!isRecycleBin">
+                <Button theme="danger" variant="outline" @click="handleBatchDelete">
+                  <template #icon><DeleteIcon /></template>
+                  删除
+                </Button>
+              </template>
+              <template v-else>
+                <Button theme="success" @click="handleBatchRecovery">恢复</Button>
+                <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+              </template>
+            </Space>
+
+            <Space>
+              <Button
+                theme="default"
+                variant="outline"
+                @click="switchViewMode"
+              >
+                <template #icon>
+                  <AppsIcon v-if="viewMode === 'list'" />
+                  <ListIcon v-else />
+                </template>
+                {{ viewMode === 'list' ? '橱窗模式' : '列表模式' }}
+              </Button>
+
+              <CrudToolbar
+                v-model="visibleColumns"
+                :column-options="columnOptions"
+                :is-recycle-bin="isRecycleBin"
+                @refresh="fetchTableData"
+                @toggle-recycle="toggleRecycleBin"
+              />
+            </Space>
+          </div>
+
+          <!-- List View -->
+          <Table
+            v-if="viewMode === 'list'"
+            v-model:display-columns="displayColumns"
+            :columns="columns"
+            :data="tableData"
+            :loading="loading"
+            :selected-row-keys="selectedRowKeys"
+            row-key="id"
+            hover
+            stripe
+            @select-change="handleSelectChange"
+          >
+            <template #url="{ row }">
+              <div class="flex items-center justify-center">
+                <img
+                  v-if="isImageType(row.mime_type)"
+                  :src="row.url"
+                  :alt="row.origin_name"
+                  class="h-10 w-10 rounded object-cover"
+                />
+                <Tag v-else theme="default">
+                  {{ getFileExtension(row.mime_type) }}
+                </Tag>
+              </div>
+            </template>
+
+            <template #storage_mode="{ row }">
+              <Tag :theme="row.storage_mode === 1 ? 'primary' : 'warning'">
+                {{ row.storage_mode === 1 ? '本地' : '云存储' }}
+              </Tag>
+            </template>
+
+            <template #action="{ row }">
+              <div class="flex items-center justify-center gap-1">
+                <template v-if="!isRecycleBin">
+                  <Button
+                    size="small"
+                    theme="primary"
+                    variant="outline"
+                    @click="handleDownload(row)"
+                  >
+                    下载
+                  </Button>
+                  <Button
+                    size="small"
+                    theme="danger"
+                    variant="outline"
+                    @click="handleDelete(row)"
+                  >
+                    删除
+                  </Button>
+                </template>
+                <template v-else>
+                  <Button
+                    size="small"
+                    theme="primary"
+                    variant="outline"
+                    @click="handleRecovery(row)"
+                  >
+                    恢复
+                  </Button>
+                  <Button
+                    size="small"
+                    theme="danger"
+                    variant="outline"
+                    @click="handleDelete(row)"
+                  >
+                    彻底删除
+                  </Button>
+                </template>
+              </div>
+            </template>
+          </Table>
+
+          <!-- Window View (Gallery) -->
+          <div v-else class="grid grid-cols-4 gap-4">
+            <div
+              v-for="row in tableData"
+              :key="row.id"
+              class="group relative rounded-md border border-gray-200 p-2 transition hover:border-blue-400"
+            >
+              <div class="flex h-32 items-center justify-center overflow-hidden rounded bg-gray-50">
+                <img
+                  v-if="isImageType(row.mime_type)"
+                  :src="row.url"
+                  :alt="row.origin_name"
+                  class="max-h-full max-w-full object-contain"
+                />
+                <Tag v-else theme="default" size="large">
+                  {{ getFileExtension(row.mime_type) }}
+                </Tag>
+              </div>
+              <div class="mt-2 text-sm">
+                <div class="truncate text-gray-700" :title="row.origin_name">
+                  {{ row.origin_name }}
+                </div>
+                <div class="text-xs text-gray-400">{{ row.size_info }}</div>
+              </div>
+              <div
+                class="absolute left-0 top-0 flex h-full w-full items-center justify-center gap-2 rounded bg-black/50 opacity-0 transition group-hover:opacity-100"
+              >
+                <Button
+                  size="small"
+                  theme="primary"
+                  @click="handleDownload(row)"
+                >
+                  下载
+                </Button>
+                <Button
+                  size="small"
+                  theme="danger"
+                  @click="handleDelete(row)"
+                >
+                  删除
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Page>
 </template>
