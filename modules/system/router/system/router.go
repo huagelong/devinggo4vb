@@ -50,6 +50,7 @@ func BindController(group *ghttp.RouterGroup) {
 			system.DashboardController,
 			system.PusherAuthController,
 			system.PusherUserAuthController, // Pusher User Authentication
+			system.CodeGenController,       // 代码生成
 		).Middleware(service.Middleware().AdminAuth)
 	})
 

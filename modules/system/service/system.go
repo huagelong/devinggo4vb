@@ -348,6 +348,18 @@ type (
 		Model(ctx context.Context) *gdb.Model
 		GetRoleIdsByUserId(ctx context.Context, userId int64) (roleIds []int64, err error)
 	}
+	ICodeGen interface {
+		Model(ctx context.Context) *gdb.Model
+		GetPageList(ctx context.Context, req *model.PageListReq, in *req.CodeGenSearch) (rs []*res.CodeGenTable, total int, err error)
+		Delete(ctx context.Context, ids []int64) (err error)
+		Update(ctx context.Context, in *req.CodeGenUpdate, userId int64) (err error)
+		LoadTable(ctx context.Context, in *req.CodeGenLoadTable, userId int64) (err error)
+		SyncTable(ctx context.Context, id int64, userId int64) (err error)
+		GenerateCode(ctx context.Context, ids string) (fileBytes []byte, err error)
+		PreviewCode(ctx context.Context, id int64) (preview []res.CodeGenPreview, err error)
+		ReadTable(ctx context.Context, id int64) (tableInfo res.CodeGenReadTable, err error)
+		ListSourceTables(ctx context.Context, source string) (tables []res.CodeGenSourceTable, err error)
+	}
 )
 
 var (
@@ -384,6 +396,7 @@ var (
 	localSystemUserDept            ISystemUserDept
 	localSystemUserPost            ISystemUserPost
 	localSystemUserRole            ISystemUserRole
+	localCodeGen                   ICodeGen
 )
 
 func Dashboard() IDashboard {
@@ -747,4 +760,19 @@ func SystemUserRole() ISystemUserRole {
 
 func RegisterSystemUserRole(i ISystemUserRole) {
 	localSystemUserRole = i
+}
+
+var (
+	localCodeGen ICodeGen
+)
+
+func CodeGen() ICodeGen {
+	if localCodeGen == nil {
+		panic("implement not found for interface ICodeGen, forgot register?")
+	}
+	return localCodeGen
+}
+
+func RegisterCodeGen(i ICodeGen) {
+	localCodeGen = i
 }
