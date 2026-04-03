@@ -185,4 +185,6 @@
 
 - 统一目标确认：以 old_admin 为功能基线，重构到 admin-ui。
 - 当前最大缺口：logs 三页、dataMaintain、pusher 接入。
-- 下一步执行：先做 T1（logs 域）。
+- 已完成：logs 三页页面骨架与列表删除能力落地（loginLog/operLog/apiLog）。
+- 已完成：日志 API 端点切换为 `/system/logs/*` 路由组。
+- 下一步执行：联调日志页查询字段与响应字段，补菜单与权限点校验。

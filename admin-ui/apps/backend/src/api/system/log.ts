@@ -1,5 +1,6 @@
-import { requestClient } from '#/api/request';
 import type { PageResponse } from '#/types/paging';
+
+import { requestClient } from '#/api/request';
 
 export namespace LogApi {
   export interface LoginLogItem {
@@ -16,12 +17,12 @@ export namespace LogApi {
   }
 
   export interface LoginLogQuery {
+    page?: number;
+    pageSize?: number;
     username?: string;
     status?: number;
     ip?: string;
     login_time?: string[];
-    page?: number;
-    page_size?: number;
   }
 
   export interface OperLogItem {
@@ -39,12 +40,12 @@ export namespace LogApi {
   }
 
   export interface OperLogQuery {
+    page?: number;
+    pageSize?: number;
     username?: string;
     service_name?: string;
     ip?: string;
     created_at?: string[];
-    page?: number;
-    page_size?: number;
   }
 
   export interface ApiLogItem {
@@ -61,12 +62,12 @@ export namespace LogApi {
   }
 
   export interface ApiLogQuery {
+    page?: number;
+    pageSize?: number;
     api_name?: string;
     access_name?: string;
     ip?: string;
     access_time?: string[];
-    page?: number;
-    page_size?: number;
   }
 
   export type LoginLogResponse = PageResponse<LoginLogItem>;
@@ -77,39 +78,45 @@ export namespace LogApi {
 // Login Log APIs
 export function getLoginLogPageList(params: LogApi.LoginLogQuery) {
   return requestClient.get<LogApi.LoginLogResponse>(
-    '/system/loginLog/index',
+    '/system/logs/getLoginLogPageList',
     { params },
   );
 }
 
 export function deleteLoginLog(ids: number[]) {
-  return requestClient.delete<void>('/system/loginLog/delete', {
+  return requestClient.delete<void>('/system/logs/deleteLoginLog', {
     data: { ids },
   });
 }
 
 // Operation Log APIs
 export function getOperLogPageList(params: LogApi.OperLogQuery) {
-  return requestClient.get<LogApi.OperLogResponse>('/system/operLog/index', {
+  return requestClient.get<LogApi.OperLogResponse>(
+    '/system/logs/getOperLogPageList',
+    {
     params,
-  });
+    },
+  );
 }
 
 export function deleteOperLog(ids: number[]) {
-  return requestClient.delete<void>('/system/operLog/delete', {
+  return requestClient.delete<void>('/system/logs/deleteOperLog', {
     data: { ids },
   });
 }
 
 // API Log APIs
 export function getApiLogPageList(params: LogApi.ApiLogQuery) {
-  return requestClient.get<LogApi.ApiLogResponse>('/system/apiLog/index', {
+  return requestClient.get<LogApi.ApiLogResponse>(
+    '/system/logs/getApiLogPageList',
+    {
     params,
-  });
+    },
+  );
 }
 
 export function deleteApiLog(ids: number[]) {
-  return requestClient.delete<void>('/system/apiLog/delete', {
+  return requestClient.delete<void>('/system/logs/deleteApiLog', {
     data: { ids },
   });
 }
