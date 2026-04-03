@@ -194,4 +194,5 @@
 - 约束确认：当前后端仅开放 `/system/dataMaintain/index`，旧版 `detailed/optimize/fragment` 暂未提供。
 - 已完成：dataMaintain 第二版页面细化（操作列、详情面板、权限按钮点位预埋）。
 - 已完成：dataMaintain API 预留（detailed/optimize/fragment）并在页面侧做后端未开放降级提示。
+- 已完成：详情区组件化（data-maintain-detail-panel），后续后端开放接口可局部替换启用。
 - 下一步执行：联调日志页查询字段与响应字段，补菜单与权限点校验。
