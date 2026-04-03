@@ -33,10 +33,12 @@ export namespace LogApi {
     method: string;
     ip: string;
     ip_location: string;
-    response_code: number;
+    response_code: string;
     request_data: string;
     response_data: string;
     created_at: string;
+    status?: number;
+    remark?: string;
   }
 
   export interface OperLogQuery {
@@ -45,20 +47,22 @@ export namespace LogApi {
     username?: string;
     service_name?: string;
     ip?: string;
+    status?: number;
     created_at?: string[];
   }
 
   export interface ApiLogItem {
     id: number;
+    api_id?: number;
     api_name: string;
     access_name: string;
-    response_code: number;
+    response_code: string;
     access_time: string;
     ip: string;
     ip_location: string;
     request_data: string;
     response_data: string;
-    created_at?: string;
+    remark?: string;
   }
 
   export interface ApiLogQuery {
