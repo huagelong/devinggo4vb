@@ -33,7 +33,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       fieldName: 'name',
       label: '名称',
-      props: {
+      componentProps: {
         placeholder: '请输入'
       },
       rules: 'required',
@@ -42,7 +42,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       fieldName: 'code',
       label: '编码',
-      props: {
+      componentProps: {
         placeholder: '请输入'
       },
       rules: 'required',
@@ -52,7 +52,7 @@ const [Form, formApi] = useVbenForm({
       fieldName: 'status',
       label: '状态',
       defaultValue: 1,
-      props: {
+      componentProps: {
         options: [{"label":"正常","value":1},{"label":"已禁用","value":2}],
       },
       rules: 'required',
@@ -62,7 +62,7 @@ const [Form, formApi] = useVbenForm({
       fieldName: 'sort',
       label: '排序',
       defaultValue: 1,
-      props: {
+      componentProps: {
         min: 0,
         max: 1000,
       },
@@ -72,7 +72,7 @@ const [Form, formApi] = useVbenForm({
       component: 'InputNumber',
       fieldName: 'price',
       label: '数字',
-      props: {
+      componentProps: {
         min: 0,
         max: 1000,
         placeholder: '请输入'
@@ -82,7 +82,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Upload',
       fieldName: 'cover',
       label: '图片',
-      props: {
+      componentProps: {
         accept: 'image/*',
         placeholder: '请上传图片',
       },
@@ -92,7 +92,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       fieldName: 'email',
       label: '邮箱',
-      props: {
+      componentProps: {
         type: 'email',
         placeholder: '请输入邮箱',
       },
@@ -102,7 +102,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       fieldName: 'phone',
       label: '手机号',
-      props: {
+      componentProps: {
         placeholder: '请输入手机号',
       },
     },
@@ -110,7 +110,7 @@ const [Form, formApi] = useVbenForm({
       component: 'DatePicker',
       fieldName: 'birthday',
       label: '日期',
-      props: {
+      componentProps: {
         placeholder: '请选择日期',
         clearable: true,
       },
@@ -119,7 +119,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Textarea',
       fieldName: 'remark',
       label: '备注',
-      props: {
+      componentProps: {
         placeholder: '请输入备注',
         autosize: { minRows: 3, maxRows: 6 },
       },
@@ -134,7 +134,7 @@ const [Modal, modalApi] = useVbenModal({
       const { valid } = await formApi.validate();
       if (!valid) return;
 
-      const values = await formApi.getValues<DemoApi.SubmitPayload>();
+      const values = await formApi.getValues<DemoApi.SubmitPayload & { id?: number }>();
       modalApi.setState({ confirmLoading: true });
 
       if (values.id) {
@@ -155,7 +155,7 @@ const [Modal, modalApi] = useVbenModal({
   class: 'w-[560px]',
 });
 
-async function open(data?: Partial<DemoApi.SubmitPayload>) {
+async function open(data?: Partial<DemoApi.SubmitPayload & { id?: number }>) {
   modalApi.setState({
     title: data?.id ? '编辑演示' : '新增演示',
   });

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { CrontabApi, CrontabLogItem } from '#/api/system/crontab';
+import type { CrontabApi } from '#/api/system/crontab';
 
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
@@ -10,8 +10,6 @@ import {
   deleteCrontabLog,
   getCrontabLogPageList,
 } from '#/api/system/crontab';
-import CrudToolbar from '#/components/crud/crud-toolbar.vue';
-import type { PageResponse } from '#/types/paging';
 
 import {
   DeleteIcon,
@@ -22,16 +20,14 @@ import {
   DateRangePicker,
   Form,
   FormItem,
-  Input,
   Space,
   Table,
-  Tag,
 } from 'tdesign-vue-next';
 
 import type { CrontabLogQuery } from '../model';
 
 const loading = ref(false);
-const tableData = ref<CrontabLogItem[]>([]);
+const tableData = ref<CrontabApi.LogItem[]>([]);
 const total = ref(0);
 const selectedRowKeys = ref<(number | string)[]>([]);
 
@@ -45,46 +41,9 @@ const logColumns = [
   { colKey: 'start_time', title: '开始时间', width: 180 },
   { colKey: 'end_time', title: '结束时间', width: 180 },
   { colKey: 'duration', title: '耗时(秒)', width: 100 },
-  {
-    colKey: 'status',
-    title: '执行结果',
-    width: 100,
-    cell: ({ row }: { row: CrontabLogItem }) => {
-      const status = row.status;
-      return h(Tag, { theme: status === 1 ? 'success' : 'danger' }, () =>
-        String(status === 1 ? '成功' : '失败')
-      );
-    },
-  },
-  {
-    colKey: 'output',
-    title: '执行输出',
-    width: 150,
-    cell: ({ row }: { row: CrontabLogItem }) => {
-      const output = row.output || '';
-      const display = output.length > 50 ? output.substring(0, 50) + '...' : output;
-      return h('span', { title: output }, display);
-    },
-  },
-  {
-    colKey: 'error',
-    title: '异常信息',
-    width: 120,
-    cell: ({ row }: { row: CrontabLogItem }) => {
-      const error = row.error || '';
-      if (!error) return h('span', {}, '-');
-      const display = error.length > 30 ? error.substring(0, 30) + '...' : error;
-      return h(
-        'span',
-        {
-          class: 'text-red-500 cursor-pointer',
-          title: error,
-          onClick: () => showErrorDetail(row),
-        },
-        display
-      );
-    },
-  },
+  { colKey: 'status', title: '执行结果', width: 100 },
+  { colKey: 'output', title: '执行输出', width: 180 },
+  { colKey: 'error', title: '异常信息', width: 180 },
   { colKey: 'created_at', title: '创建时间', width: 180 },
 ];
 
@@ -107,7 +66,7 @@ async function fetchLogList() {
   try {
     const params: CrontabApi.LogQuery = {
       page: 1,
-      page_size: 20,
+      pageSize: 20,
       crontab_id: crontabId.value,
     };
     if (searchForm.value.created_at?.length === 2 && searchForm.value.created_at[0]) {
@@ -115,7 +74,7 @@ async function fetchLogList() {
     }
 
     const response = await getCrontabLogPageList(params);
-    tableData.value = response.list || [];
+    tableData.value = response.items || [];
     total.value = Number(response.pageInfo?.total || response.total || 0);
   } catch (error) {
     console.error(error);
@@ -142,7 +101,7 @@ async function handleDeleteLog() {
   }
 }
 
-function showErrorDetail(row: CrontabLogItem) {
+function showErrorDetail(row: CrontabApi.LogItem) {
   modalApi.setState({ title: `异常信息 - ${row.crontab_name || row.id}` });
   // Show error in a simple message box - in real implementation could use a detail modal
   message.info(row.error || '无异常信息');
@@ -224,7 +183,33 @@ defineExpose({
           hover
           stripe
           @select-change="handleSelectChange"
-        />
+        >
+          <template #status="{ row }">
+            <span
+              :class="Number(row.status) === 1 ? 'text-green-600' : 'text-red-600'"
+            >
+              {{ Number(row.status) === 1 ? '成功' : '失败' }}
+            </span>
+          </template>
+
+          <template #output="{ row }">
+            <span :title="row.output || ''">
+              {{ row.output ? (row.output.length > 50 ? `${row.output.slice(0, 50)}...` : row.output) : '-' }}
+            </span>
+          </template>
+
+          <template #error="{ row }">
+            <span
+              v-if="row.error"
+              class="cursor-pointer text-red-500"
+              :title="row.error"
+              @click="showErrorDetail(row)"
+            >
+              {{ row.error.length > 30 ? `${row.error.slice(0, 30)}...` : row.error }}
+            </span>
+            <span v-else>-</span>
+          </template>
+        </Table>
       </div>
     </div>
   </Modal>

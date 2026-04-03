@@ -1,5 +1,5 @@
 import { requestClient } from '#/api/request';
-import type { BatchIdsPayload, StatusValue } from '#/types/common';
+import type { BatchIdsPayload } from '#/types/common';
 import type { PageQuery, PageResponse } from '#/types/paging';
 
 export namespace DemoApi {

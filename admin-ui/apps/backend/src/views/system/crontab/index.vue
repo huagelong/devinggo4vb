@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import type { CrontabListItem } from './model';
 
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
 import {
-  changeCrontabStatus,
   deleteCrontab,
   realDeleteCrontab,
   recoveryCrontab,
   runCrontab,
 } from '#/api/system/crontab';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
-import type { OptionItem } from '#/types/common';
 
 import {
   DeleteIcon,
@@ -31,18 +29,15 @@ import {
   FormItem,
   Input,
   Popconfirm,
-  RadioButton,
-  RadioGroup,
   Select,
   Space,
-  Switch,
   Table,
   Tag,
 } from 'tdesign-vue-next';
 
 import CrontabLogPanel from './components/crontab-log-panel.vue';
 import CrontabModal from './components/crontab-modal.vue';
-import type { CrontabColumnOptionItem, CrontabTableColumn } from './model';
+import type { CrontabTableColumn } from './model';
 import {
   createCrontabColumnOptions,
   createCrontabSearchForm,
@@ -164,17 +159,6 @@ async function handleBatchRecovery() {
   }
 }
 
-async function handleStatusChange(row: CrontabListItem, checked: boolean) {
-  try {
-    await changeCrontabStatus({ id: row.id, status: checked ? 1 : 2 });
-    message.success('状态更新成功');
-    await fetchTableData();
-  } catch (error) {
-    console.error(error);
-    message.error('状态更新失败，请稍后重试');
-  }
-}
-
 async function handleRun(row: CrontabListItem) {
   try {
     await runCrontab({ id: row.id });
@@ -188,10 +172,6 @@ async function handleRun(row: CrontabListItem) {
 
 function handleOpenLog(row: CrontabListItem) {
   crontabLogPanelRef.value?.open(row.id);
-}
-
-function handleStatusSwitchChange(row: CrontabListItem, value: unknown) {
-  void handleStatusChange(row, Boolean(value));
 }
 
 function handleSuccess() {

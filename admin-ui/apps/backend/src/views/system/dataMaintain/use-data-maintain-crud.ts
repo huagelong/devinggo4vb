@@ -17,7 +17,7 @@ export function useDataMaintainCrud() {
       const params: DataMaintainApi.ListQuery = {};
       if (form.group_name) params.group_name = form.group_name;
       if (form.name) params.name = form.name;
-      return params;
+      return params as Record<string, unknown>;
     },
     resolveTotal: (response) =>
       Number(response?.pageInfo?.total || response?.total || 0),

@@ -12,12 +12,10 @@ import {
   recoveryAttachment,
 } from '#/api/system/attachment';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
-import type { OptionItem } from '#/types/common';
 
 import {
-  AppsIcon,
+  AppIcon,
   DeleteIcon,
-  ListIcon,
   SearchIcon,
 } from 'tdesign-icons-vue-next';
 import {
@@ -32,7 +30,7 @@ import {
   Tree,
 } from 'tdesign-vue-next';
 
-import type { AttachmentColumnOptionItem, AttachmentTableColumn } from './model';
+import type { AttachmentTableColumn } from './model';
 import {
   createAttachmentColumnOptions,
   createAttachmentSearchForm,
@@ -80,9 +78,10 @@ function toIds(keys: Array<number | string>) {
   return keys.map((key) => Number(key));
 }
 
-function handleTreeClick(value: string[]) {
-  selectedTreeKey.value = value;
-  const key = value[0];
+function handleTreeChange(value: Array<string | number>) {
+  const keys = value.map((item) => String(item));
+  selectedTreeKey.value = keys.length > 0 ? keys : ['all'];
+  const key = selectedTreeKey.value[0];
   if (key === 'all') {
     searchForm.value.mime_type = undefined;
   } else {
@@ -193,7 +192,7 @@ onMounted(() => {
           :data="treeData"
           hover
           expand-all
-          @click="handleTreeClick"
+          @change="handleTreeChange"
         />
       </div>
 
@@ -257,8 +256,7 @@ onMounted(() => {
                 @click="switchViewMode"
               >
                 <template #icon>
-                  <AppsIcon v-if="viewMode === 'list'" />
-                  <ListIcon v-else />
+                  <AppIcon />
                 </template>
                 {{ viewMode === 'list' ? '橱窗模式' : '列表模式' }}
               </Button>

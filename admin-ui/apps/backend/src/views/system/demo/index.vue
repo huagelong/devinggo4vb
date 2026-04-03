@@ -18,13 +18,11 @@ import {
   Form,
   FormItem,
   Input,
-  InputNumber,
   Popconfirm,
   Select,
   Space,
   Switch,
   Table,
-  TreeSelect,
 } from 'tdesign-vue-next';
 
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';

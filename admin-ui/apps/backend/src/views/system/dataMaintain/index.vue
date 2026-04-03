@@ -26,7 +26,6 @@ import {
   Popup,
   Space,
   Table,
-  Tag,
 } from 'tdesign-vue-next';
 
 import DataMaintainDetailPanel from './components/data-maintain-detail-panel.vue';
