@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import type { GenerateApi, LoadTableRow } from '../model';
+import type { GenerateApi } from '#/api/system/generate';
 
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
 
 import { loadTable } from '#/api/system/generate';
 
-import { Checkbox, CheckboxGroup, Table } from 'tdesign-vue-next';
+import { Table } from 'tdesign-vue-next';
 
 const emit = defineEmits<{
   success: [];
@@ -70,6 +70,10 @@ async function handleSubmit() {
   }
 }
 
+function handleRowSelectionChange(keys: Array<number | string>) {
+  selectedNames.value = keys.map((key) => String(key));
+}
+
 const [Modal, modalApi] = useVbenModal({
   onConfirm: handleSubmit,
   class: 'w-[800px]',
@@ -89,17 +93,15 @@ defineExpose({ open });
         :columns="columns"
         :data="tableData"
         :loading="tableLoading"
+        :row-selection="{
+          type: 'multiple',
+          selectedRowKeys: selectedNames,
+          onChange: handleRowSelectionChange,
+        }"
         row-key="name"
         hover
         stripe
-      >
-        <template #selection="{ row }">
-          <Checkbox
-            :value="row.name"
-            v-model:checked="selectedNames"
-          />
-        </template>
-      </Table>
+      />
 
       <div class="text-sm text-gray-500">
         已选择 {{ selectedNames.length }} 个表

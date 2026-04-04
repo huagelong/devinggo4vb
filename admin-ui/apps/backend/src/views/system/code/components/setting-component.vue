@@ -11,16 +11,11 @@ import {
   Input,
   InputNumber,
   Select,
-  Space,
   Switch,
-  TabPanel,
-  Tabs,
+  Textarea,
 } from 'tdesign-vue-next';
 
 import {
-  componentTypeOptions,
-  generateTypeOptions,
-  queryTypeOptions,
   viewTypeOptions,
 } from '../schemas';
 
@@ -133,9 +128,8 @@ const [Modal, modalApi] = useVbenModal({
           <Switch v-model="isMultiple" />
         </FormItem>
         <FormItem label="选项数据">
-          <Input
+          <Textarea
             v-model="optionsData"
-            type="textarea"
             placeholder="请输入选项数据，JSON格式，如：[{label: '是', value: 1}]"
           />
         </FormItem>

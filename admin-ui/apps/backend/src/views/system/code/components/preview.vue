@@ -7,8 +7,9 @@ import { useVbenModal } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
 
 import { previewCode } from '#/api/system/generate';
+import { CodeIcon } from 'tdesign-icons-vue-next';
 
-import { Button, CodeIcon, TabPanel, Tabs } from 'tdesign-vue-next';
+import { Button, TabPanel, Tabs } from 'tdesign-vue-next';
 
 const emit = defineEmits<{
   success: [];
@@ -46,7 +47,7 @@ function handleCopy(code: string) {
 }
 
 const [Modal, modalApi] = useVbenModal({
-  showFooter: false,
+  footer: false,
   class: 'w-[1000px]',
 });
 

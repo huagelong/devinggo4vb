@@ -8,8 +8,8 @@ import { Page } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
 import { getOnlineUserPageList, kickUser } from '#/api/system/monitor';
 
-import { InputIcon, SearchIcon } from 'tdesign-icons-vue-next';
-import { Button, Input, Space, Table, Tag } from 'tdesign-vue-next';
+import { SearchIcon } from 'tdesign-icons-vue-next';
+import { Button, Input, Space, Table } from 'tdesign-vue-next';
 
 defineOptions({ name: 'SystemOnlineUser' });
 
@@ -38,7 +38,7 @@ async function fetchOnlineUsers() {
       params.username = searchUsername.value;
     }
     const response = await getOnlineUserPageList(params);
-    tableData.value = response.list || [];
+    tableData.value = response.items || [];
     total.value = Number(response.pageInfo?.total || response.total || 0);
   } catch (error) {
     console.error(error);

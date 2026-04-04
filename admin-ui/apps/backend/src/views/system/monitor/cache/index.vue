@@ -13,7 +13,7 @@ import {
   viewCache,
 } from '#/api/system/monitor';
 
-import { DeleteIcon, SearchIcon, ViewIcon } from 'tdesign-icons-vue-next';
+import { BrowseIcon, DeleteIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import {
   Button,
   Card,
@@ -24,6 +24,7 @@ import {
   Table,
   Textarea,
 } from 'tdesign-vue-next';
+import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next/es/table/type';
 
 defineOptions({ name: 'SystemCache' });
 
@@ -37,7 +38,7 @@ const cacheContent = ref('');
 const columns = [
   { colKey: 'name', title: '缓存键名' },
   { colKey: 'action', title: '操作', width: 150, align: 'right' },
-];
+] satisfies PrimaryTableCol<TableRowData>[];
 
 const filteredData = computed(() => {
   if (!searchKey.value) return cacheKeys.value.map((name) => ({ name }));
@@ -117,8 +118,8 @@ async function handleBatchDelete() {
   }
 }
 
-function handleSelectChange(value: string[]) {
-  selectedKeys.value = value;
+function handleSelectChange(value: Array<number | string>) {
+  selectedKeys.value = value.map((item) => String(item));
 }
 
 onMounted(() => {
@@ -219,7 +220,7 @@ onMounted(() => {
                     variant="outline"
                     @click="handleViewKey(row.name)"
                   >
-                    <template #icon><ViewIcon /></template>
+                    <template #icon><BrowseIcon /></template>
                     查看
                   </Button>
                   <Button

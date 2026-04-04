@@ -11,17 +11,16 @@ import CrudToolbar from '#/components/crud/crud-toolbar.vue';
 import { downloadResponseBlob } from '#/utils/download';
 
 import {
+  BrowseIcon,
   CodeIcon,
   DeleteIcon,
   EditIcon,
   ExportIcon,
+  RefreshIcon,
   SearchIcon,
-  SyncIcon,
-  ViewIcon,
 } from 'tdesign-icons-vue-next';
 import {
   Button,
-  DateRangePicker,
   Form,
   FormItem,
   Input,
@@ -35,7 +34,7 @@ import {
 import EditInfo from './components/edit-info.vue';
 import LoadTable from './components/load-table.vue';
 import Preview from './components/preview.vue';
-import type { CodeColumnOptionItem, CodeTableColumn } from './model';
+import type { CodeTableColumn } from './model';
 import {
   createCodeColumnOptions,
   createCodeSearchForm,
@@ -77,17 +76,14 @@ const displayColumns = computed({
 });
 
 const selectedTables = ref<number[]>([]);
-const generateLoading = ref(false);
 
 const {
-  clearSelectedRowKeys,
   fetchTableData,
   handleReset,
   handleSearch,
   handleSelectChange,
   loading,
   pagination,
-  searchForm: crudSearchForm,
   selectedRowKeys,
   tableData,
 } = useCodeCrud();
@@ -123,7 +119,7 @@ async function handleGenerate(row: CodeListItem) {
   try {
     message.info('代码生成中，请稍后...');
     const response = await generateCode({ ids: String(row.id) });
-    downloadResponseBlob(response, `code_${row.table_name}.zip`);
+    downloadResponseBlob({ data: response as unknown as Blob }, `code_${row.table_name}.zip`);
     message.success('代码生成成功，开始下载');
   } catch (error) {
     console.error(error);
@@ -142,7 +138,7 @@ async function handleBatchGenerate() {
     const response = await generateCode({
       ids: selectedTables.value.join(','),
     });
-    downloadResponseBlob(response, `code_batch_${Date.now()}.zip`);
+    downloadResponseBlob({ data: response as unknown as Blob }, `code_batch_${Date.now()}.zip`);
     message.success('代码生成成功，开始下载');
   } catch (error) {
     console.error(error);
@@ -258,7 +254,7 @@ onMounted(() => {
                 variant="outline"
                 @click="handleOpenPreview(row)"
               >
-                <template #icon><ViewIcon /></template>
+                <template #icon><BrowseIcon /></template>
                 预览
               </Button>
               <Button
@@ -267,7 +263,7 @@ onMounted(() => {
                 variant="outline"
                 @click="handleSync(row)"
               >
-                <template #icon><SyncIcon /></template>
+                <template #icon><RefreshIcon /></template>
                 同步
               </Button>
               <Button

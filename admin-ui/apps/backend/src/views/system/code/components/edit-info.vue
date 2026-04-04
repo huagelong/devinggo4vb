@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { FieldConfigRow, PreviewCodeRow } from '../model';
+import type { FieldConfigRow } from '../model';
 
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
@@ -12,21 +12,16 @@ import {
   Button,
   Checkbox,
   CheckboxGroup,
-  DateRangePicker,
   Form,
   FormItem,
   Input,
-  InputNumber,
   Select,
-  Space,
   Switch,
   TabPanel,
   Table,
   Tabs,
-  Tag,
 } from 'tdesign-vue-next';
 
-import SettingComponent from './setting-component.vue';
 import {
   componentTypeOptions,
   generateTypeOptions,
@@ -51,7 +46,6 @@ const remark = ref('');
 
 // 生成配置
 const moduleName = ref('');
-const belongMenuId = ref<number>();
 const type = ref<'single' | 'tree'>('single');
 const menuName = ref('');
 const componentType = ref<number>(1);
@@ -89,13 +83,10 @@ const fieldList = ref<FieldConfigRow[]>([]);
 // 菜单配置
 const menuButtons = ref<string[]>(['save', 'update', 'read', 'delete']);
 
-// 当前编辑的行
-const editingFieldRow = ref<FieldConfigRow | null>(null);
-
 async function open(id: number) {
   loading.value = true;
   try {
-    const response = await readTable(id);
+    await readTable(id);
     // 模拟数据加载
     tableName.value = '';
     tableComment.value = '';
@@ -112,23 +103,8 @@ async function open(id: number) {
 }
 
 function handleEditField(row: FieldConfigRow) {
-  editingFieldRow.value = { ...row };
-}
-
-function handleSaveField() {
-  if (!editingFieldRow.value) return;
-  const index = fieldList.value.findIndex(
-    (f) => f.column_name === editingFieldRow.value?.column_name
-  );
-  if (index >= 0) {
-    fieldList.value[index] = { ...editingFieldRow.value };
-  }
-  editingFieldRow.value = null;
-  message.success('保存字段成功');
-}
-
-function handleCancelEditField() {
-  editingFieldRow.value = null;
+  void row;
+  message.info('字段高级配置功能建设中');
 }
 
 function handleAllChecked(checked: boolean, key: keyof FieldConfigRow) {
