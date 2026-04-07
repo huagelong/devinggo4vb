@@ -55,6 +55,50 @@ export namespace MonitorApi {
   export interface DeleteCachePayload {
     key: string;
   }
+
+  // Server Monitor
+  export interface CpuInfo {
+    num: number;
+    usage: number;
+    model: string;
+  }
+
+  export interface MemoryInfo {
+    total: number;
+    used: number;
+    free: number;
+    usage: number;
+  }
+
+  export interface DiskInfo {
+    total: number;
+    used: number;
+    free: number;
+    usage: number;
+    mount_point: string;
+    file_system: string;
+  }
+
+  export interface GoRuntimeInfo {
+    go_version: string;
+    goroutines: number;
+    gc_stats: string;
+    heap_alloc: number;
+    heap_sys: number;
+    stack_in_use: number;
+  }
+
+  export interface ServerInfoResponse {
+    cpu: CpuInfo;
+    memory: MemoryInfo;
+    disks: DiskInfo[];
+    go_runtime: GoRuntimeInfo;
+    os: string;
+    arch: string;
+    hostname: string;
+    uptime: number;
+    server_time: string;
+  }
 }
 
 export function getOnlineUserPageList(params: MonitorApi.OnlineUserQuery) {
@@ -85,4 +129,11 @@ export function deleteCacheKey(data: MonitorApi.DeleteCachePayload) {
 
 export function clearAllCache() {
   return requestClient.delete<void>('/system/cache/clear');
+}
+
+// Server Monitor APIs
+export function getServerInfo() {
+  return requestClient.get<MonitorApi.ServerInfoResponse>(
+    '/system/server/monitor',
+  );
 }
