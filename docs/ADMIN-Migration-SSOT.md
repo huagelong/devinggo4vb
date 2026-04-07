@@ -1,6 +1,6 @@
 # Admin 前端迁移统一执行文档（SSOT）
 
-更新时间：2026-04-03
+更新时间：2026-04-07
 适用目标：将 docs/old_admin 的前端能力重构到 admin-ui/apps/backend
 
 ---
@@ -49,36 +49,110 @@
 
 ---
 
-## 4. old_admin -> admin-ui 模块映射（当前状态）
+## 4. old_admin -> admin-ui 模块映射（2026-04-07 对照）
 
 状态说明：
-- 已迁移：页面与 API 已有可用实现。
-- 部分迁移：已有 API 或部分页面，仍需闭环。
-- 未迁移：未发现对应页面实现。
+- ✅ 已迁移：页面与 API 已有可用实现。
+- ⚠️ 部分迁移：已有 API 或部分页面，仍需闭环。
+- ❌ 未迁移：未发现对应页面实现。
+- ➕ 新增：admin-ui 独有，old_admin 无对应。
 
-| old_admin 能力 | 当前 admin-ui 对应 | 状态 | 备注 |
+### 4.1 核心业务页面
+
+| # | old_admin 模块 | admin-ui 对应 | 状态 | 功能对比说明 |
+|---|---|---|---|---|
+| 1 | login | `_core/authentication` | ✅ 已迁移 | 登录/注册/忘记密码/二维码登录/验证码登录 均已实现 |
+| 2 | dashboard | `views/dashboard/*` | ✅ 已迁移 | analytics 趋势图 + workspace 工作台 + 个人资料 |
+| 3 | userCenter/message | `views/dashboard/message` | ✅ 已迁移 | 消息中心+实时推送（pusher 集成），类型已清理 |
+| 4 | userCenter/index | `views/dashboard/profile` + `_core/profile` | ✅ 已迁移 | 个人信息+修改密码+安全设置+通知设置 |
+
+### 4.2 系统管理页面
+
+| # | old_admin 模块 | admin-ui 对应 | 状态 | 功能对比说明 |
+|---|---|---|---|---|
+| 5 | system/user | `views/system/user` | ✅ 已迁移 | 完整 CRUD + 部门树联动 + 回收站 + 头像上传 |
+| 6 | system/role | `views/system/role` | ✅ 已迁移 | 完整 CRUD + 菜单权限 + 数据权限 |
+| 7 | system/menu | `views/system/menu` | ✅ 已迁移 | 树形 CRUD + 图标选择 + 权限标识 |
+| 8 | system/dept | `views/system/dept` | ✅ 已迁移 | 树形 CRUD + 领导配置 |
+| 9 | system/post | `views/system/post` | ✅ 已迁移 | 标准 CRUD |
+| 10 | system/dict | `views/system/dict` | ✅ 已迁移 | 主从联动（类型+数据） |
+| 11 | system/config | `views/system/config` | ✅ 已迁移 | 分组管理 + 键值编辑 + 文件上传配置 |
+| 12 | system/crontab | `views/system/crontab` | ✅ 已迁移 | 任务 CRUD + 执行 + 日志面板 |
+| 13 | system/notice | `views/system/notice` | ✅ 已迁移 | 标准 CRUD |
+| 14 | system/attachment | `views/system/attachment` | ✅ 已迁移 | 列表 + 删除 + 恢复 + 回收站 + 橱窗/列表视图 |
+| 15 | system/api | `views/system/api` | ✅ 已迁移 | CRUD + 参数管理（apiColumn） |
+| 16 | system/apiGroup | `views/system/apiGroup` | ✅ 已迁移 | 标准 CRUD |
+| 17 | system/app | `views/system/app` | ✅ 已迁移 | CRUD + 绑定 |
+| 18 | system/appGroup | `views/system/appGroup` | ✅ 已迁移 | 标准 CRUD |
+| 19 | system/systemModules | `views/system/systemModules` | ✅ 已迁移 | 替代 old_admin 的 module 管理 |
+| 20 | system/code | `views/system/code` | ✅ 已迁移 | 表加载 + 配置 + 预览 + 生成 |
+| 21 | system/logs (login/oper/api) | `views/system/logs/*` | ⚠️ 部分迁移 | 页面骨架完成，import 路径需修复（`@/` → `#/`），schemas 使用 naive-ui 类型需替换 |
+| 22 | system/dataMaintain | `views/system/dataMaintain` | ✅ 已迁移 | 列表+详情+优化+碎片整理 UI，后端 API 部分待开放 |
+| 23 | system/monitor/cache | `views/system/monitor/cache` | ✅ 已迁移 | Redis 信息 + 缓存键搜索/查看/删除/清空 |
+| 24 | system/monitor/onlineUser | `views/system/monitor/onlineUser` | ✅ 已迁移 | 在线用户列表 + 强制下线 |
+| 25 | system/module | `views/system/systemModules` | ✅ 已合并 | old_admin 的 module 合并到 systemModules |
+
+### 4.3 old_admin 独有（admin-ui 未实现）
+
+| # | old_admin 模块 | admin-ui 对应 | 状态 | 说明 |
+|---|---|---|---|---|
+| 26 | system/datasource | 无 | ❌ 未迁移 | 数据源管理（CRUD），后端 API 存在 |
+| 27 | system/queueMessage | 无 | ❌ 未迁移 | 队列消息列表，后端 API 存在 |
+| 28 | system/queueLog | 无 | ❌ 未迁移 | 队列日志列表，后端 API 存在 |
+
+### 4.4 admin-ui 新增（old_admin 无对应）
+
+| # | admin-ui 模块 | 状态 | 说明 |
 |---|---|---|---|
-| login | dashboard/_core 登录体系 | 已迁移 | 保持现有实现 |
-| dashboard | views/dashboard/analytics | 已迁移 | 已对接 dashboard 统计/图表 |
-| user | views/system/user | 已迁移 | 继续做联调回归 |
-| role | views/system/role | 已迁移 | 包含权限扩展动作 |
-| menu | views/system/menu | 已迁移 | 树形 CRUD |
-| dept | views/system/dept | 已迁移 | 树形 CRUD |
-| post | views/system/post | 已迁移 | 标准 CRUD |
-| dict | views/system/dict | 已迁移 | 主从联动 |
-| config | views/system/config | 已迁移 | 标准 CRUD |
-| crontab | views/system/crontab | 已迁移 | 含日志面板 |
-| attachment | views/system/attachment | 已迁移 | 标准 CRUD |
-| notice | views/system/notice | 已迁移 | 标准 CRUD |
-| api/apiGroup/app/appGroup | views/system 对应目录 | 已迁移 | 标准 CRUD |
-| monitor/onlineUser, cache, server | views/system/monitor/* | 已迁移 | 缓存监控+在线用户完整；服务器监控前端已实现，待后端API |
-| systemModules | views/system/systemModules | 已迁移 | 作为模块管理目标实现 |
-| code | views/system/code | 已迁移 | 已存在生成器页面 |
-| logs/loginLog, operLog, apiLog | views/system/logs/* | 已迁移 | 三页完整实现（CRUD/权限/搜索/分页） |
-| dataMaintain | views/system/dataMaintain | 已迁移 | 完整实现（列表/详情/优化/碎片整理UI），后端部分API待开放 |
-| queueMessage | views/dashboard/message | 已迁移 | 类型清理完成，any 已移除 |
-| upload 专项能力 | views/system/upload + api/system/upload | 部分迁移 | 统一 upload API 已建立，管理页面前端框架已完成 |
-| pusher 实时能力 | composables/pusher/* + dashboard/message | 已迁移 | pusher-js 集成完成，消息中心已接入实时推送 |
+| 29 | `views/system/monitor/server` | ⚠️ 待后端 API | 服务器监控（CPU/内存/磁盘/Go运行时），前端框架已完成 |
+| 30 | `views/system/upload` | ⚠️ 待后端 API | 统一文件上传管理页面，前端框架已完成 |
+| 31 | `views/system/dataMaintain` | ✅ 已实现 | 数据维护（old_admin 有 API 无独立页面） |
+| 32 | `views/system/demo` | ➕ 新增 | 示例/模板页面 |
+| 33 | `composables/pusher/*` | ✅ 已实现 | Pusher 实时推送能力（pusher-js 集成） |
+
+### 4.5 API 层对照
+
+| old_admin API | admin-ui API | 状态 |
+|---|---|---|
+| login.js | api/core/auth.ts | ✅ |
+| common.js | api/system/common.ts | ✅ |
+| system/user.js | api/system/user.ts + api/core/user.ts | ✅ |
+| system/role.js | api/system/role.ts | ✅ |
+| system/menu.js | api/system/menu.ts | ✅ |
+| system/dept.js | api/system/dept.ts | ✅ |
+| system/dict.js | api/system/dict.ts | ✅ |
+| system/post.js | api/system/post.ts | ✅ |
+| system/config.js | api/system/config.ts | ✅ |
+| system/crontab.js | api/system/crontab.ts | ✅ |
+| system/attachment.js | api/system/attachment.ts | ✅ |
+| system/notice.js | api/system/notice.ts | ✅ |
+| system/api.js | api/system/api.ts | ✅ |
+| system/apiGroup.js | api/system/api-group.ts | ✅ |
+| system/app.js | api/system/app.ts | ✅ |
+| system/appGroup.js | api/system/app-group.ts | ✅ |
+| system/systemModules.js | api/system/system-modules.ts | ✅ |
+| system/generate.js | api/system/generate.ts | ✅ |
+| system/monitor.js | api/system/monitor.ts | ✅ |
+| system/operLog.js / loginLog.js / apiLog.js | api/system/log.ts（统一） | ✅ |
+| system/dataMaintain.js | api/system/data-maintain.ts | ✅ |
+| system/datasource.js | 无 | ❌ |
+| system/queueMessage.js | 无 | ❌ |
+| system/queueLog.js | 无 | ❌ |
+| system/module.js | 合并到 system-modules.ts | ✅ |
+| 无对应 | api/core/message.ts（类型化） | ➕ |
+| 无对应 | api/system/upload.ts（统一上传） | ➕ |
+| 无对应 | api/core/profile.ts（类型化） | ➕ |
+
+### 4.6 统计汇总
+
+| 指标 | 数量 |
+|---|---|
+| old_admin 系统管理页面总数 | 25 |
+| admin-ui 已完成迁移 | 22 |
+| 遗留问题（需修复 import） | 1（logs 三页） |
+| 未迁移模块 | 3（datasource / queueMessage / queueLog） |
+| admin-ui 新增模块 | 5（server monitor / upload / dataMaintain / demo / pusher） |
+| 迁移完成率 | 88%（22/25） |
 
 ---
 
@@ -191,6 +265,19 @@
 - [x] 与 attachment 功能职责清晰分离
 - [ ] 后端 API 对接完成
 
+## T7：对照补缺（基于 2026-04-07 全面对比）
+
+目标：修复对照中发现的遗漏项。
+
+- [ ] 修复 logs 三页（loginLog/operLog/apiLog）的 import 路径（`@/` → `#/`）和 naive-ui 类型替换为 tdesign
+- [ ] 评估是否需要新增 datasource（数据源管理）页面
+- [ ] 评估是否需要新增 queueMessage / queueLog（队列消息/日志）页面
+- [ ] 对接后端 upload API，完善 T6 上传管理页面的实际数据加载
+
+完成标准：
+- [ ] logs 三页 import 路径修复，typecheck 通过
+- [ ] 所有目标页面联调可用
+
 ---
 
 ## 6. 统一开发约束
@@ -227,6 +314,14 @@
 > 用于持续推进，避免再拆分到多份 TODO。
 
 ### 2026-04-07
+
+**全面对比分析（old_admin vs admin-ui）**：
+- 重写第 4 节模块映射表，改为按分类的详细对照表
+- old_admin 系统管理页面 25 个，admin-ui 已完成 22 个（88%）
+- 发现 3 个未迁移模块：datasource（数据源管理）、queueMessage（队列消息）、queueLog（队列日志）
+- 发现 1 个遗留问题：logs 三页 import 路径需修复（`@/` → `#/`）+ naive-ui 类型需替换为 tdesign
+- admin-ui 新增 5 个 old_admin 没有的模块（server monitor / upload / dataMaintain / demo / pusher）
+- 新增 T7 对照补缺任务，修复遗留的 import 路径和类型问题
 
 **代码分析与文档更新**：
 - 经代码分析确认：logs 三页（loginLog/operLog/apiLog）已完整实现，包括 CRUD、权限控制、搜索分页等完整功能。
