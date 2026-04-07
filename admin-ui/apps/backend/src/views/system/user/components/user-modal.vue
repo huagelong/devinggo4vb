@@ -11,7 +11,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { MessagePlugin } from 'tdesign-vue-next';
 
 import { useVbenForm } from '#/adapter/form';
-import { uploadImageFileApi } from '#/api/core/profile';
+import { uploadImageFileApi } from '#/api/system/upload';
 import { getDeptTree } from '#/api/system/dept';
 import { getPostList } from '#/api/system/post';
 import { getRoleList } from '#/api/system/role';

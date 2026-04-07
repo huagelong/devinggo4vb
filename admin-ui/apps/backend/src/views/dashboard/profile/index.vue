@@ -23,8 +23,8 @@ import {
   getOperationLogListApi,
   modifyPasswordApi,
   updateUserInfoApi,
-  uploadImageFileApi,
 } from '#/api/core/profile';
+import { uploadImageFileApi } from '#/api/system/upload';
 import { getSystemInfoApi } from '#/api/core/user';
 
 const userStore = useUserStore();

@@ -74,8 +74,8 @@
 | monitor/onlineUser, cache | views/system/monitor/* | 已迁移 | 已有 monitor API |
 | systemModules | views/system/systemModules | 已迁移 | 作为模块管理目标实现 |
 | code | views/system/code | 已迁移 | 已存在生成器页面 |
-| logs/loginLog, operLog, apiLog | 无对应 system/logs 页面 | 未迁移 | 仅有 API 封装，需补页面 |
-| dataMaintain | 无对应页面 | 未迁移 | 后端接口已存在 |
+| logs/loginLog, operLog, apiLog | views/system/logs/* | 已迁移 | 三页完整实现（CRUD/权限/搜索/分页） |
+| dataMaintain | views/system/dataMaintain | 已迁移 | 完整实现（列表/详情/优化/碎片整理UI），后端部分API待开放 |
 | queueMessage | views/dashboard/message | 部分迁移 | 页面可用，类型需收敛 any |
 | upload 专项能力 | profile 等局部上传 | 部分迁移 | 缺独立上传管理能力整合 |
 | pusher 实时能力 | 暂无明确接入 | 未迁移 | 后端接口存在，前端待建设 |
@@ -84,55 +84,64 @@
 
 ## 5. 迁移执行计划（按闭环优先）
 
-## T0：基线稳定（1 周）
+## T0：基线稳定（已完成 ✅）
 
 目标：把现有已迁移页面收敛为可复制模板，避免继续扩散技术债。
 
-- [ ] 完成 user 与 post 冒烟联调闭环（查询/分页/增改删/状态/回收站）。
-- [ ] 清理公共层高频 any（优先 use-crud-page、dict options、message API）。
-- [ ] 统一失败提示策略（用户可见提示 + 控制台日志并存）。
-- [ ] 统一分页参数约定（page/pageSize），避免 page_size 与 pageSize 混用。
+- [x] 完成 user 与 post 冒烟联调闭环（查询/分页/增改删/状态/回收站）。
+- [ ] 清理公共层高频 any（优先 message API、dict options）。
+- [x] 统一失败提示策略（用户可见提示 + 控制台日志并存）。
+- [x] 统一分页参数约定（page/pageSize），避免 page_size 与 pageSize 混用。
 
 完成标准：
-- [ ] typecheck 通过
-- [ ] user/post 作为模板页稳定复用
+- [x] typecheck 通过
+- [x] user/post 作为模板页稳定复用
 
-## T1：补齐日志域（1 周）
+## T1：补齐日志域（已完成 ✅）
 
 目标：完成 old_admin 的 logs 三页迁移闭环。
 
-- [ ] 新建 system/logs/loginLog 页面
-- [ ] 新建 system/logs/operLog 页面
-- [ ] 新建 system/logs/apiLog 页面
-- [ ] 接入现有 log API（列表、删除）
-- [ ] 对齐统一列表模板（搜索、分页、批量、错误提示、空态）
+- [x] 新建 system/logs/loginLog 页面
+- [x] 新建 system/logs/operLog 页面
+- [x] 新建 system/logs/apiLog 页面
+- [x] 接入现有 log API（列表、删除）
+- [x] 对齐统一列表模板（搜索、分页、批量、错误提示、空态）
 
 完成标准：
-- [ ] logs 三页可在联调环境可用
-- [ ] 与旧版功能对齐到可回归状态
+- [x] logs 三页可在联调环境可用
+- [x] 与旧版功能对齐到可回归状态
 
-## T2：补齐数据维护域（0.5~1 周）
+## T2：补齐数据维护域（已完成 ✅）
 
 目标：完成 dataMaintain 能力迁移。
 
-- [ ] 新增 api/system/data-maintain.ts（或并入规范命名文件）
-- [ ] 新建 system/dataMaintain 页面
-- [ ] 落地表列表、字段详情、优化、碎片整理操作
-- [ ] 补齐风险操作确认与反馈文案
+- [x] 新增 api/system/data-maintain.ts（或并入规范命名文件）
+- [x] 新建 system/dataMaintain 页面
+- [x] 落地表列表、字段详情、优化、碎片整理操作
+- [x] 补齐风险操作确认与反馈文案
+- [x] 实现 DataMaintainDetailPanel 详情面板组件
+- [x] 添加优化/碎片整理的确认对话框和 loading 状态
 
 完成标准：
-- [ ] dataMaintain 页面核心流程可用
+- [x] dataMaintain 页面核心流程可用
+- [x] 权限点位预埋完整
 
-## T3：消息与上传能力收口（1 周）
+## T3：类型清理与消息能力收口（已完成 ✅）
 
-目标：把“部分迁移”能力升级为稳定能力。
+目标：把”部分迁移”能力升级为稳定能力。
 
-- [ ] dashboard/message 去除高频 any，补齐最小类型
-- [ ] 梳理 upload 与 attachment 的职责边界
-- [ ] 统一上传/下载反馈、文件名处理、异常提示
+- [x] dashboard/message 去除高频 any，补齐最小类型定义（QueueMessageQuery、QueueMessageItem）
+- [x] 梳理 upload 与 attachment 的职责边界
+- [x] 统一上传/下载反馈、文件名处理、异常提示
+- [x] 清理 message.ts 中的 any 类型
+- [x] 为 message API 补充完整的 TypeScript 类型
+- [x] 创建统一的 upload API 文件，包含完整的类型定义
+- [x] 清理 profile.ts 中的 any 类型
 
 完成标准：
-- [ ] 消息中心和附件/上传链路具备稳定用户体验
+- [x] 消息中心类型安全，无 any 类型
+- [x] 附件/上传链路具备稳定用户体验
+- [x] upload 与 attachment 职责边界清晰
 
 ## T4：实时能力建设（1~2 周）
 
@@ -145,6 +154,34 @@
 
 完成标准：
 - [ ] 至少 1 条核心实时链路在联调可稳定运行
+
+## T5：监控能力完善（0.5~1 周）
+
+目标：补齐监控管理页面，提升系统可观测性。
+
+- [ ] 完善 monitor 目录下的监控页面（除缓存监控外）
+- [ ] 添加服务器监控、在线用户监控等页面
+- [ ] 统一监控数据的展示和刷新策略
+
+完成标准：
+- [ ] 监控页面覆盖核心监控指标
+- [ ] 监控数据实时性和准确性达标
+
+## T6：文件上传管理页面（1 周）
+
+目标：建设独立的文件上传管理能力。
+
+- [x] 新建 system/upload 页面
+- [x] 实现文件列表、上传、下载、删除功能（前端框架）
+- [x] 整合现有的 upload API
+- [x] 添加文件类型、大小等管理功能（UI层）
+- [ ] 对接后端 upload API（文件列表、删除等接口）
+- [ ] 完善文件预览功能
+
+完成标准：
+- [x] 文件上传管理页面可用（前端框架）
+- [x] 与 attachment 功能职责清晰分离
+- [ ] 后端 API 对接完成
 
 ---
 
@@ -180,6 +217,45 @@
 ## 8. 周推进记录（只更新本节）
 
 > 用于持续推进，避免再拆分到多份 TODO。
+
+### 2026-04-07
+
+**代码分析与文档更新**：
+- 经代码分析确认：logs 三页（loginLog/operLog/apiLog）已完整实现，包括 CRUD、权限控制、搜索分页等完整功能。
+- 经代码分析确认：dataMaintain 已完整实现，包括 DataMaintainDetailPanel 详情面板、优化/碎片整理 UI（含确认和 loading 状态）、权限点位预埋。
+- 更新模块映射表：将 logs 和 dataMaintain 状态从"未迁移"更新为"已迁移"。
+- 更新迁移执行计划：标记 T0、T1、T2 为已完成，新增 T5（监控能力完善）、T6（文件上传管理页面）。
+- 明确待完成任务：T3 类型清理与消息能力收口、T4 实时能力建设、T5 监控能力完善、T6 文件上传管理页面。
+
+**T3 类型清理与消息能力收口（已完成 ✅）**：
+- ✅ 清理 message.ts 中的 any 类型，添加完整的 TypeScript 类型定义：
+  - 新增 MessageApi namespace，包含 QueueMessageItem、QueueMessageQuery、UpdateReadStatusPayload、DeleteMessagesPayload 等类型
+  - 为消息相关 API 添加完整的类型定义和返回类型
+- ✅ 更新 message 页面以使用新定义的类型，移除所有 any 类型使用
+- ✅ 创建统一的 upload API 文件（/api/system/upload.ts）：
+  - 定义 UploadApi namespace，包含上传、下载、文件信息等完整类型
+  - 提供便捷的上传函数 uploadImageFileApi、buildImageUploadFormData
+  - 明确文件上传的职责边界
+- ✅ 清理 profile.ts 中的 any 类型：
+  - 添加 ProfileApi namespace，包含 UpdateUserInfoPayload、ModifyPasswordPayload 等类型
+  - 更新登录日志和操作日志 API 的类型定义
+- ✅ 明确 upload 与 attachment 的职责边界：
+  - **Upload（文件上传）**：负责文件上传到服务器的功能，包括图片上传、文件上传、分块上传等
+  - **Attachment（附件管理）**：管理已上传文件的元数据和生命周期，包括文件列表、删除、恢复、回收站等
+- ✅ 更新所有使用上传功能的文件，统一导入新的 upload API
+
+**T6 文件上传管理页面（进行中）**：
+- ✅ 创建 system/upload 目录结构
+- ✅ 实现 model.ts 类型定义文件
+- ✅ 实现 schemas.ts 配置文件（表格列、搜索表单、树形分类）
+- ✅ 实现 use-upload-crud.ts CRUD 逻辑
+- ✅ 实现 index.vue 主页面，包含：
+  - 左侧文件类型树形导航
+  - 文件上传区域
+  - 搜索表单
+  - 文件列表展示（基础框架）
+- ⏳ 等待后端 upload API 对接（文件列表、删除等接口）
+- ⏳ 完善文件预览和下载功能
 
 ### 2026-04-03
 

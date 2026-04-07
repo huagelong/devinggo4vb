@@ -1,4 +1,6 @@
 ﻿<script setup lang="ts">
+import type { MessageApi } from '#/api/core/message';
+
 import { onMounted, reactive, ref } from 'vue';
 
 import { useWindowSize } from '@vueuse/core';
@@ -25,7 +27,7 @@ import {
 const { height } = useWindowSize();
 
 const currentType = ref('all'); // all 全部
-const dictOptions = ref<any[]>([]);
+const dictOptions = ref<MessageApi.DataDictItem[]>([]);
 
 const searchForm = reactive({
   title: '',
@@ -39,9 +41,9 @@ const pagination = reactive({
   total: 0,
 });
 
-const tableData = ref([]);
+const tableData = ref<MessageApi.QueueMessageItem[]>([]);
 const tableLoading = ref(false);
-const selectedRowKeys = ref<any[]>([]);
+const selectedRowKeys = ref<number[]>([]);
 
 const columns: any[] = [
   { colKey: 'row-select', type: 'multiple' as const, width: 50 },
@@ -54,10 +56,10 @@ const columns: any[] = [
 
 const loadDict = async () => {
   try {
-    const res: any = await getDataDictListApi({ code: 'queue_msg_type' });
+    const res = await getDataDictListApi({ code: 'queue_msg_type' });
     dictOptions.value = Array.isArray(res)
       ? res
-      : res?.items || res?.data || [];
+      : res?.items || (res?.data?.items || []);
   } catch (error) {
     console.error(error);
   }
@@ -71,7 +73,7 @@ const getTypeName = (val: string) => {
 const fetchData = async () => {
   tableLoading.value = true;
   try {
-    const params: any = {
+    const params: MessageApi.QueueMessageQuery = {
       page: pagination.current,
       pageSize: pagination.pageSize,
       title: searchForm.title,
@@ -85,15 +87,15 @@ const fetchData = async () => {
     ) {
       params.created_at = searchForm.created_at;
     }
-    const res: any = await getQueueMessageReceiveListApi(params);
-    tableData.value = res?.items || res?.data?.items || [];
-    pagination.total = res?.pageInfo?.total || res?.data?.pageInfo?.total || 0;
+    const res = await getQueueMessageReceiveListApi(params);
+    tableData.value = res?.items ?? res?.data?.items ?? [];
+    pagination.total = res?.pageInfo?.total ?? res?.data?.pageInfo?.total ?? 0;
   } finally {
     tableLoading.value = false;
   }
 };
 
-const onPageChange = (pageInfo: any) => {
+const onPageChange = (pageInfo: { current: number; pageSize: number }) => {
   pagination.current = pageInfo.current;
   pagination.pageSize = pageInfo.pageSize;
   fetchData();
@@ -110,8 +112,8 @@ const onReset = () => {
   onSearch();
 };
 
-const onSelectChange = (val: any[]) => {
-  selectedRowKeys.value = val;
+const onSelectChange = (val: (string | number)[]) => {
+  selectedRowKeys.value = val.map(Number);
 };
 
 const handleChangeType = (val: string) => {
@@ -142,7 +144,7 @@ const handleBatchDelete = () => {
   });
 };
 
-const handleDelete = (row: any) => {
+const handleDelete = (row: MessageApi.QueueMessageItem) => {
   const dialog = DialogPlugin.confirm({
     header: '确认删除',
     body: '确定要删除该数据吗？',
@@ -156,8 +158,8 @@ const handleDelete = (row: any) => {
 };
 
 const detailVisible = ref(false);
-const detailData = ref<any>({});
-const handleDetail = async (row: any) => {
+const detailData = ref<MessageApi.QueueMessageItem>({} as MessageApi.QueueMessageItem);
+const handleDetail = async (row: MessageApi.QueueMessageItem) => {
   detailData.value = row;
   detailVisible.value = true;
   // Mark as read

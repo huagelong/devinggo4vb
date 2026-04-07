@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { UploadIcon } from 'tdesign-icons-vue-next';
 import { Button, Input, MessagePlugin, Space } from 'tdesign-vue-next';
 
-import { uploadImageFileApi } from '#/api/core/profile';
+import { uploadImageFileApi } from '#/api/system/upload';
 
 const props = defineProps<{
   modelValue?: string;

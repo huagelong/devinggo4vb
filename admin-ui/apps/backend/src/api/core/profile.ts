@@ -1,55 +1,66 @@
-﻿import file2md5 from 'file2md5';
+﻿import type { LogApi } from '#/api/system/log';
 
 import { requestClient } from '#/api/request';
 
-type UploadRequestData = Record<string, boolean | number | string>;
+export namespace ProfileApi {
+  export interface UpdateUserInfoPayload {
+    nickname?: string;
+    avatar?: string;
+    email?: string;
+    phone?: string;
+    remark?: string;
+    signed?: string;
+  }
 
-async function fileToMd5(file: File) {
-  return file2md5(file);
+  export interface ModifyPasswordPayload {
+    old_password?: string;
+    new_password?: string;
+    confirm_password?: string;
+    oldPassword?: string;
+    newPassword?: string;
+    newPasswordConfirmation?: string;
+  }
+
+  export interface LoginLogQuery {
+    page?: number;
+    pageSize?: number;
+    username?: string;
+    status?: number;
+    ip?: string;
+    login_time?: string[];
+  }
+
+  export interface OperationLogQuery {
+    page?: number;
+    pageSize?: number;
+    username?: string;
+    service_name?: string;
+    ip?: string;
+    status?: number;
+    created_at?: string[];
+  }
 }
 
-export async function buildImageUploadFormData(
-  file: File,
-  requestData: UploadRequestData = {},
-) {
-  const hash = await fileToMd5(file);
-  const formData = new FormData();
-
-  formData.append('image', file);
-  formData.append('isChunk', 'false');
-  formData.append('hash', hash);
-
-  Object.entries(requestData).forEach(([name, value]) => {
-    formData.append(name, String(value));
-  });
-
-  return formData;
+// User profile APIs
+export async function updateUserInfoApi(data: ProfileApi.UpdateUserInfoPayload) {
+  return requestClient.post<void>('/system/user/updateInfo', data);
 }
 
-export async function updateUserInfoApi(data: any) {
-  return requestClient.post('/system/user/updateInfo', data);
+export async function modifyPasswordApi(data: ProfileApi.ModifyPasswordPayload) {
+  return requestClient.post<void>('/system/user/modifyPassword', data);
 }
 
-export async function modifyPasswordApi(data: any) {
-  return requestClient.post('/system/user/modifyPassword', data);
+// Log APIs (should use LogApi from system/log instead)
+export async function getLoginLogListApi(params: LogApi.LoginLogQuery) {
+  return requestClient.get<LogApi.LoginLogResponse>(
+    '/system/common/getLoginLogList',
+    { params },
+  );
 }
 
-export async function uploadImageApi(data: FormData) {
-  return requestClient.post('/system/uploadImage', data);
-}
-
-export async function uploadImageFileApi(
-  file: File,
-  requestData: UploadRequestData = {},
-) {
-  const formData = await buildImageUploadFormData(file, requestData);
-  return uploadImageApi(formData);
-}
-
-export async function getLoginLogListApi(params: any) {
-  return requestClient.get('/system/common/getLoginLogList', { params });
-}
-
-export async function getOperationLogListApi(params: any) {
-  return requestClient.get('/system/common/getOperationLogList', { params });
+export async function getOperationLogListApi(params: LogApi.OperLogQuery) {
+  return requestClient.get<LogApi.OperLogResponse>(
+    '/system/common/getOperationLogList',
+    { params },
+  );
 }
