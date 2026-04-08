@@ -288,10 +288,12 @@ onMounted(() => {
             :columns="columns"
             :data="tableData"
             :loading="loading"
+            :pagination="pagination"
             :selected-row-keys="selectedRowKeys"
             row-key="id"
             hover
             stripe
+            @page-change="handlePageChange"
             @select-change="handleSelectChange"
           >
             <template #url="{ row }">
