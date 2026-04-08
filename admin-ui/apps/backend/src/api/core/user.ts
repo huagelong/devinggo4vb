@@ -4,16 +4,34 @@ import { requestClient } from '#/api/request';
 
 export interface SystemUserInfoResult {
   user: {
-    [key: string]: any;
     avatar: string;
     dashboard?: string;
+    email?: string;
     id: number;
     nickname: string;
+    phone?: string;
+    signed?: string;
     username: string;
+    [key: string]: unknown;
   };
   roles: string[];
   codes: string[];
-  routers: any[];
+  routers: Array<{
+    id: number;
+    parent_id: number;
+    name: string;
+    path: string;
+    component: string;
+    redirect: string;
+    meta: {
+      hidden: boolean;
+      hiddenBreadcrumb: boolean;
+      icon: string;
+      title: string;
+      type: 'B' | 'I' | 'L' | 'M';
+    };
+    children: unknown[];
+  }>;
 }
 
 // 模块级缓存：避免同一事件循环内重复请求

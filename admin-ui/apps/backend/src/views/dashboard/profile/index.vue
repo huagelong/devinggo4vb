@@ -1,4 +1,6 @@
 ﻿<script setup lang="ts">
+import type { LogApi } from '#/api/system/log';
+
 import { onMounted, reactive, ref } from 'vue';
 
 // 瀵煎叆鐢ㄦ埛淇℃伅鐩稿叧鐨?Store
@@ -24,8 +26,8 @@ import {
   modifyPasswordApi,
   updateUserInfoApi,
 } from '#/api/core/profile';
-import { uploadImageFileApi } from '#/api/system/upload';
 import { getSystemInfoApi } from '#/api/core/user';
+import { uploadImageFileApi } from '#/api/system/upload';
 
 const userStore = useUserStore();
 
@@ -52,13 +54,13 @@ const securityForm = reactive({
 });
 
 // 鏃ュ織鏁版嵁
-const loginLogs = ref<any[]>([]);
-const operationLogs = ref<any[]>([]);
+const loginLogs = ref<LogApi.LoginLogItem[]>([]);
+const operationLogs = ref<LogApi.OperLogItem[]>([]);
 
 // 鑾峰彇涓汉淇℃伅
 async function fetchUserInfo() {
   try {
-    const res: any = await getSystemInfoApi();
+    const res = await getSystemInfoApi();
     if (res && res.user) {
       userInfoForm.username = res.user.username || '';
       userInfoForm.nickname = res.user.nickname || '';
@@ -111,8 +113,8 @@ function triggerUpload() {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*';
-  fileInput.addEventListener('change', async (e: any) => {
-    const file = e.target.files[0];
+  fileInput.addEventListener('change', async (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
     try {
       const res: any = await uploadImageFileApi(file);
