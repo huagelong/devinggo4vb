@@ -23,6 +23,7 @@ import {
   DateRangePicker,
   Form,
   FormItem,
+  ImageViewer,
   Input,
   Space,
   Table,
@@ -164,6 +165,15 @@ function isImageType(mimeType: string): boolean {
   return /^image\//.test(mimeType);
 }
 
+// Image preview
+const previewVisible = ref(false);
+const previewImageUrl = ref('');
+
+function handlePreviewImage(url: string) {
+  previewImageUrl.value = url;
+  previewVisible.value = true;
+}
+
 function getFileExtension(mimeType: string): string {
   const map: Record<string, string> = {
     'application/pdf': 'PDF',
@@ -290,7 +300,8 @@ onMounted(() => {
                   v-if="isImageType(row.mime_type)"
                   :src="row.url"
                   :alt="row.origin_name"
-                  class="h-10 w-10 rounded object-cover"
+                  class="h-10 w-10 cursor-zoom-in rounded object-cover transition hover:opacity-80"
+                  @click="handlePreviewImage(row.url)"
                 />
                 <Tag v-else theme="default">
                   {{ getFileExtension(row.mime_type) }}
@@ -358,7 +369,8 @@ onMounted(() => {
                   v-if="isImageType(row.mime_type)"
                   :src="row.url"
                   :alt="row.origin_name"
-                  class="max-h-full max-w-full object-contain"
+                  class="max-h-full max-w-full cursor-zoom-in object-contain"
+                  @click="handlePreviewImage(row.url)"
                 />
                 <Tag v-else theme="default" size="large">
                   {{ getFileExtension(row.mime_type) }}
@@ -393,5 +405,12 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Image Preview -->
+    <ImageViewer
+      v-model:visible="previewVisible"
+      :images="[previewImageUrl]"
+      :close-on-overlay="true"
+    />
   </Page>
 </template>

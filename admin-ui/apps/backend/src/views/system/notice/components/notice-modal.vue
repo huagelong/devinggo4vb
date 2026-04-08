@@ -98,12 +98,13 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Textarea',
       componentProps: {
-        autosize: { minRows: 6, maxRows: 10 },
-        placeholder: '请输入公告内容',
+        autosize: { minRows: 8, maxRows: 20 },
+        placeholder: '请输入公告内容（支持 HTML 格式）',
       },
       fieldName: 'content',
       label: '公告内容',
       rules: 'required',
+      description: '支持 HTML 格式，可使用基础标签排版',
     },
     {
       component: 'Textarea',

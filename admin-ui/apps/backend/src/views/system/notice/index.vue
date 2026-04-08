@@ -297,6 +297,13 @@ onMounted(() => {
             </span>
           </template>
 
+          <template #content="{ row }">
+            <span
+              class="block max-w-[320px] truncate text-gray-600 text-sm"
+              v-html="row.content || '-'"
+            />
+          </template>
+
           <template #created_at="{ row }">
             <span>{{ row.created_at || '-' }}</span>
           </template>

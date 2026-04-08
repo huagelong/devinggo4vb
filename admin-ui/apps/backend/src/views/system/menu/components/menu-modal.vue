@@ -12,6 +12,8 @@ import { useVbenForm } from '#/adapter/form';
 import { getMenuTreeOptions, saveMenu, updateMenu } from '#/api/system/menu';
 import { useDictOptions } from '#/composables/crud/use-dict-options';
 
+import IconSelect from './icon-select.vue';
+
 import {
   createMenuFormDefaultValues,
   menuHiddenOptions,
@@ -71,8 +73,8 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
-      component: 'Input',
-      componentProps: { placeholder: '请输入图标名称，如 t-icon-apps' },
+      component: IconSelect,
+      componentProps: { placeholder: '请选择或输入图标名称' },
       dependencies: {
         show: (values) => isFieldVisible('icon', values?.type),
         triggerFields: ['type'],

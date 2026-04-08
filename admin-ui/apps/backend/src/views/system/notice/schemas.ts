@@ -20,9 +20,10 @@ export function createNoticeTableColumns(): NoticeTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'title', title: '公告标题', minWidth: 260 },
-    { align: 'center', colKey: 'type', title: '公告类型', width: 140 },
-    { colKey: 'remark', title: '备注', minWidth: 200 },
+    { colKey: 'title', title: '公告标题', minWidth: 200 },
+    { align: 'center', colKey: 'type', title: '公告类型', width: 100 },
+    { colKey: 'content', title: '公告内容', minWidth: 260 },
+    { colKey: 'remark', title: '备注', minWidth: 160 },
     { colKey: 'created_at', title: '创建时间', minWidth: 180 },
     {
       align: 'center',
