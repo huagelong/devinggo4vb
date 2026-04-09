@@ -117,7 +117,7 @@ function triggerUpload() {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
     try {
-      const res: any = await uploadImageFileApi(file);
+      const res = await uploadImageFileApi(file);
       // 鏍规嵁鍚庣杩斿洖鏍煎紡鍙栧浘鐗嘦RL
       if (res && res.url) {
         userInfoForm.avatar = res.url;
@@ -127,7 +127,7 @@ function triggerUpload() {
         userStore.setUserInfo({
           ...userStore.userInfo,
           avatar: res.url,
-        } as any);
+        });
         MessagePlugin.success('澶村儚涓婁紶鎴愬姛');
       }
     } catch (error) {
@@ -141,12 +141,12 @@ function triggerUpload() {
 // 鑾峰彇鏃ュ織
 async function fetchLogs() {
   try {
-    const loginRes: any = await getLoginLogListApi({ page: 1, pageSize: 10 });
+    const loginRes = await getLoginLogListApi({ page: 1, pageSize: 10 });
     if (loginRes && loginRes.items) {
       loginLogs.value = loginRes.items;
     }
 
-    const opRes: any = await getOperationLogListApi({ page: 1, pageSize: 10 });
+    const opRes = await getOperationLogListApi({ page: 1, pageSize: 10 });
     if (opRes && opRes.items) {
       operationLogs.value = opRes.items;
     }
