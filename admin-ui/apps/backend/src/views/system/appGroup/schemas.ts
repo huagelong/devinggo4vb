@@ -33,7 +33,7 @@ export function createAppGroupTableColumns(): AppGroupTableColumn[] {
     { colKey: 'id', title: 'ID', width: 80 },
     { colKey: 'name', title: '分组名称', minWidth: 160 },
     { colKey: 'sort', title: '排序', width: 120 },
-    { colKey: 'status', title: '状态', width: 120 },
+    { colKey: 'status', title: '״̬', width: 120 },
     { colKey: 'created_at', title: '创建时间', width: 180 },
     {
       align: 'center',

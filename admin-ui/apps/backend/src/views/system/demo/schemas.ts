@@ -41,7 +41,7 @@ export function createDemoTableColumns(): DemoTableColumn[] {
     { align: 'center', colKey: 'id', title: 'ID', width: 80 },
     { align: 'center', colKey: 'name', minWidth: 120, title: '名称' },
     { align: 'center', colKey: 'code', minWidth: 120, title: '编码' },
-    { align: 'center', colKey: 'status', minWidth: 120, title: '状态' },
+    { align: 'center', colKey: 'status', minWidth: 120, title: '״̬' },
     { align: 'center', colKey: 'sort', minWidth: 140, title: '排序' },
     { align: 'center', colKey: 'price', minWidth: 120, title: '数字' },
     { align: 'center', colKey: 'email', minWidth: 120, title: '邮箱' },

@@ -36,7 +36,7 @@ export function createPostTableColumns(): PostTableColumn[] {
     { align: 'center', colKey: 'name', minWidth: 140, title: '岗位名称' },
     { align: 'center', colKey: 'code', minWidth: 140, title: '岗位标识' },
     { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { align: 'center', colKey: 'remark', minWidth: 160, title: '备注' },
     { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
     {

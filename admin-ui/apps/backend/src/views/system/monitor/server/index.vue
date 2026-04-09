@@ -43,7 +43,7 @@ function formatUptime(seconds: number): string {
   const minutes = Math.floor((seconds % 3600) / 60);
   const parts: string[] = [];
   if (days > 0) parts.push(`${days}天`);
-  if (hours > 0) parts.push(`${hours}小时`);
+  if (hours > 0) parts.push(`${hours}Сʱ`);
   if (minutes > 0) parts.push(`${minutes}分钟`);
   return parts.join(' ') || `${seconds}秒`;
 }

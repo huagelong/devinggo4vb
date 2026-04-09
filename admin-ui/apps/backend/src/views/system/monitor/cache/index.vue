@@ -154,7 +154,7 @@ onMounted(() => {
             <div class="text-base">{{ serverInfo.port || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">AOF状态</div>
+            <div class="mb-2 text-sm text-gray-500">AOF״̬</div>
             <div class="text-base">{{ serverInfo.aof_enabled || '-' }}</div>
           </Col>
           <Col :span="6">

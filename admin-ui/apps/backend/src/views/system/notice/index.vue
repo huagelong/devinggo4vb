@@ -47,7 +47,7 @@ type NoticeModalInstance = {
 
 const noticeModalRef = ref<NoticeModalInstance>();
 const fallbackNoticeTypeOptions: DictOption[] = [
-  { label: '通知', value: 1 },
+  { label: '֪ͨ', value: 1 },
   { label: '公告', value: 2 },
 ];
 

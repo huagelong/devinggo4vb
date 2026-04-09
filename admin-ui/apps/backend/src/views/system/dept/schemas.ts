@@ -41,7 +41,7 @@ export function createDeptTableColumns(): DeptTableColumn[] {
     { align: 'center', colKey: 'leader', minWidth: 120, title: '负责人' },
     { align: 'center', colKey: 'phone', minWidth: 150, title: '手机' },
     { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
     {
       align: 'center',

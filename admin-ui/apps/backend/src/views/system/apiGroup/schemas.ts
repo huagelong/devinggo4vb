@@ -22,7 +22,7 @@ export function createApiGroupTableColumns(): ApiGroupTableColumn[] {
       width: 52,
     },
     { colKey: 'name', title: '分组名称', minWidth: 220 },
-    { colKey: 'status', title: '状态', width: 120, align: 'center' },
+    { colKey: 'status', title: '״̬', width: 120, align: 'center' },
     { colKey: 'remark', title: '备注', minWidth: 200 },
     { colKey: 'created_at', title: '创建时间', minWidth: 180 },
     { colKey: 'updated_at', title: '更新时间', minWidth: 180 },

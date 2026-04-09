@@ -32,7 +32,7 @@ export function createApiTableColumns(): ApiTableColumn[] {
     { colKey: 'access_name', title: '接口标识', minWidth: 220 },
     { colKey: 'request_mode', title: '请求模式', width: 120 },
     { colKey: 'auth_mode', title: '认证模式', width: 120 },
-    { colKey: 'status', title: '状态', width: 100, align: 'center' },
+    { colKey: 'status', title: '״̬', width: 100, align: 'center' },
     { colKey: 'remark', title: '备注', minWidth: 200 },
     { colKey: 'created_at', title: '创建时间', minWidth: 180 },
     {
@@ -78,7 +78,7 @@ export function createApiColumnTableColumns(): ApiColumnTableColumn[] {
     { colKey: 'data_type', title: '数据类型', width: 140 },
     { colKey: 'type', title: '字段类型', width: 120 },
     { colKey: 'is_required', title: '是否必填', width: 100, align: 'center' },
-    { colKey: 'status', title: '状态', width: 100, align: 'center' },
+    { colKey: 'status', title: '״̬', width: 100, align: 'center' },
     { colKey: 'default_value', title: '默认值', minWidth: 180 },
     { colKey: 'remark', title: '备注', minWidth: 200 },
     { colKey: 'created_at', title: '创建时间', minWidth: 180 },

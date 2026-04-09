@@ -35,7 +35,7 @@ export function createDictTypeTableColumns(): DictTableColumn[] {
     },
     { colKey: 'name', minWidth: 160, title: '字典名称' },
     { colKey: 'code', minWidth: 200, title: '字典标识' },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { colKey: 'remark', minWidth: 180, title: '备注' },
     { colKey: 'created_at', minWidth: 180, title: '创建时间' },
     {
@@ -91,7 +91,7 @@ export function createDictDataTableColumns(): DictTableColumn[] {
     { colKey: 'label', minWidth: 160, title: '字典标签' },
     { colKey: 'value', minWidth: 140, title: '字典键值' },
     { align: 'center', colKey: 'sort', title: '排序', width: 120 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { colKey: 'remark', minWidth: 180, title: '备注' },
     { colKey: 'created_at', minWidth: 180, title: '创建时间' },
     {

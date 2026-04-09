@@ -49,7 +49,7 @@ export function createRoleTableColumns(): RoleTableColumn[] {
     { align: 'center', colKey: 'code', minWidth: 160, title: '角色标识' },
     { align: 'center', colKey: 'data_scope', minWidth: 160, title: '数据范围' },
     { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { align: 'center', colKey: 'remark', minWidth: 180, title: '备注' },
     { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
     {

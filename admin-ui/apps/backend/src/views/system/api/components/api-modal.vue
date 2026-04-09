@@ -105,7 +105,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: statusOptions.value },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: '״̬',
       rules: 'required',
     },
     {

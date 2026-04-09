@@ -351,7 +351,7 @@ defineExpose({
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem label="״̬" name="status">
               <Select
                 v-model="searchForm.status"
                 :options="statusOptions"

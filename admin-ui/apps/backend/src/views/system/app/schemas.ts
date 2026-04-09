@@ -36,7 +36,7 @@ export function createAppTableColumns(): AppTableColumn[] {
     { colKey: 'app_id', title: 'AppId', minWidth: 200 },
     { colKey: 'intro', title: '应用简介', minWidth: 200 },
     { colKey: 'sort', title: '排序', width: 120 },
-    { colKey: 'status', title: '状态', width: 120 },
+    { colKey: 'status', title: '״̬', width: 120 },
     { colKey: 'created_at', title: '创建时间', width: 180 },
     {
       align: 'center',

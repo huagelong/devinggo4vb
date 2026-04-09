@@ -12,7 +12,7 @@ export const generateTypeOptions = [
 export const componentTypeOptions = [
   { label: '模态框', value: 1 },
   { label: '抽屉', value: 2 },
-  { label: 'Tag页', value: 3 },
+  { label: 'Tagҳ', value: 3 },
 ];
 
 export const tplTypeOptions = [

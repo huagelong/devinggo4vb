@@ -64,7 +64,7 @@ const leaderColumns = [
   { colKey: 'nickname', title: '用户昵称', minWidth: 140 },
   { colKey: 'phone', title: '手机', minWidth: 140 },
   { colKey: 'email', title: '邮箱', minWidth: 180 },
-  { colKey: 'status', title: '状态', width: 100, align: 'center' as const },
+  { colKey: 'status', title: '״̬', width: 100, align: 'center' as const },
   {
     colKey: 'leader_add_time',
     title: '设置领导时间',
@@ -314,7 +314,7 @@ defineExpose({
                 clearable
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem label="״̬" name="status">
               <Select
                 v-model="leaderSearchForm.status"
                 :options="statusOptions"

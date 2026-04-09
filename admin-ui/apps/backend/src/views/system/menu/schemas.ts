@@ -7,7 +7,7 @@ import type {
 } from './model';
 
 export const menuTypeOptions: Array<{ label: string; value: MenuTypeValue }> = [
-  { label: '目录', value: 'M' },
+  { label: 'Ŀ¼', value: 'M' },
   { label: '按钮', value: 'B' },
   { label: '外链', value: 'L' },
   { label: 'iFrame', value: 'I' },
@@ -25,7 +25,7 @@ export const restfulOptions = [
 
 export const menuTypeTagMap: Record<string, { label: string; theme: 'default' | 'primary' | 'success' | 'warning' | 'danger' }> =
   {
-    M: { label: '目录', theme: 'primary' },
+    M: { label: 'Ŀ¼', theme: 'primary' },
     B: { label: '按钮', theme: 'warning' },
     L: { label: '外链', theme: 'success' },
     I: { label: 'iFrame', theme: 'default' },
@@ -75,7 +75,7 @@ export function createMenuTableColumns(): MenuTableColumn[] {
     { colKey: 'route', minWidth: 180, title: '路由地址' },
     { colKey: 'component', minWidth: 200, title: '组件路径' },
     { align: 'center', colKey: 'sort', title: '排序', width: 120 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 120 },
     { colKey: 'created_at', minWidth: 180, title: '创建时间' },
     {
       align: 'center',

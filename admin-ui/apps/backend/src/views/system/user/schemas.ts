@@ -35,7 +35,7 @@ export function createUserTableColumns(): UserTableColumn[] {
     { align: 'center', colKey: 'phone', minWidth: 120, title: '手机' },
     { align: 'center', colKey: 'post_name', minWidth: 100, title: '岗位' },
     { align: 'center', colKey: 'email', minWidth: 150, title: '邮箱' },
-    { align: 'center', colKey: 'status', title: '状态', width: 100 },
+    { align: 'center', colKey: 'status', title: '״̬', width: 100 },
     { align: 'center', colKey: 'user_type', title: '用户类型', width: 100 },
     { align: 'center', colKey: 'created_at', title: '注册时间', width: 160 },
     {

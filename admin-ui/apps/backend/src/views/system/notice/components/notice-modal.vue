@@ -19,7 +19,7 @@ type UserSelectOption = { label: string; value: number };
 const emit = defineEmits(['success']);
 
 const fallbackNoticeTypeOptions: DictOption[] = [
-  { label: '通知', value: 1 },
+  { label: '֪ͨ', value: 1 },
   { label: '公告', value: 2 },
 ];
 

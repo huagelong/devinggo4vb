@@ -15,7 +15,7 @@ export const storageModeOptions = [
 
 export const defaultAttachmentTreeData: AttachmentTreeItem[] = [
   { title: '所有', key: 'all' },
-  { title: '图片', key: 'image' },
+  { title: 'ͼƬ', key: 'image' },
   { title: '视频', key: 'video' },
   { title: '音频', key: 'audio' },
   { title: '文档', key: 'document' },
