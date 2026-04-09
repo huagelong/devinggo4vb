@@ -13,7 +13,20 @@ import { $t } from '#/locales';
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 
 async function generateAccess(options: GenerateMenuAndRoutesOptions) {
-  const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
+  const globMap = import.meta.glob('../views/**/*.vue');
+
+  const pageMap: ComponentRecordType = {};
+  for (const [key, value] of Object.entries(globMap)) {
+    pageMap[key] = value;
+    // 为目录结构下的 index.vue 注册 .vue 别名
+    // 使后端返回的 component 值（如 views/system/logs/apiLog）能正确解析
+    if (key.endsWith('/index.vue')) {
+      const alias = key.replace(/\/index\.vue$/, '.vue');
+      if (!(alias in pageMap)) {
+        pageMap[alias] = value;
+      }
+    }
+  }
 
   // 修复 Vben5 generateRoutesByBackend 中 fallback 组件路径没有带 views/ 导致的 undefined
   // 导致在加载未实现的后端路由组件时 vue-router 崩溃，菜单整个空白

@@ -7,6 +7,7 @@ import { useWindowSize } from '@vueuse/core';
 import {
   Button,
   DateRangePicker,
+  DeleteIcon,
   Dialog,
   DialogPlugin,
   Input,
@@ -14,6 +15,8 @@ import {
   MessagePlugin,
   RadioButton,
   RadioGroup,
+  RefreshIcon,
+  SearchIcon,
   Table,
 } from 'tdesign-vue-next';
 
@@ -99,6 +102,8 @@ const fetchData = async () => {
     const res = await getQueueMessageReceiveListApi(params);
     tableData.value = res?.items ?? res?.data?.items ?? [];
     pagination.total = res?.pageInfo?.total ?? res?.data?.pageInfo?.total ?? 0;
+  } catch (error) {
+    console.error('获取消息列表失败', error);
   } finally {
     tableLoading.value = false;
   }
@@ -181,9 +186,15 @@ const handleDetail = async (row: MessageApi.QueueMessageItem) => {
 };
 
 onMounted(() => {
-  loadDict().then(() => fetchData());
+  loadDict()
+    .then(() => fetchData())
+    .catch((error) => console.error('加载消息数据失败', error));
   // Start real-time push connection
-  startRealtime();
+  try {
+    startRealtime();
+  } catch (error) {
+    console.error('启动实时推送失败', error);
+  }
 });
 
 onUnmounted(() => {
@@ -255,23 +266,11 @@ watch(latestNotification, (notification) => {
           />
         </div>
         <Button theme="primary" @click="onSearch">
-          <template #icon>
-            <SearchIcon
-              fill-color="transparent"
-              stroke-color="currentColor"
-              :stroke-width="2"
-            />
-          </template>
+          <template #icon><SearchIcon /></template>
           搜索
         </Button>
         <Button theme="default" @click="onReset">
-          <template #icon>
-            <RefreshIcon
-              fill-color="transparent"
-              stroke-color="currentColor"
-              :stroke-width="2"
-            />
-          </template>
+          <template #icon><RefreshIcon /></template>
           重置
         </Button>
       </div>
@@ -280,13 +279,7 @@ watch(latestNotification, (notification) => {
       <div class="flex justify-between items-center mb-4">
         <div class="flex gap-3 items-center">
           <Button theme="danger" @click="handleBatchDelete">
-            <template #icon>
-              <DeleteIcon
-                fill-color="transparent"
-                stroke-color="currentColor"
-                :stroke-width="2"
-              />
-            </template>
+            <template #icon><DeleteIcon /></template>
             删除
           </Button>
           <RadioGroup
@@ -307,11 +300,7 @@ watch(latestNotification, (notification) => {
             @click="onSearch"
           >
             <template #icon>
-              <RefreshIcon
-                fill-color="transparent"
-                stroke-color="currentColor"
-                :stroke-width="2"
-              />
+              <RefreshIcon />
             </template>
           </Button>
         </div>
