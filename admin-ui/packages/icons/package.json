@@ -17,6 +17,9 @@
     }
   },
   "dependencies": {
-    "@vben-core/icons": "workspace:*"
+    "@vben-core/icons": "workspace:*",
+    "@iconify-json/lucide": "catalog:",
+    "@iconify-json/mdi": "catalog:",
+    "@iconify-json/carbon": "catalog:"
   }
 }
