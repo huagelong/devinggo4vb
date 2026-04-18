@@ -3,6 +3,7 @@ import type { MonitorApi } from '#/api/system/monitor';
 
 import { computed, onMounted, ref } from 'vue';
 
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
@@ -12,6 +13,7 @@ import {
   getCacheInfo,
   viewCache,
 } from '#/api/system/monitor';
+import { logger } from '#/utils/logger';
 
 import { BrowseIcon, DeleteIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import {
@@ -55,8 +57,8 @@ async function fetchCacheInfo() {
     serverInfo.value = response.server || {};
     cacheKeys.value = response.keys || [];
   } catch (error) {
-    console.error(error);
-    message.error('获取缓存信息失败');
+    logger.error(error);
+    message.error($t('common.cacheInfoFailed'));
   } finally {
     loading.value = false;
   }
@@ -67,40 +69,40 @@ async function handleViewKey(key: string) {
     const response = await viewCache({ key });
     cacheContent.value = response.data?.content || '';
   } catch (error) {
-    console.error(error);
-    message.error('查看缓存失败');
+    logger.error(error);
+    message.error($t('common.cacheViewFailed'));
   }
 }
 
 async function handleDeleteKey(key: string) {
   try {
     await deleteCacheKey({ key });
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     if (cacheContent.value && selectedKeys.value.includes(key)) {
       cacheContent.value = '';
     }
     await fetchCacheInfo();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleClearAll() {
   try {
     await clearAllCache();
-    message.success('清除所有缓存成功');
+    message.success($t('common.clearCacheSuccess'));
     cacheContent.value = '';
     await fetchCacheInfo();
   } catch (error) {
-    console.error(error);
-    message.error('清除失败');
+    logger.error(error);
+    message.error($t('common.clearCacheFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedKeys.value.length === 0) {
-    message.warning('请选择要删除的缓存');
+    message.warning($t('common.selectCacheFirst'));
     return;
   }
 
@@ -108,13 +110,13 @@ async function handleBatchDelete() {
     for (const key of selectedKeys.value) {
       await deleteCacheKey({ key });
     }
-    message.success('批量删除成功');
+    message.success($t('common.batchDeleteSuccess'));
     selectedKeys.value = [];
     cacheContent.value = '';
     await fetchCacheInfo();
   } catch (error) {
-    console.error(error);
-    message.error('批量删除失败');
+    logger.error(error);
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 

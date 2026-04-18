@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import { ref } from 'vue';
 
 import { UploadIcon } from 'tdesign-icons-vue-next';
@@ -40,7 +41,7 @@ async function handleFileChange(event: Event) {
       MessagePlugin.error('上传失败');
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('上传失败');
   } finally {
     uploading.value = false;

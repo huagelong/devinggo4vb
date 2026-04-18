@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import type { ConfigApi } from '#/api/system/config';
 import type { ConfigFormModel, ConfigGroup } from './model';
 
@@ -7,6 +7,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import { AddIcon, InfoCircleIcon, SettingIcon } from 'tdesign-icons-vue-next';
 import {
@@ -120,7 +121,7 @@ async function fetchGroups() {
       activeGroupKey.value = undefined;
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('配置分组加载失败，请稍后重试');
   } finally {
     groupLoading.value = false;
@@ -164,7 +165,7 @@ async function fetchGroupConfigs(groupId: number) {
     configFieldsMap[groupId] = fields;
     configFormMap[groupId] = form;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('配置数据加载失败，请稍后重试');
   }
 }
@@ -206,7 +207,7 @@ async function handleSubmit(groupId: number) {
     MessagePlugin.success('配置更新成功');
     await fetchGroupConfigs(groupId);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('配置更新失败，请稍后重试');
   }
 }
@@ -223,7 +224,7 @@ async function handleDeleteGroup(groupId: number) {
     MessagePlugin.success('分组删除成功');
     await fetchGroups();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('分组删除失败，请稍后重试');
   }
 }

@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { MenuApi } from '#/api/system/menu';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -192,7 +193,7 @@ const [Modal, modalApi] = useVbenModal({
       emit('success');
       modalApi.close();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       modalApi.setState({ confirmLoading: false });
     }
@@ -222,7 +223,7 @@ async function fetchParentOptions() {
       },
     ];
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     parentMenuOptions.value = [{ id: 0, label: '顶级菜单', value: 0 }];
   }
 

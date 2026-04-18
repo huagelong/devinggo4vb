@@ -4,8 +4,10 @@ import type { CodeListItem } from './model';
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 import { deleteCode, generateCode, syncTable } from '#/api/system/generate';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
 import { downloadResponseBlob } from '#/utils/download';
@@ -107,53 +109,53 @@ function handleOpenEdit(row: CodeListItem) {
 async function handleSync(row: CodeListItem) {
   try {
     await syncTable(row.id);
-    message.success('同步成功');
+    message.success($t('common.syncSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('同步失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.syncFailed'));
   }
 }
 
 async function handleGenerate(row: CodeListItem) {
   try {
-    message.info('代码生成中，请稍后...');
+    message.info($t('common.generating'));
     const response = await generateCode({ ids: String(row.id) });
     downloadResponseBlob({ data: response as unknown as Blob }, `code_${row.table_name}.zip`);
-    message.success('代码生成成功，开始下载');
+    message.success($t('common.generateSuccess'));
   } catch (error) {
-    console.error(error);
-    message.error('生成失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.generateFailed'));
   }
 }
 
 async function handleBatchGenerate() {
   if (selectedTables.value.length === 0) {
-    message.warning('请选择要生成的数据');
+    message.warning($t('common.selectGenerateData'));
     return;
   }
 
   try {
-    message.info('代码生成中，请稍后...');
+    message.info($t('common.generating'));
     const response = await generateCode({
       ids: selectedTables.value.join(','),
     });
     downloadResponseBlob({ data: response as unknown as Blob }, `code_batch_${Date.now()}.zip`);
-    message.success('代码生成成功，开始下载');
+    message.success($t('common.generateSuccess'));
   } catch (error) {
-    console.error(error);
-    message.error('生成失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.generateFailed'));
   }
 }
 
 async function handleDelete(row: CodeListItem) {
   try {
     await deleteCode([row.id]);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 

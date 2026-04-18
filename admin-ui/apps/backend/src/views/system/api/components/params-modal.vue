@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import type { ApiColumnListItem, ApiColumnType, ApiListItem } from '../model';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -6,6 +6,7 @@ import { computed, nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import {
   AddIcon,
@@ -124,7 +125,7 @@ async function fetchFilterOptions() {
     dataTypeOptions.value = dataTypes;
     statusOptions.value = statuses;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('筛选项加载失败，请稍后重试');
   }
 }
@@ -179,7 +180,7 @@ async function handleDelete(row: ApiColumnListItem) {
     message.success('操作成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error(isRecycleBin.value ? '彻底删除失败，请稍后重试' : '删除失败，请稍后重试');
   }
 }
@@ -200,7 +201,7 @@ async function handleBatchDelete() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error(isRecycleBin.value ? '批量彻底删除失败，请稍后重试' : '批量删除失败，请稍后重试');
   }
 }
@@ -211,7 +212,7 @@ async function handleRecovery(row: ApiColumnListItem) {
     message.success('恢复成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('恢复失败，请稍后重试');
   }
 }
@@ -232,7 +233,7 @@ async function handleBatchRecovery() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量恢复失败，请稍后重试');
   }
 }
@@ -244,7 +245,7 @@ async function handleStatusChange(row: ApiColumnListItem, checked: boolean) {
     message.success('状态更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('状态更新失败，请稍后重试');
   }
 }
@@ -266,7 +267,7 @@ async function handleImportChange(event: Event) {
     message.success('导入成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('导入失败，请检查文件后重试');
   } finally {
     importLoading.value = false;
@@ -287,7 +288,7 @@ async function handleExport() {
     downloadResponseBlob(response, '接口参数列表.xlsx');
     message.success('导出成功');
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('导出失败，请稍后重试');
   } finally {
     exportLoading.value = false;
@@ -301,7 +302,7 @@ async function handleDownloadTemplate() {
     downloadResponseBlob(response, '接口参数导入模板.xlsx');
     message.success('模板下载成功');
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('模板下载失败，请稍后重试');
   } finally {
     templateLoading.value = false;

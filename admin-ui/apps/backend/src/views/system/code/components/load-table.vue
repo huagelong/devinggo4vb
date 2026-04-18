@@ -4,7 +4,10 @@ import type { GenerateApi } from '#/api/system/generate';
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import { loadTable } from '#/api/system/generate';
 
@@ -38,8 +41,8 @@ async function fetchTableList() {
     // 模拟数据，实际应该从API获取
     tableData.value = [];
   } catch (error) {
-    console.error(error);
-    message.error('获取数据表列表失败');
+    logger.error(error);
+    message.error($t('common.tableListFailed'));
   } finally {
     tableLoading.value = false;
   }
@@ -47,7 +50,7 @@ async function fetchTableList() {
 
 async function handleSubmit() {
   if (selectedNames.value.length === 0) {
-    message.warning('请选择要装载的表');
+    message.warning($t('common.selectTableFirst'));
     return;
   }
 
@@ -59,12 +62,12 @@ async function handleSubmit() {
       sourceName: name,
     }));
     await loadTable({ source: 'default', names });
-    message.success('装载成功');
+    message.success($t('common.loadSuccess'));
     emit('success');
     modalApi.close();
   } catch (error) {
-    console.error(error);
-    message.error('装载失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.loadFailed'));
   } finally {
     submitLoading.value = false;
   }

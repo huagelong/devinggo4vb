@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { DictApi } from '#/api/system/dict';
 
 import { reactive, ref } from 'vue';
@@ -92,7 +93,7 @@ async function fetchTableData() {
     tableData.value = response.items ?? [];
     pagination.total = Number(response?.pageInfo?.total || response?.total || 0);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('字典数据加载失败，请稍后重试');
   } finally {
     loading.value = false;
@@ -161,7 +162,7 @@ async function handleDelete(row: DictDataListItem) {
     MessagePlugin.success('操作成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('删除失败，请稍后重试');
   }
 }
@@ -178,7 +179,7 @@ async function handleBatchDelete() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('批量删除失败，请稍后重试');
   }
 }
@@ -189,7 +190,7 @@ async function handleRecovery(row: DictDataListItem) {
     MessagePlugin.success('恢复成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('恢复失败，请稍后重试');
   }
 }
@@ -206,7 +207,7 @@ async function handleBatchRecovery() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('批量恢复失败，请稍后重试');
   }
 }
@@ -217,7 +218,7 @@ async function handleStatusChange(row: DictDataListItem, checked: boolean) {
     MessagePlugin.success('状态更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('状态更新失败，请稍后重试');
   }
 }
@@ -238,7 +239,7 @@ async function handleSortChange(value: number | string, row: DictDataListItem) {
     MessagePlugin.success('排序更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('排序更新失败，请稍后重试');
   }
 }

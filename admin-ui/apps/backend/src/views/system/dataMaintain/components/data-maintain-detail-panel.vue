@@ -3,7 +3,10 @@ import type { DataMaintainApi } from '#/api/system/data-maintain';
 
 import { ref } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 import { getDataMaintainDetailed } from '#/api/system/data-maintain';
 
 import { Button, Table, Tag } from 'tdesign-vue-next';
@@ -42,8 +45,8 @@ async function open(options: OpenOptions) {
       type: item.type,
     }));
   } catch (error) {
-    console.error(error);
-    message.error('获取字段详情失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.fieldDetailFailed'));
   } finally {
     loading.value = false;
   }

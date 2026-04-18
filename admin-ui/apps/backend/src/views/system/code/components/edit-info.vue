@@ -4,7 +4,10 @@ import type { FieldConfigRow } from '../model';
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import { readTable, updateCode } from '#/api/system/generate';
 
@@ -95,8 +98,8 @@ async function open(id: number) {
     modalApi.setState({ title: '编辑代码生成信息' });
     modalApi.open();
   } catch (error) {
-    console.error(error);
-    message.error('获取表信息失败');
+    logger.error(error);
+    message.error($t('common.tableInfoFailed'));
   } finally {
     loading.value = false;
   }
@@ -104,7 +107,7 @@ async function open(id: number) {
 
 function handleEditField(row: FieldConfigRow) {
   void row;
-  message.info('字段高级配置功能建设中');
+  message.info($t('common.advancedConfigWIP'));
 }
 
 function handleAllChecked(checked: boolean, key: keyof FieldConfigRow) {
@@ -129,12 +132,12 @@ async function handleSubmit() {
       fields: fieldList.value,
     };
     await updateCode(payload);
-    message.success('保存成功');
+    message.success($t('common.saveSuccess'));
     emit('success');
     modalApi.close();
   } catch (error) {
-    console.error(error);
-    message.error('保存失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.saveFailed'));
   } finally {
     submitLoading.value = false;
   }

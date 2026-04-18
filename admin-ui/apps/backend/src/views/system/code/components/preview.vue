@@ -4,7 +4,10 @@ import type { PreviewCodeRow } from '../model';
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import { previewCode } from '#/api/system/generate';
 import { CodeIcon } from 'tdesign-icons-vue-next';
@@ -31,8 +34,8 @@ async function open(id: number) {
     modalApi.setState({ title: '代码预览' });
     modalApi.open();
   } catch (error) {
-    console.error(error);
-    message.error('获取预览失败');
+    logger.error(error);
+    message.error($t('common.previewFailed'));
   } finally {
     loading.value = false;
   }
@@ -40,9 +43,9 @@ async function open(id: number) {
 
 function handleCopy(code: string) {
   navigator.clipboard.writeText(code).then(() => {
-    message.success('复制成功');
+    message.success($t('common.copySuccess'));
   }).catch(() => {
-    message.error('复制失败');
+    message.error($t('common.copyFailed'));
   });
 }
 

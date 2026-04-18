@@ -1,8 +1,9 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import { AddIcon, DeleteIcon, EditIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import {
@@ -149,7 +150,7 @@ async function fetchFilterOptions() {
     statusOptions.value =
       statuses && statuses.length > 0 ? statuses : fallbackStatusOptions;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('筛选项加载失败，请稍后重试');
     groupOptions.value = [];
     requestModeOptions.value = fallbackRequestModes;
@@ -171,7 +172,7 @@ async function handleDelete(row: ApiListItem) {
     message.success('操作成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error(isRecycleBin.value ? '彻底删除失败，请稍后重试' : '删除失败，请稍后重试');
   }
 }
@@ -192,7 +193,7 @@ async function handleBatchDelete() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error(isRecycleBin.value ? '批量彻底删除失败，请稍后重试' : '批量删除失败，请稍后重试');
   }
 }
@@ -203,7 +204,7 @@ async function handleRecovery(row: ApiListItem) {
     message.success('恢复成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('恢复失败，请稍后重试');
   }
 }
@@ -224,7 +225,7 @@ async function handleBatchRecovery() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量恢复失败，请稍后重试');
   }
 }
@@ -236,7 +237,7 @@ async function handleStatusChange(row: ApiListItem, checked: boolean) {
     message.success('状态更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('状态更新失败，请稍后重试');
   }
 }

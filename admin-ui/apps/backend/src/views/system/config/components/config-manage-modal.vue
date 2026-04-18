@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { ConfigApi } from '#/api/system/config';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -69,7 +70,7 @@ async function fetchTableData() {
     tableData.value = response.items ?? [];
     pagination.total = Number(response?.pageInfo?.total || response?.total || 0);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('配置列表加载失败，请稍后重试');
   } finally {
     loading.value = false;
@@ -124,7 +125,7 @@ async function handleDelete(row: ConfigApi.ConfigItem) {
     MessagePlugin.success('删除成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('删除失败，请稍后重试');
   }
 }

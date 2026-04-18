@@ -1,4 +1,4 @@
-import type { Ref } from 'vue';
+﻿import type { Ref } from 'vue';
 import type { IdType } from '#/types/common';
 
 import { ref } from 'vue';
@@ -62,7 +62,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       message.success('删除成功');
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('删除失败，请稍后重试');
     }
   }
@@ -85,7 +85,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       options.clearSelectedRowKeys();
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('批量删除失败，请稍后重试');
     }
   }
@@ -96,7 +96,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       message.success('恢复成功');
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('恢复失败，请稍后重试');
     }
   }
@@ -119,7 +119,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       options.clearSelectedRowKeys();
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('批量恢复失败，请稍后重试');
     }
   }
@@ -136,7 +136,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       message.success('更新状态成功');
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('更新状态失败，请稍后重试');
     }
   }
@@ -146,7 +146,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       await resetPassword({ id: row.id });
       message.success('密码重置成功');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('密码重置失败，请稍后重试');
     }
   }
@@ -156,7 +156,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       await clearUserCache({ id: row.id });
       message.success('清除缓存成功');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('更新缓存失败，请稍后重试');
     }
   }
@@ -176,7 +176,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       message.success('导入成功');
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('导入失败，请检查文件后重试');
     } finally {
       importLoading.value = false;
@@ -191,7 +191,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       downloadResponseBlob(response, '用户列表.xlsx');
       message.success('导出成功');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('导出失败，请稍后重试');
     } finally {
       exportLoading.value = false;
@@ -205,7 +205,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       downloadResponseBlob(response, '用户导入模板.xlsx');
       message.success('模板下载成功');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('模板下载失败，请稍后重试');
     } finally {
       templateLoading.value = false;
@@ -244,7 +244,7 @@ export function useUserActions(options: UseUserActionsOptions) {
       setHomePageVisible.value = false;
       options.fetchTableData();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.error('设置首页失败，请稍后重试');
     } finally {
       setHomePageLoading.value = false;

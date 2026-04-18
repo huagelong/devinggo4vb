@@ -1,4 +1,5 @@
 ﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { IdType } from '#/types/common';
 
@@ -39,7 +40,7 @@ async function fetchDeptTree() {
       },
     ];
   } catch (error) {
-    console.error('Failed to fetch dept tree', error);
+    logger.error('Failed to fetch dept tree', error);
   }
 }
 

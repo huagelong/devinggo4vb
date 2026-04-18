@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { CrontabApi } from '#/api/system/crontab';
 
 import { nextTick, ref } from 'vue';
@@ -120,7 +121,7 @@ const [Modal, modalApi] = useVbenModal({
       emit('success');
       modalApi.close();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       MessagePlugin.error(isEdit ? '更新失败' : '新增失败');
     } finally {
       modalApi.setState({ confirmLoading: false });

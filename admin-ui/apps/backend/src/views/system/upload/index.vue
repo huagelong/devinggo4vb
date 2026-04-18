@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import type { UploadTreeItem } from './model';
 
 import { computed, onMounted, ref } from 'vue';
@@ -7,6 +7,7 @@ import { Page } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
 
 import {
@@ -87,7 +88,7 @@ async function handleUpload(_file: File) {
     MessagePlugin.success($t('common.uploadSuccess'));
   } catch (error) {
     if (import.meta.env.DEV) {
-      console.error(error);
+      logger.error(error);
     }
     MessagePlugin.error($t('common.uploadFailed'));
   } finally {

@@ -23,7 +23,7 @@ const defaultConfig: PusherConfig = {
   wsPort: (import.meta.env.VITE_PUSHER_WS_PORT as number) || 8070,
   wssPort: (import.meta.env.VITE_PUSHER_WSS_PORT as number) || 8070,
   forceTLS: window.location.protocol === 'https:',
-  authEndpoint: '/api/system/pusher/auth',
+  authEndpoint: `${import.meta.env.VITE_GLOB_API_URL}/system/pusher/auth`,
   cluster: (import.meta.env.VITE_PUSHER_CLUSTER as string) || 'local',
 };
 

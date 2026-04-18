@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { RoleApi } from '#/api/system/role';
 
 import { nextTick, ref } from 'vue';
@@ -109,7 +110,7 @@ const [Modal, modalApi] = useVbenModal({
       emit('success');
       modalApi.close();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       modalApi.setState({ confirmLoading: false });
     }

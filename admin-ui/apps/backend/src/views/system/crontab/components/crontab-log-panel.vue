@@ -4,8 +4,10 @@ import type { CrontabApi } from '#/api/system/crontab';
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 import {
   deleteCrontabLog,
   getCrontabLogPageList,
@@ -77,8 +79,8 @@ async function fetchLogList() {
     tableData.value = response.items || [];
     total.value = Number(response.pageInfo?.total || response.total || 0);
   } catch (error) {
-    console.error(error);
-    message.error('获取日志失败');
+    logger.error(error);
+    message.error($t('common.logFetchFailed'));
   } finally {
     loading.value = false;
   }
@@ -86,18 +88,18 @@ async function fetchLogList() {
 
 async function handleDeleteLog() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要删除的日志');
+    message.warning($t('common.selectLogFirst'));
     return;
   }
 
   try {
     await deleteCrontabLog(selectedRowKeys.value.map((k) => Number(k)));
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     selectedRowKeys.value = [];
     await fetchLogList();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 

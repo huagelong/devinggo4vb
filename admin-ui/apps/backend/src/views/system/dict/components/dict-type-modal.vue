@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { DictApi } from '#/api/system/dict';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -81,7 +82,7 @@ const [Modal, modalApi] = useVbenModal({
       emit('success');
       modalApi.close();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       modalApi.setState({ confirmLoading: false });
     }

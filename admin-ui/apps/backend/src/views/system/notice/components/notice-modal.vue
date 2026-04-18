@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { NoticeApi } from '#/api/system/notice';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -133,7 +134,7 @@ const [Modal, modalApi] = useVbenModal({
       emit('success');
       modalApi.close();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       modalApi.setState({ confirmLoading: false });
     }
@@ -196,7 +197,7 @@ async function fetchUserOptions(keyword = '') {
       .map(normalizeUserOption)
       .filter((item): item is UserSelectOption => Boolean(item));
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     userLoading.value = false;
     updateUserSchema();
@@ -222,7 +223,7 @@ async function ensureSelectedUsers(userIds?: number[]) {
       updateUserSchema();
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 }
 

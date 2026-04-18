@@ -3,6 +3,7 @@ import type { DemoListItem } from './model';
 
 import { computed, onMounted, ref } from 'vue';
 
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
 
@@ -32,6 +33,7 @@ import {
   realDeleteDemo,
   recoveryDemo,
 } from '#/api/system/demo';
+import { logger } from '#/utils/logger';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 import { useDictOptions } from '#/composables/crud/use-dict-options';
 
@@ -101,58 +103,58 @@ function handleEdit(row: DemoListItem) {
 async function handleDelete(row: DemoListItem) {
   try {
     await (isRecycleBin.value ? realDeleteDemo([row.id]) : deleteDemo([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeleteDemo(ids) : deleteDemo(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: DemoListItem) {
   try {
     await recoveryDemo([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryDemo(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
@@ -160,11 +162,11 @@ async function handleStatusChange(row: DemoListItem, checked: boolean) {
   const status = checked ? 1 : 2;
   try {
     await changeDemoStatus({ id: row.id, status });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('状态更新失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 

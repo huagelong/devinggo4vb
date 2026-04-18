@@ -3,10 +3,12 @@ import type { MonitorApi } from '#/api/system/monitor';
 
 import { onMounted, ref } from 'vue';
 
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
 import { getOnlineUserPageList, kickUser } from '#/api/system/monitor';
+import { logger } from '#/utils/logger';
 
 import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Button, Input, Space, Table } from 'tdesign-vue-next';
@@ -41,8 +43,8 @@ async function fetchOnlineUsers() {
     tableData.value = response.items || [];
     total.value = Number(response.pageInfo?.total || response.total || 0);
   } catch (error) {
-    console.error(error);
-    message.error('获取在线用户失败');
+    logger.error(error);
+    message.error($t('common.onlineUserFetchFailed'));
   } finally {
     loading.value = false;
   }
@@ -51,11 +53,11 @@ async function fetchOnlineUsers() {
 async function handleKick(row: MonitorApi.OnlineUserItem) {
   try {
     await kickUser({ id: row.id, app_id: row.app_id });
-    message.success('强制退出成功');
+    message.success($t('common.forceLogoutSuccess'));
     await fetchOnlineUsers();
   } catch (error) {
-    console.error(error);
-    message.error('强制退出失败');
+    logger.error(error);
+    message.error($t('common.forceLogoutFailed'));
   }
 }
 

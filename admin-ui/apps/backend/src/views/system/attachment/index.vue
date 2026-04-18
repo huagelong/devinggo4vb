@@ -3,6 +3,7 @@ import type { AttachmentListItem, AttachmentTreeItem } from './model';
 
 import { computed, onMounted, ref } from 'vue';
 
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
@@ -11,6 +12,7 @@ import {
   realDeleteAttachment,
   recoveryAttachment,
 } from '#/api/system/attachment';
+import { logger } from '#/utils/logger';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
 
 import {
@@ -102,17 +104,17 @@ async function handleDelete(row: AttachmentListItem) {
     await (isRecycleBin.value
       ? realDeleteAttachment([row.id])
       : deleteAttachment([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
@@ -121,41 +123,41 @@ async function handleBatchDelete() {
     await (isRecycleBin.value
       ? realDeleteAttachment(ids)
       : deleteAttachment(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: AttachmentListItem) {
   try {
     await recoveryAttachment([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryAttachment(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 

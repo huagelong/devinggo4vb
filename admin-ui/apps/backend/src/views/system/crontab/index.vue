@@ -3,6 +3,7 @@ import type { CrontabListItem } from './model';
 
 import { computed, onMounted, ref } from 'vue';
 
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
@@ -13,6 +14,7 @@ import {
   runCrontab,
 } from '#/api/system/crontab';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
+import { logger } from '#/utils/logger';
 
 import {
   DeleteIcon,
@@ -104,69 +106,69 @@ async function handleDelete(row: CrontabListItem) {
     await (isRecycleBin.value
       ? realDeleteCrontab([row.id])
       : deleteCrontab([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeleteCrontab(ids) : deleteCrontab(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量删除失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: CrontabListItem) {
   try {
     await recoveryCrontab([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryCrontab(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleRun(row: CrontabListItem) {
   try {
     await runCrontab({ id: row.id });
-    message.success('执行成功');
+    message.success($t('common.executeSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('执行失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.executeFailed'));
   }
 }
 

@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { UserApi } from '#/api/system/user';
 
@@ -96,7 +97,7 @@ async function fetchLeaderList() {
       response.pageInfo?.total || response.total || 0,
     );
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('领导列表加载失败');
   } finally {
     loading.value = false;
@@ -123,7 +124,7 @@ async function fetchCandidateUsers() {
       value: Number(item.id),
     }));
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('候选用户加载失败');
   } finally {
     candidateLoading.value = false;
@@ -159,7 +160,7 @@ async function handleAddLeaders() {
     selectedCandidateIds.value = [];
     await fetchLeaderList();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('添加领导失败');
   }
 }
@@ -174,7 +175,7 @@ async function handleDeleteLeader(id: number) {
     MessagePlugin.success('删除成功');
     await fetchLeaderList();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('删除失败');
   }
 }
@@ -194,7 +195,7 @@ async function handleBatchDeleteLeaders() {
     selectedLeaderKeys.value = [];
     await fetchLeaderList();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     MessagePlugin.error('删除失败');
   }
 }

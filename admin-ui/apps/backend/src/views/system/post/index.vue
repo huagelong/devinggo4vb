@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import {
   AddIcon,
@@ -108,7 +109,7 @@ async function handleDelete(row: PostListItem) {
     message.success('操作成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('删除失败，请稍后重试');
   }
 }
@@ -126,7 +127,7 @@ async function handleBatchDelete() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量删除失败，请稍后重试');
   }
 }
@@ -137,7 +138,7 @@ async function handleRecovery(row: PostListItem) {
     message.success('恢复成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('恢复失败，请稍后重试');
   }
 }
@@ -155,7 +156,7 @@ async function handleBatchRecovery() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量恢复失败，请稍后重试');
   }
 }
@@ -167,7 +168,7 @@ async function handleStatusChange(row: PostListItem, checked: boolean) {
     message.success('状态更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('状态更新失败，请稍后重试');
   }
 }
@@ -185,7 +186,7 @@ async function handleSortChange(value: number | string, row: PostListItem) {
     message.success('排序更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('排序更新失败，请稍后重试');
   }
 }

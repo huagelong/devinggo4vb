@@ -4,6 +4,7 @@ import type { DataMaintainApi } from '#/api/system/data-maintain';
 import { computed, onMounted, ref } from 'vue';
 
 import { useAccess } from '@vben/access';
+import { $t } from '@vben/locales';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
@@ -12,6 +13,7 @@ import {
   optimizeDataMaintainTable,
 } from '#/api/system/data-maintain';
 import CrudToolbar from '#/components/crud/crud-toolbar.vue';
+import { logger } from '#/utils/logger';
 
 import {
   InfoCircleFilledIcon,
@@ -117,11 +119,11 @@ async function handleOptimize(row: DataMaintainListItem) {
       group_name: searchForm.group_name,
       table_name: row.name,
     });
-    message.success('优化成功');
+    message.success($t('common.optimizeSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('优化失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.optimizeFailed'));
   } finally {
     optimizingTableName.value = '';
   }
@@ -139,11 +141,11 @@ async function handleFragment(row: DataMaintainListItem) {
       group_name: searchForm.group_name,
       table_name: row.name,
     });
-    message.success('清理成功');
+    message.success($t('common.cleanSuccess'));
     await fetchTableData();
   } catch (error) {
-    console.error(error);
-    message.error('清理失败，请稍后重试');
+    logger.error(error);
+    message.error($t('common.cleanFailed'));
   } finally {
     fragmentingTableName.value = '';
   }

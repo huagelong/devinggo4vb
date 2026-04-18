@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import type { DictApi } from '#/api/system/dict';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
@@ -7,6 +7,7 @@ import { computed, onMounted, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 import {
   changeDictTypeStatus,
   deleteDictType,
@@ -125,7 +126,7 @@ async function handleDelete(row: DictTypeListItem) {
     message.success('操作成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('删除失败，请稍后重试');
   }
 }
@@ -142,7 +143,7 @@ async function handleBatchDelete() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量删除失败，请稍后重试');
   }
 }
@@ -153,7 +154,7 @@ async function handleRecovery(row: DictTypeListItem) {
     message.success('恢复成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('恢复失败，请稍后重试');
   }
 }
@@ -170,7 +171,7 @@ async function handleBatchRecovery() {
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('批量恢复失败，请稍后重试');
   }
 }
@@ -181,7 +182,7 @@ async function handleStatusChange(row: DictTypeListItem, checked: boolean) {
     message.success('状态更新成功');
     await fetchTableData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('状态更新失败，请稍后重试');
   }
 }

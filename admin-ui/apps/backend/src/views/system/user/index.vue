@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { message } from '#/adapter/tdesign';
+import { logger } from '#/utils/logger';
 
 import {
   AddIcon,
@@ -170,7 +171,7 @@ async function fetchOptions() {
     userTypeOptions.value = userTypeDict || [];
     homePageOptions.value = dashboardDict || [];
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.error('筛选项加载失败，请稍后重试');
   }
 }
