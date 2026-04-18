@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ConfigApi } from '#/api/system/config';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { SearchIcon } from 'tdesign-icons-vue-next';
 import {
@@ -122,11 +123,11 @@ function handleEdit(row: ConfigApi.ConfigItem) {
 async function handleDelete(row: ConfigApi.ConfigItem) {
   try {
     await deleteConfig({ ids: [row.id] });
-    MessagePlugin.success('删除成功');
+    MessagePlugin.success($t('common.deleteSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('删除失败，请稍后重试');
+    MessagePlugin.error($t('common.deleteFailed'));
   }
 }
 

@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { ConfigApi } from '#/api/system/config';
 import type { ConfigFormModel, ConfigGroup } from './model';
 
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
@@ -122,7 +123,7 @@ async function fetchGroups() {
     }
   } catch (error) {
     logger.error(error);
-    message.error('配置分组加载失败，请稍后重试');
+    message.error($t('common.configGroupLoadFailed'));
   } finally {
     groupLoading.value = false;
   }
@@ -166,7 +167,7 @@ async function fetchGroupConfigs(groupId: number) {
     configFormMap[groupId] = form;
   } catch (error) {
     logger.error(error);
-    message.error('配置数据加载失败，请稍后重试');
+    message.error($t('common.configDataLoadFailed'));
   }
 }
 

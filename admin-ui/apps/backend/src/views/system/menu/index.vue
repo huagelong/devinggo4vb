@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { MenuApi } from '#/api/system/menu';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
@@ -115,67 +116,67 @@ function handleEdit(row: MenuApi.TreeItem) {
 async function handleDelete(row: MenuApi.TreeItem) {
   try {
     await (isRecycleBin.value ? realDeleteMenu([row.id]) : deleteMenu([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeleteMenu(ids) : deleteMenu(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: MenuApi.TreeItem) {
   try {
     await recoveryMenu([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryMenu(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleStatusChange(row: MenuApi.TreeItem, checked: boolean) {
   try {
     await changeMenuStatus({ id: row.id, status: checked ? 1 : 2 });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 
@@ -192,11 +193,11 @@ async function handleSortChange(value: number | string, row: MenuApi.TreeItem) {
       numberName: 'sort',
       numberValue,
     });
-    message.success('排序更新成功');
+    message.success($t('common.sortUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('排序更新失败，请稍后重试');
+    message.error($t('common.sortUpdateFailed'));
   }
 }
 

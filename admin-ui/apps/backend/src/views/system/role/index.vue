@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { RoleApi } from '#/api/system/role';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
@@ -110,7 +111,7 @@ function handleAdd() {
 
 function handleEdit(row: RoleListItem) {
   if (row.id === 1 || row.code === 'superAdmin') {
-    message.error('超级管理员角色不可编辑');
+    message.error($t('common.superAdminRoleCannotEdit'));
     return;
   }
   roleModalRef.value?.open({
@@ -130,83 +131,83 @@ function handleDataPermission(row: RoleListItem) {
 
 async function handleDelete(row: RoleListItem) {
   if (row.id === 1 || row.code === 'superAdmin') {
-    message.error('超级管理员角色不可删除');
+    message.error($t('common.superAdminRoleCannotDelete'));
     return;
   }
   try {
     await (isRecycleBin.value ? realDeleteRole([row.id]) : deleteRole([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   if (ids.includes(1)) {
-    message.error('超级管理员角色不可删除');
+    message.error($t('common.superAdminRoleCannotDelete'));
     return;
   }
   try {
     await (isRecycleBin.value ? realDeleteRole(ids) : deleteRole(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: RoleListItem) {
   try {
     await recoveryRole([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryRole(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleStatusChange(row: RoleListItem, checked: boolean) {
   if (row.code === 'superAdmin') {
-    message.info('超级管理员角色不能禁用');
+    message.info($t('common.superAdminCannotDisable'));
     return;
   }
   const status = checked ? 1 : 2;
   try {
     await changeRoleStatus({ id: row.id, status });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 
@@ -214,7 +215,7 @@ async function handleSortChange(value: number | string, row: RoleListItem) {
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return;
   if (row.id === 1) {
-    message.info('超级管理员不可修改');
+    message.info($t('common.superAdminCannotModify'));
     return;
   }
 
@@ -224,11 +225,11 @@ async function handleSortChange(value: number | string, row: RoleListItem) {
       numberName: 'sort',
       numberValue,
     });
-    message.success('排序更新成功');
+    message.success($t('common.sortUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('排序更新失败，请稍后重试');
+    message.error($t('common.sortUpdateFailed'));
   }
 }
 

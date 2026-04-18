@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { DictApi } from '#/api/system/dict';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
@@ -123,67 +124,67 @@ function handleOpenData(row: DictTypeListItem) {
 async function handleDelete(row: DictTypeListItem) {
   try {
     await (isRecycleBin.value ? realDeleteDictType([row.id]) : deleteDictType([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeleteDictType(ids) : deleteDictType(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: DictTypeListItem) {
   try {
     await recoveryDictType([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryDictType(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleStatusChange(row: DictTypeListItem, checked: boolean) {
   try {
     await changeDictTypeStatus({ id: row.id, status: checked ? 1 : 2 });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 

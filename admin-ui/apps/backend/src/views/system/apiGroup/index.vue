@@ -1,7 +1,8 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
 
@@ -113,64 +114,64 @@ async function handleDelete(row: ApiGroupListItem) {
   try {
     const id = Number(row.id);
     await (isRecycleBin.value ? realDeleteApiGroup([id]) : deleteApiGroup([id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error(isRecycleBin.value ? '彻底删除失败，请稍后重试' : '删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   if (ids.length === 0) {
-    message.warning('所选数据格式异常，请重试');
+    message.warning($t('common.invalidDataFormat'));
     return;
   }
   try {
     await (isRecycleBin.value ? realDeleteApiGroup(ids) : deleteApiGroup(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error(isRecycleBin.value ? '批量彻底删除失败，请稍后重试' : '批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: ApiGroupListItem) {
   try {
     await recoveryApiGroup([Number(row.id)]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   if (ids.length === 0) {
-    message.warning('所选数据格式异常，请重试');
+    message.warning($t('common.invalidDataFormat'));
     return;
   }
   try {
     await recoveryApiGroup(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
@@ -178,11 +179,11 @@ async function handleStatusChange(row: ApiGroupListItem, checked: boolean) {
   const status = checked ? 1 : 2;
   try {
     await changeApiGroupStatus({ id: Number(row.id), status });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 

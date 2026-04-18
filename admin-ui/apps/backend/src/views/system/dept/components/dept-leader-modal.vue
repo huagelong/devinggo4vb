@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { UserApi } from '#/api/system/user';
@@ -6,6 +6,7 @@ import type { UserApi } from '#/api/system/user';
 import { reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import {
   Button,
@@ -172,7 +173,7 @@ async function handleDeleteLeader(id: number) {
       id: currentDept.value.id,
       ids: [id],
     });
-    MessagePlugin.success('删除成功');
+    MessagePlugin.success($t('common.deleteSuccess'));
     await fetchLeaderList();
   } catch (error) {
     logger.error(error);
@@ -191,7 +192,7 @@ async function handleBatchDeleteLeaders() {
       id: currentDept.value.id,
       ids: selectedLeaderKeys.value.map((item) => Number(item)),
     });
-    MessagePlugin.success('删除成功');
+    MessagePlugin.success($t('common.deleteSuccess'));
     selectedLeaderKeys.value = [];
     await fetchLeaderList();
   } catch (error) {

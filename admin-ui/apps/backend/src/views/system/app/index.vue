@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { AppApi } from '#/api/system/app';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
 import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
@@ -93,75 +94,75 @@ function handleEdit(row: AppListItem) {
 async function handleDelete(row: AppListItem) {
   try {
     await (isRecycleBin.value ? realDeleteApp([row.id]) : deleteApp([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error(isRecycleBin.value ? '彻底删除失败，请稍后重试' : '删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   if (ids.length === 0) {
-    message.warning('所选数据格式异常，请重试');
+    message.warning($t('common.invalidDataFormat'));
     return;
   }
   try {
     await (isRecycleBin.value ? realDeleteApp(ids) : deleteApp(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error(isRecycleBin.value ? '批量彻底删除失败，请稍后重试' : '批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: AppListItem) {
   try {
     await recoveryApp([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   if (ids.length === 0) {
-    message.warning('所选数据格式异常，请重试');
+    message.warning($t('common.invalidDataFormat'));
     return;
   }
   try {
     await recoveryApp(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleStatusChange(row: AppListItem, checked: boolean) {
   try {
     await changeAppStatus({ id: row.id, status: checked ? 1 : 2 });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 

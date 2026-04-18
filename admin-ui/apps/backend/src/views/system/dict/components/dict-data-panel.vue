@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DictApi } from '#/api/system/dict';
 
 import { reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 import { AddIcon, DeleteIcon, SearchIcon } from 'tdesign-icons-vue-next';
@@ -159,67 +160,67 @@ function handleEdit(row: DictDataListItem) {
 async function handleDelete(row: DictDataListItem) {
   try {
     await (isRecycleBin.value ? realDeleteDictData([row.id]) : deleteDictData([row.id]));
-    MessagePlugin.success('操作成功');
+    MessagePlugin.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('删除失败，请稍后重试');
+    MessagePlugin.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请选择需要操作的数据');
+    MessagePlugin.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeleteDictData(ids) : deleteDictData(ids));
-    MessagePlugin.success('操作成功');
+    MessagePlugin.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('批量删除失败，请稍后重试');
+    MessagePlugin.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: DictDataListItem) {
   try {
     await recoveryDictData([row.id]);
-    MessagePlugin.success('恢复成功');
+    MessagePlugin.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('恢复失败，请稍后重试');
+    MessagePlugin.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请选择需要操作的数据');
+    MessagePlugin.warning($t('common.selectDataFirst'));
     return;
   }
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryDictData(ids);
-    MessagePlugin.success('恢复成功');
+    MessagePlugin.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('批量恢复失败，请稍后重试');
+    MessagePlugin.error($t('common.batchRecoveryFailed'));
   }
 }
 
 async function handleStatusChange(row: DictDataListItem, checked: boolean) {
   try {
     await changeDictDataStatus({ id: row.id, status: checked ? 1 : 2 });
-    MessagePlugin.success('状态更新成功');
+    MessagePlugin.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('状态更新失败，请稍后重试');
+    MessagePlugin.error($t('common.statusUpdateFailed'));
   }
 }
 
@@ -236,11 +237,11 @@ async function handleSortChange(value: number | string, row: DictDataListItem) {
       numberName: 'sort',
       numberValue,
     });
-    MessagePlugin.success('排序更新成功');
+    MessagePlugin.success($t('common.sortUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('排序更新失败，请稍后重试');
+    MessagePlugin.error($t('common.sortUpdateFailed'));
   }
 }
 

@@ -1,7 +1,8 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
 
@@ -172,7 +173,7 @@ async function fetchOptions() {
     homePageOptions.value = dashboardDict || [];
   } catch (error) {
     logger.error(error);
-    message.error('筛选项加载失败，请稍后重试');
+    message.error($t('common.filterLoadFailed'));
   }
 }
 
@@ -182,7 +183,7 @@ function handleAdd() {
 
 function handleEdit(row: UserListItem) {
   if (isSuperAdmin(row)) {
-    message.warning('超级管理员不可编辑');
+    message.warning($t('common.superAdminCannotEdit'));
     return;
   }
   userModalRef.value?.open(row);

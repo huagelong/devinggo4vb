@@ -1,7 +1,8 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+
 import { message } from '#/adapter/tdesign';
 import { logger } from '#/utils/logger';
 
@@ -106,58 +107,58 @@ function handleEdit(row: PostListItem) {
 async function handleDelete(row: PostListItem) {
   try {
     await (isRecycleBin.value ? realDeletePost([row.id]) : deletePost([row.id]));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('删除失败，请稍后重试');
+    message.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await (isRecycleBin.value ? realDeletePost(ids) : deletePost(ids));
-    message.success('操作成功');
+    message.success($t('common.operationSuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量删除失败，请稍后重试');
+    message.error($t('common.batchDeleteFailed'));
   }
 }
 
 async function handleRecovery(row: PostListItem) {
   try {
     await recoveryPost([row.id]);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('恢复失败，请稍后重试');
+    message.error($t('common.recoveryFailed'));
   }
 }
 
 async function handleBatchRecovery() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择需要操作的数据');
+    message.warning($t('common.selectDataFirst'));
     return;
   }
 
   const ids = toIds(selectedRowKeys.value);
   try {
     await recoveryPost(ids);
-    message.success('恢复成功');
+    message.success($t('common.recoverySuccess'));
     clearSelectedRowKeys();
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('批量恢复失败，请稍后重试');
+    message.error($t('common.batchRecoveryFailed'));
   }
 }
 
@@ -165,11 +166,11 @@ async function handleStatusChange(row: PostListItem, checked: boolean) {
   const status = checked ? 1 : 2;
   try {
     await changePostStatus({ id: row.id, status });
-    message.success('状态更新成功');
+    message.success($t('common.statusUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('状态更新失败，请稍后重试');
+    message.error($t('common.statusUpdateFailed'));
   }
 }
 
@@ -183,11 +184,11 @@ async function handleSortChange(value: number | string, row: PostListItem) {
       numberName: 'sort',
       numberValue,
     });
-    message.success('排序更新成功');
+    message.success($t('common.sortUpdateSuccess'));
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error('排序更新失败，请稍后重试');
+    message.error($t('common.sortUpdateFailed'));
   }
 }
 

@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ConfigApi } from '#/api/system/config';
 
 import { nextTick } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -57,7 +58,7 @@ const [Modal, modalApi] = useVbenModal({
       const values = await formApi.getValues<ConfigApi.ConfigGroupSubmitPayload>();
       modalApi.setState({ confirmLoading: true });
       await saveConfigGroup(values);
-      MessagePlugin.success('保存成功');
+      MessagePlugin.success($t('common.saveSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
