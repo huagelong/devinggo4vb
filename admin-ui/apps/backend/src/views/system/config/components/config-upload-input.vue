@@ -1,6 +1,8 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import { ref } from 'vue';
+
+import { $t } from '@vben/locales';
 
 import { UploadIcon } from 'tdesign-icons-vue-next';
 import { Button, Input, MessagePlugin, Space } from 'tdesign-vue-next';
@@ -36,13 +38,13 @@ async function handleFileChange(event: Event) {
     const response = (await uploadImageFileApi(file)) as { url?: string };
     if (response?.url) {
       emit('update:modelValue', response.url);
-      MessagePlugin.success('上传成功');
+      MessagePlugin.success($t('common.uploadSuccess2'));
     } else {
-      MessagePlugin.error('上传失败');
+      MessagePlugin.error($t('common.uploadFailed2'));
     }
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('上传失败');
+    MessagePlugin.error($t('common.uploadFailed2'));
   } finally {
     uploading.value = false;
     input.value = '';

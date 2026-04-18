@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { PostApi } from '#/api/system/post';
@@ -8,6 +8,7 @@ import type { UserApi } from '#/api/system/user';
 import { defineComponent, h, markRaw, nextTick } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -62,7 +63,7 @@ const AvatarUpload = defineComponent({
             emitInner('change', res.url);
           }
         } catch {
-          MessagePlugin.error('头像上传失败');
+          MessagePlugin.error($t('common.avatarUploadFailed2'));
         }
       };
       input.click();

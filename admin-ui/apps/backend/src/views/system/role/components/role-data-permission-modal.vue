@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { RoleApi } from '#/api/system/role';
@@ -6,6 +6,7 @@ import type { RoleApi } from '#/api/system/role';
 import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import {
   Checkbox,
@@ -103,7 +104,7 @@ const [Modal, modalApi] = useVbenModal({
         data_scope: Number(dataScope.value),
         dept_ids: checkedKeys.value.map((item) => Number(item)),
       });
-      MessagePlugin.success('数据权限更新成功');
+      MessagePlugin.success($t('common.dataPermissionUpdateSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {

@@ -6,6 +6,7 @@ import type { PrimaryTableCol, RadioValue } from 'tdesign-vue-next';
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 
 import { useWindowSize } from '@vueuse/core';
+import { $t } from '@vben/locales';
 import {
   Button,
   DateRangePicker,
@@ -141,7 +142,7 @@ const handleChangeStatus = (val: string) => {
 
 const handleBatchDelete = () => {
   if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请先选择要删除的数据');
+    MessagePlugin.warning($t('common.selectDataToDeleteFirst'));
     return;
   }
   const dialog = DialogPlugin.confirm({
@@ -149,7 +150,7 @@ const handleBatchDelete = () => {
     body: '确定要删除所选数据吗？',
     onConfirm: async () => {
       await deleteQueueMessageApi({ ids: selectedRowKeys.value });
-      MessagePlugin.success('删除成功');
+      MessagePlugin.success($t('common.deleteSuccess'));
       selectedRowKeys.value = [];
       fetchData();
       dialog.hide();
@@ -163,7 +164,7 @@ const handleDelete = (row: MessageApi.QueueMessageItem) => {
     body: '确定要删除该数据吗？',
     onConfirm: async () => {
       await deleteQueueMessageApi({ ids: [row.id] });
-      MessagePlugin.success('删除成功');
+      MessagePlugin.success($t('common.deleteSuccess'));
       fetchData();
       dialog.hide();
     },

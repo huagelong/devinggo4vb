@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import type { UploadTreeItem } from './model';
 
 import { computed, onMounted, ref } from 'vue';
@@ -102,7 +102,7 @@ function handleBatchDelete() {
     return;
   }
   // TODO: implement batch delete
-  message.info('批量删除功能待实现');
+  message.info($t('common.batchDeleteFeaturePending'));
 }
 
 onMounted(() => {

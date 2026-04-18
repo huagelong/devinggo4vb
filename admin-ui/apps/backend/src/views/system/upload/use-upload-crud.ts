@@ -38,7 +38,7 @@ export function useUploadCrud() {
     } catch (error) {
       if (requestId !== fetchRequestId) return;
       if (import.meta.env.DEV) {
-        console.error(error);
+        logger.error(error);
       }
       message.error($t('common.listLoadFailed'));
     } finally {

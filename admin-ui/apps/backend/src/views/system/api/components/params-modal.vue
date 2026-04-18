@@ -287,10 +287,10 @@ async function handleExport() {
       buildRequestParams(false) as ApiColumnApi.ListQuery,
     );
     downloadResponseBlob(response, '接口参数列表.xlsx');
-    message.success('导出成功');
+    message.success($t('common.exportSuccess'));
   } catch (error) {
     logger.error(error);
-    message.error('导出失败，请稍后重试');
+    message.error($t('common.exportFailed'));
   } finally {
     exportLoading.value = false;
   }
@@ -301,10 +301,10 @@ async function handleDownloadTemplate() {
   try {
     const response = await downloadApiColumnTemplate();
     downloadResponseBlob(response, '接口参数导入模板.xlsx');
-    message.success('模板下载成功');
+    message.success($t('common.templateDownloadSuccess'));
   } catch (error) {
     logger.error(error);
-    message.error('模板下载失败，请稍后重试');
+    message.error($t('common.templateDownloadFailed'));
   } finally {
     templateLoading.value = false;
   }

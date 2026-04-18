@@ -99,7 +99,7 @@ async function fetchLeaderList() {
     );
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('领导列表加载失败');
+    MessagePlugin.error($t('common.leaderListLoadFailed'));
   } finally {
     loading.value = false;
   }
@@ -126,7 +126,7 @@ async function fetchCandidateUsers() {
     }));
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('候选用户加载失败');
+    MessagePlugin.error($t('common.candidateUserLoadFailed'));
   } finally {
     candidateLoading.value = false;
   }
@@ -135,7 +135,7 @@ async function fetchCandidateUsers() {
 async function handleAddLeaders() {
   if (!currentDept.value) return;
   if (selectedCandidateIds.value.length === 0) {
-    MessagePlugin.warning('请选择需要添加的用户');
+    MessagePlugin.warning($t('common.selectUserToAdd'));
     return;
   }
 
@@ -148,7 +148,7 @@ async function handleAddLeaders() {
     }));
 
   if (selectedUsers.length === 0) {
-    MessagePlugin.warning('未找到可添加的用户信息');
+    MessagePlugin.warning($t('common.noUserFoundToAdd'));
     return;
   }
 
@@ -157,12 +157,12 @@ async function handleAddLeaders() {
       id: currentDept.value.id,
       users: selectedUsers,
     });
-    MessagePlugin.success('添加领导成功');
+    MessagePlugin.success($t('common.addLeaderSuccess'));
     selectedCandidateIds.value = [];
     await fetchLeaderList();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('添加领导失败');
+    MessagePlugin.error($t('common.addLeaderFailed'));
   }
 }
 
@@ -177,14 +177,14 @@ async function handleDeleteLeader(id: number) {
     await fetchLeaderList();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('删除失败');
+    MessagePlugin.error($t('common.deleteFailed'));
   }
 }
 
 async function handleBatchDeleteLeaders() {
   if (!currentDept.value) return;
   if (selectedLeaderKeys.value.length === 0) {
-    MessagePlugin.warning('请选择需要删除的领导');
+    MessagePlugin.warning($t('common.selectLeaderToDelete'));
     return;
   }
   try {
@@ -197,7 +197,7 @@ async function handleBatchDeleteLeaders() {
     await fetchLeaderList();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('删除失败');
+    MessagePlugin.error($t('common.deleteFailed'));
   }
 }
 

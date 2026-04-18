@@ -5,6 +5,7 @@ import { useUserStore } from '@vben/stores';
 import type { NotificationNewData, PresenceMemberData } from './pusher-types';
 import { Events } from './pusher-types';
 import { usePusher } from './use-pusher';
+import { logger } from '#/utils/logger';
 
 /**
  * Composable that subscribes to real-time notifications and online-user presence.
@@ -27,7 +28,7 @@ export function useRealtimeNotifications() {
     const userId = (userInfo?.userId ?? userInfo?.id) as string | number | undefined;
 
     if (!userId) {
-      console.warn(
+      logger.warn(
         '[Pusher] No user ID found, skipping real-time subscription',
       );
       return;

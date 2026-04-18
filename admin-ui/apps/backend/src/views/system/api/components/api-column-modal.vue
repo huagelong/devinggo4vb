@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ApiColumnFormModel, ApiColumnListItem, ApiColumnType } from '../model';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -7,6 +7,7 @@ import type { ApiColumnApi } from '#/api/system/api-column';
 import { nextTick, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin, Select } from 'tdesign-vue-next';
 
@@ -185,7 +186,7 @@ async function fetchFormOptions() {
       statuses && statuses.length > 0 ? statuses : fallbackStatusOptions;
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('字段选项加载失败，请稍后重试');
+    MessagePlugin.error($t('common.columnOptionsLoadFailed'));
     dataTypeOptions.value = [];
     statusOptions.value = fallbackStatusOptions;
   } finally {

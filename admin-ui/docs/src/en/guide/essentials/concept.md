@@ -12,7 +12,7 @@ Applications refer to a complete project; a project can contain multiple applica
 
 ::: tip
 
-Applications are not limited to front-end applications; they can also be back-end applications, mobile applications, etc. For example, `apps/backend-mock` is a back-end service.
+Applications are not limited to front-end applications; they can also be back-end applications, mobile applications, etc. For example, `apps/backend` is a back-end service.
 
 :::
 

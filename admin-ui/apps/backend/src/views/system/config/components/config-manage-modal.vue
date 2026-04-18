@@ -72,7 +72,7 @@ async function fetchTableData() {
     pagination.total = Number(response?.pageInfo?.total || response?.total || 0);
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('配置列表加载失败，请稍后重试');
+    MessagePlugin.error($t('common.configDataLoadFailed2'));
   } finally {
     loading.value = false;
   }

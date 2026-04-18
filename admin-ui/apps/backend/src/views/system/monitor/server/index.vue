@@ -4,6 +4,7 @@ import type { MonitorApi } from '#/api/system/monitor';
 import { onMounted, onUnmounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { message } from '#/adapter/tdesign';
 import { getServerInfo } from '#/api/system/monitor';
@@ -59,10 +60,10 @@ async function fetchServerInfo() {
   } catch (error: unknown) {
     if ((error as { response?: { status?: number } })?.response?.status === 404) {
       hasServerApi.value = false;
-      message.info('服务器监控接口暂未开放');
+      message.info($t('common.serverMonitorNotAvailable'));
     } else {
       logger.error(error);
-      message.error('获取服务器信息失败');
+      message.error($t('common.serverInfoFailed'));
     }
   } finally {
     loading.value = false;

@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ApiFormModel } from '../model';
 import type { OptionItem, IdType } from '#/types/common';
@@ -8,6 +8,7 @@ import type { ApiManageApi } from '#/api/system/api';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin, Select } from 'tdesign-vue-next';
 
@@ -186,7 +187,7 @@ async function fetchFormOptions() {
       statuses && statuses.length > 0 ? statuses : fallbackStatusOptions;
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('下拉选项加载失败，请稍后重试');
+    MessagePlugin.error($t('common.selectOptionsLoadFailed'));
     groupOptions.value = [];
     requestModeOptions.value = fallbackRequestModes;
     statusOptions.value = fallbackStatusOptions;

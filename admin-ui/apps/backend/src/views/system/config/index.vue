@@ -205,11 +205,11 @@ async function handleSubmit(groupId: number) {
 
   try {
     await updateConfigByKeys(payload);
-    MessagePlugin.success('配置更新成功');
+    MessagePlugin.success($t('common.configUpdateSuccess'));
     await fetchGroupConfigs(groupId);
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('配置更新失败，请稍后重试');
+    MessagePlugin.error($t('common.configUpdateFailed'));
   }
 }
 
@@ -217,16 +217,16 @@ async function handleDeleteGroup(groupId: number) {
   const group = groupList.value.find((item) => item.id === groupId);
   if (!group) return;
   if (groupId === 1 || groupId === 2) {
-    MessagePlugin.info('系统默认分组不可删除');
+    MessagePlugin.info($t('common.defaultGroupCannotDelete'));
     return;
   }
   try {
     await deleteConfigGroup({ id: groupId });
-    MessagePlugin.success('分组删除成功');
+    MessagePlugin.success($t('common.groupDeleteSuccess'));
     await fetchGroups();
   } catch (error) {
     logger.error(error);
-    MessagePlugin.error('分组删除失败，请稍后重试');
+    MessagePlugin.error($t('common.groupDeleteFailed'));
   }
 }
 

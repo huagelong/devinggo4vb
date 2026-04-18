@@ -690,25 +690,6 @@ importers:
         specifier: ^3.2.6
         version: 3.2.6(typescript@5.9.3)
 
-  apps/backend-mock:
-    dependencies:
-      '@faker-js/faker':
-        specifier: 'catalog:'
-        version: 10.3.0
-      jsonwebtoken:
-        specifier: 'catalog:'
-        version: 9.0.3
-      nitropack:
-        specifier: 'catalog:'
-        version: 2.13.1(rolldown@1.0.0-rc.9)
-    devDependencies:
-      '@types/jsonwebtoken':
-        specifier: 'catalog:'
-        version: 9.0.10
-      h3:
-        specifier: 'catalog:'
-        version: 1.15.6
-
   docs:
     dependencies:
       '@vben-core/shadcn-ui':

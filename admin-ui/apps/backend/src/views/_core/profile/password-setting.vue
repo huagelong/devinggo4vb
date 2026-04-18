@@ -3,6 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 
 import { computed } from 'vue';
 
+import { $t } from '@vben/locales';
 import { ProfilePasswordSetting, z } from '@vben/common-ui';
 
 import { message } from '#/adapter/tdesign';
@@ -51,7 +52,7 @@ const formSchema = computed((): VbenFormSchema[] => {
 });
 
 function handleSubmit() {
-  message.success('密码修改成功');
+  message.success($t('common.passwordChangeSuccess'));
 }
 </script>
 <template>

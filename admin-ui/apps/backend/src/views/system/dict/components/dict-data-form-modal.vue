@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DictApi } from '#/api/system/dict';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -92,7 +93,7 @@ const [Modal, modalApi] = useVbenModal({
 
       const values = await formApi.getValues<DictApi.DictDataSubmitPayload>();
       if (!values.type_id) {
-        MessagePlugin.warning('缺少字典类型信息');
+        MessagePlugin.warning($t('common.missingDictTypeInfo'));
         return;
       }
       modalApi.setState({ confirmLoading: true });

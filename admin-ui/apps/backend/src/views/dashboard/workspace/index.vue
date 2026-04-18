@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type {
   WorkbenchProjectItem,
@@ -211,7 +211,7 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
       logger.error('Navigation failed:', error);
     });
   } else {
-    console.warn(`Unknown URL for navigation item: ${nav.title} -> ${nav.url}`);
+    logger.warn(`Unknown URL for navigation item: ${nav.title} -> ${nav.url}`);
   }
 }
 </script>

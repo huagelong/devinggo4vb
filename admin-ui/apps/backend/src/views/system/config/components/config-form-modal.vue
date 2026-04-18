@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ConfigApi } from '#/api/system/config';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -135,7 +136,7 @@ const [Modal, modalApi] = useVbenModal({
         try {
           payload.config_select_data = JSON.parse(values.config_select_data);
         } catch {
-          MessagePlugin.error('可选项数据需为 JSON 数组');
+          MessagePlugin.error($t('common.jsonArrayRequired'));
           return;
         }
       } else {

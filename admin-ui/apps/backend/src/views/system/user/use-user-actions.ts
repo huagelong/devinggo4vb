@@ -3,6 +3,8 @@ import type { IdType } from '#/types/common';
 
 import { ref } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import { logger } from '#/utils/logger';
 
 import {
@@ -53,7 +55,7 @@ export function useUserActions(options: UseUserActionsOptions) {
 
   async function handleDelete(row: UserActionRow) {
     if (isSuperAdmin(row)) {
-      message.warning('超级管理员不可删除');
+      message.warning($t('common.superAdminCannotDelete2'));
       return;
     }
 
@@ -61,105 +63,105 @@ export function useUserActions(options: UseUserActionsOptions) {
       await (options.isRecycleBin.value
         ? realDeleteUser([row.id])
         : deleteUser([row.id]));
-      message.success('删除成功');
+      message.success($t('common.deleteSuccess'));
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('删除失败，请稍后重试');
+      message.error($t('common.deleteFailed'));
     }
   }
 
   async function handleBatchDelete() {
     if (options.selectedRowKeys.value.length === 0) {
-      message.warning('请选择需要操作的数据');
+      message.warning($t('common.selectDataFirst'));
       return;
     }
 
     const ids = toIds(options.selectedRowKeys.value);
     if (ids.some((id) => id === 1)) {
-      message.warning('超级管理员不可删除');
+      message.warning($t('common.superAdminCannotDelete2'));
       return;
     }
 
     try {
       await (options.isRecycleBin.value ? realDeleteUser(ids) : deleteUser(ids));
-      message.success('操作成功');
+      message.success($t('common.operationSuccess'));
       options.clearSelectedRowKeys();
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('批量删除失败，请稍后重试');
+      message.error($t('common.batchDeleteFailed'));
     }
   }
 
   async function handleRecovery(row: UserActionRow) {
     try {
       await recoveryUser([row.id]);
-      message.success('恢复成功');
+      message.success($t('common.recoverySuccess'));
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('恢复失败，请稍后重试');
+      message.error($t('common.recoveryFailed'));
     }
   }
 
   async function handleBatchRecovery() {
     if (options.selectedRowKeys.value.length === 0) {
-      message.warning('请选择需要操作的数据');
+      message.warning($t('common.selectDataFirst'));
       return;
     }
 
     const ids = toIds(options.selectedRowKeys.value);
     if (ids.some((id) => id === 1)) {
-      message.warning('超级管理员不可恢复');
+      message.warning($t('common.superAdminCannotRecover'));
       return;
     }
 
     try {
       await recoveryUser(ids);
-      message.success('恢复成功');
+      message.success($t('common.recoverySuccess'));
       options.clearSelectedRowKeys();
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('批量恢复失败，请稍后重试');
+      message.error($t('common.batchRecoveryFailed'));
     }
   }
 
   async function handleStatusChange(row: UserActionRow, checked: boolean) {
     if (isSuperAdmin(row)) {
-      message.warning('超级管理员不可禁用');
+      message.warning($t('common.superAdminCannotDisable'));
       return;
     }
 
     const status = checked ? 1 : 2;
     try {
       await changeUserStatus({ id: row.id, status });
-      message.success('更新状态成功');
+      message.success($t('common.updateStatusSuccess'));
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('更新状态失败，请稍后重试');
+      message.error($t('common.updateStatusFailed'));
     }
   }
 
   async function handleResetPassword(row: UserActionRow) {
     try {
       await resetPassword({ id: row.id });
-      message.success('密码重置成功');
+      message.success($t('common.passwordResetSuccess'));
     } catch (error) {
       logger.error(error);
-      message.error('密码重置失败，请稍后重试');
+      message.error($t('common.passwordResetFailed'));
     }
   }
 
   async function handleClearCache(row: UserActionRow) {
     try {
       await clearUserCache({ id: row.id });
-      message.success('清除缓存成功');
+      message.success($t('common.clearCacheSuccess2'));
     } catch (error) {
       logger.error(error);
-      message.error('更新缓存失败，请稍后重试');
+      message.error($t('common.clearCacheFailed2'));
     }
   }
 
@@ -175,11 +177,11 @@ export function useUserActions(options: UseUserActionsOptions) {
     importLoading.value = true;
     try {
       await importUserFile(file);
-      message.success('导入成功');
+      message.success($t('common.importSuccess'));
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('导入失败，请检查文件后重试');
+      message.error($t('common.importFailed'));
     } finally {
       importLoading.value = false;
       input.value = '';
@@ -191,10 +193,10 @@ export function useUserActions(options: UseUserActionsOptions) {
     try {
       const response = await exportUserList(options.buildRequestParams(false));
       downloadResponseBlob(response, '用户列表.xlsx');
-      message.success('导出成功');
+      message.success($t('common.exportSuccess'));
     } catch (error) {
       logger.error(error);
-      message.error('导出失败，请稍后重试');
+      message.error($t('common.exportFailed'));
     } finally {
       exportLoading.value = false;
     }
@@ -205,10 +207,10 @@ export function useUserActions(options: UseUserActionsOptions) {
     try {
       const response = await downloadUserImportTemplate();
       downloadResponseBlob(response, '用户导入模板.xlsx');
-      message.success('模板下载成功');
+      message.success($t('common.templateDownloadSuccess'));
     } catch (error) {
       logger.error(error);
-      message.error('模板下载失败，请稍后重试');
+      message.error($t('common.templateDownloadFailed'));
     } finally {
       templateLoading.value = false;
     }
@@ -216,7 +218,7 @@ export function useUserActions(options: UseUserActionsOptions) {
 
   function openSetHomePageDialog(row: UserActionRow) {
     if (isSuperAdmin(row)) {
-      message.warning('超级管理员不可设置首页');
+      message.warning($t('common.superAdminCannotSetHome'));
       return;
     }
 
@@ -227,12 +229,12 @@ export function useUserActions(options: UseUserActionsOptions) {
 
   async function handleSetHomePage() {
     if (!selectedHomePageUserId.value) {
-      message.warning('用户信息无效');
+      message.warning($t('common.userInfoInvalid'));
       return;
     }
 
     if (!selectedHomePage.value) {
-      message.warning('请选择用户首页');
+      message.warning($t('common.selectUserHome'));
       return;
     }
 
@@ -242,12 +244,12 @@ export function useUserActions(options: UseUserActionsOptions) {
         dashboard: selectedHomePage.value,
         id: selectedHomePageUserId.value,
       });
-      message.success('设置首页成功');
+      message.success($t('common.setHomeSuccess'));
       setHomePageVisible.value = false;
       options.fetchTableData();
     } catch (error) {
       logger.error(error);
-      message.error('设置首页失败，请稍后重试');
+      message.error($t('common.setHomeFailed'));
     } finally {
       setHomePageLoading.value = false;
     }
@@ -259,8 +261,8 @@ export function useUserActions(options: UseUserActionsOptions) {
   ) {
     if (data.value === 'reset_password') {
       const dialogInstance = dialog.confirm({
-        body: '确认重置该用户密码吗？',
-        header: '提示',
+        body: $t('common.confirmResetPassword'),
+        header: $t('common.prompt'),
         onClose: () => dialogInstance.hide(),
         onConfirm: () => {
           void handleResetPassword(row);
@@ -272,8 +274,8 @@ export function useUserActions(options: UseUserActionsOptions) {
 
     if (data.value === 'clear_cache') {
       const dialogInstance = dialog.confirm({
-        body: '确认更新该用户缓存吗？',
-        header: '提示',
+        body: $t('common.confirmUpdateCache'),
+        header: $t('common.prompt'),
         onClose: () => dialogInstance.hide(),
         onConfirm: () => {
           void handleClearCache(row);

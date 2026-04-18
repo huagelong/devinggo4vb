@@ -6,7 +6,6 @@
 .
 ├── README.md # 项目说明文档
 ├── apps # 项目应用目录
-│   ├── backend-mock # 后端模拟服务应用
 │   ├── web-antd # 基于 Ant Design Vue 的前端应用
 │   ├── web-antdv-next # 基于 Ant Design Vue Next 的前端应用
 │   ├── web-ele # 基于 Element Plus 的前端应用
