@@ -96,7 +96,7 @@ function handleTreeChange(value: Array<string | number>) {
 
 function handleDownload(row: AttachmentListItem) {
   // In a real implementation, this would trigger file download
-  message.success(`下载文件: ${row.origin_name}`);
+  message.success($t('system.attachment.downloadFile', [row.origin_name]));
 }
 
 async function handleDelete(row: AttachmentListItem) {
@@ -200,7 +200,7 @@ onMounted(() => {
     <div class="flex h-full gap-3">
       <!-- Left Tree Slider -->
       <div class="w-48 flex-shrink-0 rounded-md bg-white p-2">
-        <div class="mb-2 px-2 text-sm font-medium text-gray-500">文件类型</div>
+        <div class="mb-2 px-2 text-sm font-medium text-gray-500">{{ $t('system.upload.fileType') }}</div>
         <Tree
           v-model="selectedTreeKey"
           :data="treeData"
@@ -215,34 +215,34 @@ onMounted(() => {
         <div class="rounded-md bg-white p-4">
           <Form :data="searchForm" label-width="80px" colon>
             <div class="grid grid-cols-4 gap-x-4">
-              <FormItem label="原文件名" name="origin_name">
+              <FormItem :label="$t('system.attachment.originName')" name="origin_name">
                 <Input
                   v-model="searchForm.origin_name"
-                  placeholder="请输入原文件名"
+                  :placeholder="$t('ui.placeholder.input')"
                   clearable
                 />
               </FormItem>
-              <FormItem label="存储模式" name="storage_mode">
+              <FormItem :label="$t('system.attachment.storageMode')" name="storage_mode">
                 <Input
                   v-model="searchForm.storage_mode"
-                  placeholder="请选择存储模式"
+                  :placeholder="$t('ui.placeholder.select')"
                   clearable
                 />
               </FormItem>
-              <FormItem label="创建时间" name="created_at" class="col-span-2">
+              <FormItem :label="$t('common.createTime')" name="created_at" class="col-span-2">
                 <DateRangePicker
                   v-model="searchForm.created_at"
-                  :placeholder="['开始时间', '结束时间']"
+                  :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                   clearable
                   class="w-full"
                 />
               </FormItem>
             </div>
             <div class="flex justify-end gap-2 pt-2">
-              <Button theme="default" @click="handleReset">重置</Button>
+              <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
               <Button theme="primary" @click="handleSearch">
                 <template #icon><SearchIcon /></template>
-                查询
+                {{ $t('common.query') }}
               </Button>
             </div>
           </Form>
@@ -254,12 +254,12 @@ onMounted(() => {
               <template v-if="!isRecycleBin">
                 <Button theme="danger" variant="outline" @click="handleBatchDelete">
                   <template #icon><DeleteIcon /></template>
-                  删除
+                  {{ $t('common.delete') }}
                 </Button>
               </template>
               <template v-else>
-                <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-                <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+                <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+                <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
               </template>
             </Space>
 
@@ -272,7 +272,7 @@ onMounted(() => {
                 <template #icon>
                   <AppIcon />
                 </template>
-                {{ viewMode === 'list' ? '橱窗模式' : '列表模式' }}
+                {{ viewMode === 'list' ? $t('system.attachment.windowMode') : $t('system.attachment.listMode') }}
               </Button>
 
               <CrudToolbar
@@ -317,7 +317,7 @@ onMounted(() => {
 
             <template #storage_mode="{ row }">
               <Tag :theme="row.storage_mode === 1 ? 'primary' : 'warning'">
-                {{ row.storage_mode === 1 ? '本地' : '云存储' }}
+                {{ row.storage_mode === 1 ? $t('common.local') : $t('common.cloudStorage') }}
               </Tag>
             </template>
 
@@ -330,7 +330,7 @@ onMounted(() => {
                     variant="outline"
                     @click="handleDownload(row)"
                   >
-                    下载
+                    {{ $t('common.download') }}
                   </Button>
                   <Button
                     size="small"
@@ -338,7 +338,7 @@ onMounted(() => {
                     variant="outline"
                     @click="handleDelete(row)"
                   >
-                    删除
+                    {{ $t('common.delete') }}
                   </Button>
                 </template>
                 <template v-else>
@@ -348,7 +348,7 @@ onMounted(() => {
                     variant="outline"
                     @click="handleRecovery(row)"
                   >
-                    恢复
+                    {{ $t('common.recovery') }}
                   </Button>
                   <Button
                     size="small"
@@ -356,7 +356,7 @@ onMounted(() => {
                     variant="outline"
                     @click="handleDelete(row)"
                   >
-                    彻底删除
+                    {{ $t('common.permanentDelete') }}
                   </Button>
                 </template>
               </div>
@@ -396,14 +396,14 @@ onMounted(() => {
                   theme="primary"
                   @click="handleDownload(row)"
                 >
-                  下载
+                  {{ $t('common.download') }}
                 </Button>
                 <Button
                   size="small"
                   theme="danger"
                   @click="handleDelete(row)"
                 >
-                  删除
+                  {{ $t('common.delete') }}
                 </Button>
               </div>
             </div>

@@ -5,6 +5,8 @@ import type {
   DemoTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createDemoSearchForm(): DemoSearchFormModel {
   return {
     name: '',
@@ -39,21 +41,21 @@ export function createDemoTableColumns(): DemoTableColumn[] {
       width: 52,
     },
     { align: 'center', colKey: 'id', title: 'ID', width: 80 },
-    { align: 'center', colKey: 'name', minWidth: 120, title: '名称' },
-    { align: 'center', colKey: 'code', minWidth: 120, title: '编码' },
-    { align: 'center', colKey: 'status', minWidth: 120, title: '状态' },
-    { align: 'center', colKey: 'sort', minWidth: 140, title: '排序' },
-    { align: 'center', colKey: 'price', minWidth: 120, title: '数字' },
-    { align: 'center', colKey: 'email', minWidth: 120, title: '邮箱' },
-    { align: 'center', colKey: 'phone', minWidth: 120, title: '手机号' },
-    { align: 'center', colKey: 'birthday', minWidth: 120, title: '日期' },
-    { align: 'center', colKey: 'remark', minWidth: 160, title: '备注' },
-    { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
+    { align: 'center', colKey: 'name', minWidth: 120, title: $t('common.name') },
+    { align: 'center', colKey: 'code', minWidth: 120, title: $t('system.demo.code') },
+    { align: 'center', colKey: 'status', minWidth: 120, title: $t('common.status') },
+    { align: 'center', colKey: 'sort', minWidth: 140, title: $t('common.sort') },
+    { align: 'center', colKey: 'price', minWidth: 120, title: $t('system.demo.price') },
+    { align: 'center', colKey: 'email', minWidth: 120, title: $t('system.demo.email') },
+    { align: 'center', colKey: 'phone', minWidth: 120, title: $t('system.demo.phone') },
+    { align: 'center', colKey: 'birthday', minWidth: 120, title: $t('system.demo.birthday') },
+    { align: 'center', colKey: 'remark', minWidth: 160, title: $t('common.remark') },
+    { align: 'center', colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 220,
     },
   ];

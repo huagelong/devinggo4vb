@@ -91,8 +91,8 @@ async function fetchStatusOptions() {
     options.length > 0
       ? options
       : [
-          { label: '正常', value: 1 },
-          { label: '停用', value: 2 },
+          { label: $t('common.statusEnabled'), value: 1 },
+          { label: $t('common.statusDisabled'), value: 2 },
         ];
 }
 
@@ -216,43 +216,43 @@ onMounted(() => {
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="80px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="岗位名称" name="name">
+            <FormItem :label="$t('system.post.name')" name="name">
               <Input
                 v-model="searchForm.name"
-                placeholder="请输入岗位名称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="岗位标识" name="code">
+            <FormItem :label="$t('system.post.code')" name="code">
               <Input
                 v-model="searchForm.code"
-                placeholder="请输入岗位标识"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem :label="$t('common.status')" name="status">
               <Select
                 v-model="searchForm.status"
                 :options="statusOptions"
-                placeholder="请选择状态"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="创建时间" name="created_at">
+            <FormItem :label="$t('common.createTime')" name="created_at">
               <DateRangePicker
                 v-model="searchForm.created_at"
-                :placeholder="['开始时间', '结束时间']"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                 clearable
                 class="w-full"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -264,16 +264,16 @@ onMounted(() => {
             <template v-if="!isRecycleBin">
               <Button theme="primary" @click="handleAdd">
                 <template #icon><AddIcon /></template>
-                新增
+                {{ $t('common.create') }}
               </Button>
               <Button theme="danger" variant="outline" @click="handleBatchDelete">
                 <template #icon><DeleteIcon /></template>
-                删除
+                {{ $t('common.delete') }}
               </Button>
             </template>
             <template v-else>
-              <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-              <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+              <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+              <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
             </template>
           </Space>
 
@@ -327,34 +327,34 @@ onMounted(() => {
                   @click="handleEdit(row)"
                 >
                   <template #icon><EditIcon /></template>
-                  编辑
+                  {{ $t('common.edit') }}
                 </Button>
                 <Popconfirm
-                  content="确认删除该岗位吗？"
+                  :content="$t('system.post.confirmDelete')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
                     <template #icon><DeleteIcon /></template>
-                    删除
+                    {{ $t('common.delete') }}
                   </Button>
                 </Popconfirm>
               </template>
 
               <template v-else>
                 <Popconfirm
-                  content="确认恢复该岗位吗？"
+                  :content="$t('common.confirmRecovery')"
                   @confirm="handleRecovery(row)"
                 >
                   <Button size="small" theme="primary" variant="outline">
-                    恢复
+                    {{ $t('common.recovery') }}
                   </Button>
                 </Popconfirm>
                 <Popconfirm
-                  content="确认彻底删除该岗位吗？"
+                  :content="$t('common.confirmPermanentDelete')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
-                    彻底删除
+                    {{ $t('common.permanentDelete') }}
                   </Button>
                 </Popconfirm>
               </template>

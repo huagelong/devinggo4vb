@@ -40,13 +40,13 @@ const searchForm = ref<CrontabLogQuery>({
 
 const logColumns = [
   { colKey: 'id', title: 'ID', width: 80 },
-  { colKey: 'start_time', title: '开始时间', width: 180 },
-  { colKey: 'end_time', title: '结束时间', width: 180 },
-  { colKey: 'duration', title: '耗时(秒)', width: 100 },
-  { colKey: 'status', title: '执行结果', width: 100 },
-  { colKey: 'output', title: '执行输出', width: 180 },
-  { colKey: 'error', title: '异常信息', width: 180 },
-  { colKey: 'created_at', title: '创建时间', width: 180 },
+  { colKey: 'start_time', title: $t('common.startTime'), width: 180 },
+  { colKey: 'end_time', title: $t('common.endTime'), width: 180 },
+  { colKey: 'duration', title: $t('system.crontab.duration'), width: 100 },
+  { colKey: 'status', title: $t('system.crontab.executeResult'), width: 100 },
+  { colKey: 'output', title: $t('system.crontab.executeOutput'), width: 180 },
+  { colKey: 'error', title: $t('system.crontab.errorInfo'), width: 180 },
+  { colKey: 'created_at', title: $t('common.createTime'), width: 180 },
 ];
 
 const [Modal, modalApi] = useVbenModal({
@@ -104,9 +104,9 @@ async function handleDeleteLog() {
 }
 
 function showErrorDetail(row: CrontabApi.LogItem) {
-  modalApi.setState({ title: `异常信息 - ${row.crontab_name || row.id}` });
+  modalApi.setState({ title: `${$t('system.crontab.errorInfo')} - ${row.crontab_name || row.id}` });
   // Show error in a simple message box - in real implementation could use a detail modal
-  message.info(row.error || '无异常信息');
+  message.info(row.error || $t('system.crontab.noErrorInfo'));
 }
 
 function handleSearch() {
@@ -127,7 +127,7 @@ function handleSelectChange(value: (number | string)[]) {
 
 function open(id: number) {
   crontabId.value = id;
-  modalApi.setState({ title: '执行日志' });
+  modalApi.setState({ title: $t('system.crontab.logTitle') });
   modalApi.open();
   searchForm.value = {
     crontab_id: id,
@@ -147,20 +147,20 @@ defineExpose({
       <div class="rounded-md bg-white p-4">
         <Form label-width="80px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="创建时间" name="created_at" class="col-span-2">
+            <FormItem :label="$t('common.createTime')" name="created_at" class="col-span-2">
               <DateRangePicker
                 v-model="searchForm.created_at"
-                :placeholder="['开始时间', '结束时间']"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                 clearable
                 class="w-full"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -171,7 +171,7 @@ defineExpose({
           <Space>
             <Button theme="danger" variant="outline" @click="handleDeleteLog">
               <template #icon><DeleteIcon /></template>
-              删除日志
+              {{ $t('system.crontab.deleteLog') }}
             </Button>
           </Space>
         </div>
@@ -190,7 +190,7 @@ defineExpose({
             <span
               :class="Number(row.status) === 1 ? 'text-green-600' : 'text-red-600'"
             >
-              {{ Number(row.status) === 1 ? '成功' : '失败' }}
+              {{ Number(row.status) === 1 ? $t('common.success') : $t('common.fail') }}
             </span>
           </template>
 

@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { CrontabApi } from '#/api/system/crontab';
 
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -41,10 +42,10 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入任务名称',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'name',
-      label: '任务名称',
+      label: $t('system.crontab.name'),
       rules: 'required',
     },
     {
@@ -54,24 +55,24 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 1,
       fieldName: 'type',
-      label: '任务类型',
+      label: $t('system.crontab.taskType'),
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入执行规则，如：* * * * *',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'rule',
-      label: '执行规则',
+      label: $t('system.crontab.rule'),
       rules: 'required',
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入调用目标，如：App\\Task\\TestTask@run',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'target',
-      label: '调用目标',
+      label: $t('system.crontab.target'),
       rules: 'required',
     },
     {
@@ -81,16 +82,16 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 2,
       fieldName: 'is_finally',
-      label: '最终执行',
+      label: $t('system.crontab.isFinally'),
     },
     {
       component: 'Textarea',
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'remark',
       formItemClass: 'col-span-2',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -117,12 +118,12 @@ const [Modal, modalApi] = useVbenModal({
         await saveCrontab(payload);
       }
 
-      MessagePlugin.success(isEdit ? '更新成功' : '新增成功');
+      MessagePlugin.success(isEdit ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
       logger.error(error);
-      MessagePlugin.error(isEdit ? '更新失败' : '新增失败');
+      MessagePlugin.error(isEdit ? $t('common.updateFailed') : $t('common.createFailed'));
     } finally {
       modalApi.setState({ confirmLoading: false });
     }
@@ -138,7 +139,7 @@ async function open(data?: Partial<CrontabApi.SubmitPayload>) {
   };
 
   modalApi.setState({
-    title: data?.id ? '编辑定时任务' : '新增定时任务',
+    title: data?.id ? $t('system.crontab.editTitle') : $t('system.crontab.createTitle'),
   });
   modalApi.open();
 

@@ -192,7 +192,7 @@ export function useUserActions(options: UseUserActionsOptions) {
     exportLoading.value = true;
     try {
       const response = await exportUserList(options.buildRequestParams(false));
-      downloadResponseBlob(response, '用户列表.xlsx');
+      downloadResponseBlob(response, `${$t('system.user.systemUser')}.xlsx`);
       message.success($t('common.exportSuccess'));
     } catch (error) {
       logger.error(error);
@@ -206,7 +206,7 @@ export function useUserActions(options: UseUserActionsOptions) {
     templateLoading.value = true;
     try {
       const response = await downloadUserImportTemplate();
-      downloadResponseBlob(response, '用户导入模板.xlsx');
+      downloadResponseBlob(response, `${$t('common.importTemplate')}.xlsx`);
       message.success($t('common.templateDownloadSuccess'));
     } catch (error) {
       logger.error(error);

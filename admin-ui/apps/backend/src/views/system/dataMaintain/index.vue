@@ -96,7 +96,7 @@ const {
 } = useDataMaintainCrud();
 
 function handleUnimplementedAction(actionName: string) {
-  message.info(`${actionName}接口暂未在当前后端开放`);
+  message.info($t('common.actionNotAvailable', [actionName]));
 }
 
 async function handleViewDetail(row: DataMaintainListItem) {
@@ -109,7 +109,7 @@ async function handleViewDetail(row: DataMaintainListItem) {
 
 async function handleOptimize(row: DataMaintainListItem) {
   if (!hasOptimizeApi) {
-    handleUnimplementedAction('优化表');
+    handleUnimplementedAction($t('system.dataMaintain.optimizeTable'));
     return;
   }
 
@@ -131,7 +131,7 @@ async function handleOptimize(row: DataMaintainListItem) {
 
 async function handleFragment(row: DataMaintainListItem) {
   if (!hasFragmentApi) {
-    handleUnimplementedAction('清理碎片');
+    handleUnimplementedAction($t('system.dataMaintain.cleanFragment'));
     return;
   }
 
@@ -165,22 +165,22 @@ onMounted(() => {
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="90px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="数据库组" name="group_name">
+            <FormItem :label="$t('system.dataMaintain.dbGroup')" name="group_name">
               <Input
                 v-model="searchForm.group_name"
-                placeholder="默认 default"
+                :placeholder="$t('system.dataMaintain.defaultGroup')"
                 clearable
               />
             </FormItem>
-            <FormItem label="表名" name="name">
-              <Input v-model="searchForm.name" placeholder="请输入表名" clearable />
+            <FormItem :label="$t('system.dataMaintain.tableName')" name="name">
+              <Input v-model="searchForm.name" :placeholder="$t('ui.placeholder.input')" clearable />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -189,16 +189,16 @@ onMounted(() => {
       <div class="flex min-h-0 flex-1 flex-col rounded-md bg-white p-4">
         <div class="mb-3 flex items-center justify-between">
           <Space>
-            <Button variant="outline" @click="handleUnimplementedAction('查看字段')">
-              查看字段
+            <Button variant="outline" @click="handleUnimplementedAction($t('system.dataMaintain.viewFields'))">
+              {{ $t('system.dataMaintain.viewFields') }}
             </Button>
-            <Button variant="outline" @click="handleUnimplementedAction('优化表')">
-              优化表
+            <Button variant="outline" @click="handleUnimplementedAction($t('system.dataMaintain.optimizeTable'))">
+              {{ $t('system.dataMaintain.optimizeTable') }}
             </Button>
-            <Button variant="outline" @click="handleUnimplementedAction('清理碎片')">
-              清理碎片
+            <Button variant="outline" @click="handleUnimplementedAction($t('system.dataMaintain.cleanFragment'))">
+              {{ $t('system.dataMaintain.cleanFragment') }}
             </Button>
-            <Popup placement="bottom" trigger="hover" content="首版仅接入列表能力，扩展动作待后端接口开放后补齐。">
+            <Popup placement="bottom" trigger="hover" :content="$t('system.dataMaintain.firstVersionTooltip')">
               <InfoCircleFilledIcon class="cursor-help text-gray-400" />
             </Popup>
           </Space>
@@ -212,7 +212,7 @@ onMounted(() => {
         </div>
 
         <div v-if="!canView" class="rounded-md border border-dashed border-gray-300 p-6 text-center text-gray-500">
-          无权限访问数据维护列表（需要 `system:dataMaintain:index`）。
+          {{ $t('common.noPermission', ['system:dataMaintain:index']) }}
         </div>
 
         <div v-else class="min-h-0 flex-1">
@@ -245,11 +245,11 @@ onMounted(() => {
                   variant="text"
                   @click="handleViewDetail(row)"
                 >
-                  详情
+                  {{ $t('common.detail') }}
                 </Button>
                 <Popconfirm
                   v-if="canOptimize"
-                  content="确认优化该数据表吗？"
+                  :content="$t('system.dataMaintain.confirmOptimize')"
                   placement="bottom"
                   @confirm="handleOptimize(row)"
                 >
@@ -259,12 +259,12 @@ onMounted(() => {
                     variant="text"
                     :loading="optimizingTableName === row.name"
                   >
-                    优化
+                    {{ $t('system.dataMaintain.optimizeTable') }}
                   </Button>
                 </Popconfirm>
                 <Popconfirm
                   v-if="canFragment"
-                  content="确认执行碎片整理吗？"
+                  :content="$t('system.dataMaintain.confirmFragment')"
                   placement="bottom"
                   @confirm="handleFragment(row)"
                 >
@@ -274,7 +274,7 @@ onMounted(() => {
                     variant="text"
                     :loading="fragmentingTableName === row.name"
                   >
-                    碎片整理
+                    {{ $t('system.dataMaintain.fragmentClean') }}
                   </Button>
                 </Popconfirm>
               </Space>

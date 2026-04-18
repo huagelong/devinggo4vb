@@ -35,13 +35,13 @@ const fallbackRequestModes: DictOption[] = [
 ];
 
 const fallbackStatusOptions: DictOption[] = [
-  { label: '正常', value: 1 },
-  { label: '停用', value: 2 },
+  { label: $t('common.statusEnabled'), value: 1 },
+  { label: $t('common.statusDisabled'), value: 2 },
 ];
 
 const authModeOptions: DictOption[] = [
-  { label: '简易模式', value: 1 },
-  { label: '复杂模式', value: 2 },
+  { label: $t('system.api.simpleMode'), value: 1 },
+  { label: $t('system.api.complexMode'), value: 2 },
 ];
 
 const { getDictOptions } = useDictOptions();
@@ -68,30 +68,30 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: Select,
-      componentProps: createSelectProps(groupOptions.value, '请选择所属组'),
+      componentProps: createSelectProps(groupOptions.value, $t('ui.placeholder.select')),
       fieldName: 'group_id',
-      label: '所属组',
+      label: $t('system.api.group'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入接口名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'name',
-      label: '接口名称',
+      label: $t('system.api.name'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入接口标识，如 system:app:getAppSecret' },
+      componentProps: { placeholder: $t('system.api.codePlaceholder') },
       fieldName: 'access_name',
-      label: '接口标识',
+      label: $t('system.api.code'),
       rules: 'required',
     },
     {
       component: Select,
-      componentProps: createSelectProps(requestModeOptions.value, '请选择请求模式'),
+      componentProps: createSelectProps(requestModeOptions.value, $t('ui.placeholder.select')),
       fieldName: 'request_mode',
-      label: '请求模式',
+      label: $t('system.api.requestMode'),
       rules: 'required',
     },
     {
@@ -99,7 +99,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: authModeOptions },
       defaultValue: 1,
       fieldName: 'auth_mode',
-      label: '认证模式',
+      label: $t('system.api.authMode'),
       rules: 'required',
     },
     {
@@ -107,14 +107,14 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: statusOptions.value },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -136,7 +136,7 @@ const [Modal, modalApi] = useVbenModal({
       } else {
         await saveApi(payload);
       }
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -152,11 +152,11 @@ function updateFormSchemas() {
   formApi.updateSchema([
     {
       fieldName: 'group_id',
-      componentProps: createSelectProps(groupOptions.value, '请选择所属组'),
+      componentProps: createSelectProps(groupOptions.value, $t('ui.placeholder.select')),
     },
     {
       fieldName: 'request_mode',
-      componentProps: createSelectProps(requestModeOptions.value, '请选择请求模式'),
+      componentProps: createSelectProps(requestModeOptions.value, $t('ui.placeholder.select')),
     },
     {
       fieldName: 'status',
@@ -198,7 +198,7 @@ async function fetchFormOptions() {
 
 async function open(data?: ApiFormModel) {
   modalApi.setState({
-    title: data?.id ? '编辑接口' : '新增接口',
+    title: data?.id ? $t('system.api.editTitle') : $t('system.api.createTitle'),
   });
   modalApi.open();
   await fetchFormOptions();

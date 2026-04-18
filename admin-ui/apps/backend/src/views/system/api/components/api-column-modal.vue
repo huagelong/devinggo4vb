@@ -32,18 +32,18 @@ const dataTypeOptions = ref<DictOption[]>([]);
 const statusOptions = ref<DictOption[]>([]);
 
 const requiredOptions: DictOption[] = [
-  { label: '否', value: 1 },
-  { label: '是', value: 2 },
+  { label: $t('common.no'), value: 1 },
+  { label: $t('common.yes'), value: 2 },
 ];
 
 const typeOptions: DictOption[] = [
-  { label: '请求参数', value: 1 },
-  { label: '响应参数', value: 2 },
+  { label: $t('system.api.requestParams'), value: 1 },
+  { label: $t('system.api.responseParams'), value: 2 },
 ];
 
 const fallbackStatusOptions: DictOption[] = [
-  { label: '正常', value: 1 },
-  { label: '停用', value: 2 },
+  { label: $t('common.statusEnabled'), value: 1 },
+  { label: $t('common.statusDisabled'), value: 2 },
 ];
 
 const modalContext = reactive({
@@ -75,59 +75,59 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入字段名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'name',
-      label: '字段名称',
+      label: $t('system.api.fieldName'),
       rules: 'required',
     },
     {
       component: Select,
-      componentProps: createSelectProps(dataTypeOptions.value, '请选择数据类型'),
+      componentProps: createSelectProps(dataTypeOptions.value, $t('ui.placeholder.select')),
       fieldName: 'data_type',
-      label: '数据类型',
+      label: $t('system.api.dataType'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: { options: typeOptions, disabled: true },
       fieldName: 'type',
-      label: '字段类型',
+      label: $t('system.api.fieldType'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: { options: statusOptions.value },
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: { options: requiredOptions },
       fieldName: 'is_required',
-      label: '是否必填',
+      label: $t('system.api.isRequired'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入默认值' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'default_value',
-      label: '默认值',
+      label: $t('system.api.defaultValue'),
     },
     {
       component: 'Textarea',
       componentProps: {
-        placeholder: '请输入字段说明',
+        placeholder: $t('ui.placeholder.input'),
         autosize: { minRows: 3, maxRows: 6 },
       },
       fieldName: 'description',
-      label: '字段说明',
+      label: $t('system.api.fieldDescription'),
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -150,7 +150,7 @@ const [Modal, modalApi] = useVbenModal({
       } else {
         await saveApiColumn(payload);
       }
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -166,7 +166,7 @@ function updateSchemas() {
   formApi.updateSchema([
     {
       fieldName: 'data_type',
-      componentProps: createSelectProps(dataTypeOptions.value, '请选择数据类型'),
+      componentProps: createSelectProps(dataTypeOptions.value, $t('ui.placeholder.select')),
     },
     {
       fieldName: 'status',
@@ -198,7 +198,7 @@ async function open(payload: OpenPayload) {
   modalContext.apiId = payload.apiId;
   modalContext.type = payload.type;
   modalApi.setState({
-    title: payload.data?.id ? '编辑参数' : '新增参数',
+    title: payload.data?.id ? $t('system.api.editColumnTitle') : $t('system.api.createColumnTitle'),
   });
   modalApi.open();
   await fetchFormOptions();

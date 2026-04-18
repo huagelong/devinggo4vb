@@ -1,12 +1,14 @@
 import type { UploadTableColumn, UploadTreeItem } from './model';
 
+import { $t } from '@vben/locales';
+
 export const defaultUploadTreeData: UploadTreeItem[] = [
   {
-    label: '全部',
+    label: $t('common.all'),
     value: 'all',
   },
   {
-    label: '图片',
+    label: $t('system.upload.imageCategory'),
     value: 'image',
     children: [
       { label: 'JPEG', value: 'image/jpeg' },
@@ -16,7 +18,7 @@ export const defaultUploadTreeData: UploadTreeItem[] = [
     ],
   },
   {
-    label: '文档',
+    label: $t('system.upload.documentCategory'),
     value: 'document',
     children: [
       { label: 'PDF', value: 'application/pdf' },
@@ -26,7 +28,7 @@ export const defaultUploadTreeData: UploadTreeItem[] = [
     ],
   },
   {
-    label: '其他',
+    label: $t('system.upload.otherCategory'),
     value: 'other',
   },
 ];
@@ -35,13 +37,13 @@ export function createUploadTableColumns(): UploadTableColumn[] {
   return [
     { colKey: 'row-select', width: 50, fixed: 'left' },
     { title: 'ID', colKey: 'id', width: 80 },
-    { title: '原文件名', colKey: 'origin_name', ellipsis: true },
-    { title: 'MIME类型', colKey: 'mime_type', width: 150 },
-    { title: '存储路径', colKey: 'storage_path', ellipsis: true },
-    { title: '文件大小', colKey: 'size_info', width: 100 },
-    { title: '存储方式', colKey: 'storage_mode', width: 100 },
-    { title: '创建时间', colKey: 'created_at', width: 180 },
-    { title: '操作', colKey: 'action', width: 200, align: 'center', fixed: 'right' },
+    { title: $t('system.upload.fileName'), colKey: 'origin_name', ellipsis: true },
+    { title: $t('system.attachment.mimeType'), colKey: 'mime_type', width: 150 },
+    { title: $t('system.attachment.storagePath'), colKey: 'storage_path', ellipsis: true },
+    { title: $t('system.attachment.fileSize'), colKey: 'size_info', width: 100 },
+    { title: $t('system.upload.storageMode'), colKey: 'storage_mode', width: 100 },
+    { title: $t('common.createTime'), colKey: 'created_at', width: 180 },
+    { title: $t('common.action'), colKey: 'action', width: 200, align: 'center', fixed: 'right' },
   ];
 }
 

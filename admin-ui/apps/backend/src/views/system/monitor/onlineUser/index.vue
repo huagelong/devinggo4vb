@@ -21,12 +21,12 @@ const total = ref(0);
 const searchUsername = ref('');
 
 const columns = [
-  { colKey: 'username', title: '用户账户', width: 180 },
-  { colKey: 'nickname', title: '用户昵称', width: 180 },
+  { colKey: 'username', title: $t('system.monitor.onlineUser.username'), width: 180 },
+  { colKey: 'nickname', title: $t('system.monitor.onlineUser.nickname'), width: 180 },
   { colKey: 'app_id', title: 'App ID', width: 120 },
-  { colKey: 'login_ip', title: '登录IP', width: 180 },
-  { colKey: 'login_time', title: '登录时间', width: 180 },
-  { colKey: 'action', title: '操作', width: 120 },
+  { colKey: 'login_ip', title: $t('system.monitor.onlineUser.loginIp'), width: 180 },
+  { colKey: 'login_time', title: $t('system.monitor.onlineUser.loginTime'), width: 180 },
+  { colKey: 'action', title: $t('common.action'), width: 120 },
 ];
 
 async function fetchOnlineUsers() {
@@ -82,7 +82,7 @@ onMounted(() => {
         <div class="flex items-center gap-4">
           <Input
             v-model="searchUsername"
-            placeholder="请输入用户名"
+            :placeholder="$t('system.monitor.onlineUser.searchPlaceholder')"
             clearable
             class="w-64"
             @enter="handleSearch"
@@ -90,9 +90,9 @@ onMounted(() => {
           <Space>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
           </Space>
         </div>
       </div>
@@ -113,7 +113,7 @@ onMounted(() => {
               variant="outline"
               @click="handleKick(row)"
             >
-              强制退出
+              {{ $t('system.monitor.onlineUser.forceLogout') }}
             </Button>
           </template>
         </Table>

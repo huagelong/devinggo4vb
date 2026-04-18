@@ -31,7 +31,7 @@ async function open(id: number) {
     if (previewList.value.length > 0) {
       activeTab.value = '0';
     }
-    modalApi.setState({ title: '代码预览' });
+    modalApi.setState({ title: $t('system.code.previewTitle') });
     modalApi.open();
   } catch (error) {
     logger.error(error);
@@ -61,11 +61,11 @@ defineExpose({ open });
   <Modal>
     <div class="flex flex-col gap-3">
       <div v-if="loading" class="flex items-center justify-center py-8">
-        加载中...
+        {{ $t('common.loading') }}
       </div>
 
       <div v-else-if="previewList.length === 0" class="py-8 text-center text-gray-500">
-        暂无预览数据
+        {{ $t('common.noPreviewData') }}
       </div>
 
       <template v-else>
@@ -82,7 +82,7 @@ defineExpose({ open });
                 @click="handleCopy(item.code)"
               >
                 <template #icon><CodeIcon /></template>
-                复制代码
+                {{ $t('common.copyCode') }}
               </Button>
             </div>
             <pre

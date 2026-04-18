@@ -8,6 +8,8 @@ import type {
   ApiTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createApiSearchForm(): ApiSearchFormModel {
   return {
     group_id: undefined,
@@ -27,19 +29,19 @@ export function createApiTableColumns(): ApiTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'group_name', title: '所属组', minWidth: 160 },
-    { colKey: 'name', title: '接口名称', minWidth: 200 },
-    { colKey: 'access_name', title: '接口标识', minWidth: 220 },
-    { colKey: 'request_mode', title: '请求模式', width: 120 },
-    { colKey: 'auth_mode', title: '认证模式', width: 120 },
-    { colKey: 'status', title: '状态', width: 100, align: 'center' },
-    { colKey: 'remark', title: '备注', minWidth: 200 },
-    { colKey: 'created_at', title: '创建时间', minWidth: 180 },
+    { colKey: 'group_name', title: $t('system.api.group'), minWidth: 160 },
+    { colKey: 'name', title: $t('system.api.name'), minWidth: 200 },
+    { colKey: 'access_name', title: $t('system.api.code'), minWidth: 220 },
+    { colKey: 'request_mode', title: $t('system.api.requestMode'), width: 120 },
+    { colKey: 'auth_mode', title: $t('system.api.authMode'), width: 120 },
+    { colKey: 'status', title: $t('common.status'), width: 100, align: 'center' },
+    { colKey: 'remark', title: $t('common.remark'), minWidth: 200 },
+    { colKey: 'created_at', title: $t('common.createTime'), minWidth: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 260,
     },
   ];
@@ -74,19 +76,19 @@ export function createApiColumnTableColumns(): ApiColumnTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'name', title: '字段名称', minWidth: 220 },
-    { colKey: 'data_type', title: '数据类型', width: 140 },
-    { colKey: 'type', title: '字段类型', width: 120 },
-    { colKey: 'is_required', title: '是否必填', width: 100, align: 'center' },
-    { colKey: 'status', title: '状态', width: 100, align: 'center' },
-    { colKey: 'default_value', title: '默认值', minWidth: 180 },
-    { colKey: 'remark', title: '备注', minWidth: 200 },
-    { colKey: 'created_at', title: '创建时间', minWidth: 180 },
+    { colKey: 'name', title: $t('system.api.fieldName'), minWidth: 220 },
+    { colKey: 'data_type', title: $t('system.api.dataType'), width: 140 },
+    { colKey: 'type', title: $t('system.api.fieldType'), width: 120 },
+    { colKey: 'is_required', title: $t('system.api.isRequired'), width: 100, align: 'center' },
+    { colKey: 'status', title: $t('common.status'), width: 100, align: 'center' },
+    { colKey: 'default_value', title: $t('system.api.defaultValue'), minWidth: 180 },
+    { colKey: 'remark', title: $t('common.remark'), minWidth: 200 },
+    { colKey: 'created_at', title: $t('common.createTime'), minWidth: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 200,
     },
   ];

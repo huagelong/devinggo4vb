@@ -83,7 +83,7 @@ const AvatarUpload = defineComponent({
               ? h('img', {
                   src: getAvatarValue(),
                   class: 'h-full w-full rounded-full object-cover',
-                  alt: '头像',
+                  alt: $t('system.user.avatar'),
                 })
               : h(
                   'span',
@@ -93,11 +93,11 @@ const AvatarUpload = defineComponent({
           ],
         ),
         h('div', { class: 'flex flex-col gap-1' }, [
-          h('span', { class: 'text-sm text-gray-500' }, '点击上传头像'),
+          h('span', { class: 'text-sm text-gray-500' }, $t('system.user.clickUploadAvatar')),
           h(
             'span',
             { class: 'text-xs text-gray-400' },
-            '支持 JPG、PNG 等图片格式',
+            $t('system.user.supportImageFormat'),
           ),
         ]),
       ]);
@@ -122,32 +122,32 @@ const [Form, formApi] = useVbenForm({
     },
     {
       fieldName: 'avatar',
-      label: '头像',
+      label: $t('system.user.avatar'),
       component: markRaw(AvatarUpload),
       formItemClass: 'col-span-2',
     },
     {
       fieldName: 'username',
-      label: '账户',
+      label: $t('system.user.username'),
       component: 'Input',
       rules: 'required',
-      componentProps: { placeholder: '请输入账户' },
+      componentProps: { placeholder: $t('ui.placeholder.input', [$t('system.user.username')]) },
     },
     {
       fieldName: 'dept_ids',
-      label: '所属部门',
+      label: $t('system.user.dept'),
       component: 'TreeSelect',
       componentProps: {
         data: [],
         keys: { label: 'label', value: 'value', children: 'children' },
         multiple: true,
-        placeholder: '请选择所属部门',
+        placeholder: $t('ui.placeholder.select', [$t('system.user.dept')]),
       },
       rules: 'required',
     },
     {
       fieldName: 'password',
-      label: '密码',
+      label: $t('system.user.password'),
       component: 'Input',
       dependencies: {
         show: (values) => !values?.id,
@@ -155,82 +155,82 @@ const [Form, formApi] = useVbenForm({
       },
       rules: 'required',
       componentProps: {
-        placeholder: '请输入密码',
+        placeholder: $t('ui.placeholder.input', [$t('system.user.password')]),
         type: 'password',
       },
     },
     {
       fieldName: 'nickname',
-      label: '昵称',
+      label: $t('system.user.nickname'),
       component: 'Input',
-      componentProps: { placeholder: '请输入昵称' },
+      componentProps: { placeholder: $t('ui.placeholder.input', [$t('system.user.nickname')]) },
     },
     {
       fieldName: 'role_ids',
-      label: '角色',
+      label: $t('system.user.role'),
       component: 'Select',
       componentProps: {
         options: [],
         keys: { label: 'name', value: 'id' },
         multiple: true,
-        placeholder: '请选择角色',
+        placeholder: $t('ui.placeholder.select', [$t('system.user.role')]),
       },
       rules: 'required',
     },
     {
       fieldName: 'phone',
-      label: '手机',
+      label: $t('system.user.phone'),
       component: 'Input',
-      componentProps: { placeholder: '请输入手机' },
+      componentProps: { placeholder: $t('ui.placeholder.input', [$t('system.user.phone')]) },
     },
     {
       fieldName: 'post_ids',
-      label: '岗位',
+      label: $t('system.user.post'),
       component: 'Select',
       componentProps: {
         options: [],
         keys: { label: 'name', value: 'id' },
         multiple: true,
-        placeholder: '请选择岗位',
+        placeholder: $t('ui.placeholder.select', [$t('system.user.post')]),
       },
     },
     {
       fieldName: 'email',
-      label: '邮箱',
+      label: $t('system.user.email'),
       component: 'Input',
-      componentProps: { placeholder: '请输入邮箱' },
+      componentProps: { placeholder: $t('ui.placeholder.input', [$t('system.user.email')]) },
     },
     {
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       component: 'RadioGroup',
       defaultValue: 1,
       componentProps: {
         options: [
-          { label: '正常', value: 1 },
-          { label: '停用', value: 2 },
+          { label: $t('common.statusEnabled'), value: 1 },
+          { label: $t('common.statusDisabled'), value: 2 },
         ],
       },
       formItemClass: 'col-span-2',
     },
     {
       fieldName: 'user_type',
-      label: '用户类型',
+      label: $t('system.user.userType'),
       component: 'Select',
       defaultValue: '100',
       componentProps: {
-        options: [{ label: '系统用户', value: '100' }],
-        placeholder: '请选择用户类型',
+        options: [{ label: $t('system.user.systemUser'), value: '100' }],
+        placeholder: $t('ui.placeholder.select', [$t('system.user.userType')]),
       },
       rules: 'required',
       formItemClass: 'col-span-2',
     },
     {
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
       component: 'Textarea',
       formItemClass: 'col-span-2',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input', [$t('common.remark')]) },
     },
   ],
 });
@@ -246,7 +246,7 @@ const [Modal, modalApi] = useVbenModal({
 
       values.id ? await updateUser(values.id, values) : await saveUser(values);
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -259,7 +259,7 @@ const [Modal, modalApi] = useVbenModal({
 });
 
 async function open(data?: UserModalOpenData) {
-  modalApi.setState({ title: data?.id ? '编辑管理员' : '新增管理员' });
+  modalApi.setState({ title: data?.id ? $t('system.user.editTitle') : $t('system.user.createTitle') });
   modalApi.open();
 
   const [roleRes, postRes, deptRes] = await Promise.all([

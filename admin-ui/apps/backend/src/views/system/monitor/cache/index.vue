@@ -38,8 +38,8 @@ const searchKey = ref('');
 const cacheContent = ref('');
 
 const columns = [
-  { colKey: 'name', title: '缓存键名' },
-  { colKey: 'action', title: '操作', width: 150, align: 'right' },
+  { colKey: 'name', title: $t('system.monitor.cache.keyName') },
+  { colKey: 'action', title: $t('common.action'), width: 150, align: 'right' },
 ] satisfies PrimaryTableCol<TableRowData>[];
 
 const filteredData = computed(() => {
@@ -133,38 +133,38 @@ onMounted(() => {
   <Page auto-content-height>
     <div class="flex flex-col gap-3">
       <!-- Redis Info Panel -->
-      <Card title="Redis信息" class="w-full">
+      <Card :title="$t('system.monitor.cache.redisInfo')" class="w-full">
         <Row :gutter="24">
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">Redis版本</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.redisVersion') }}</div>
             <div class="text-base">{{ serverInfo.version || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">客户端连接数</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.clientConnections') }}</div>
             <div class="text-base">{{ serverInfo.clients || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">运行模式</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.runMode') }}</div>
             <div class="text-base">{{ serverInfo.redis_mode || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">运行天数</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.runDays') }}</div>
             <div class="text-base">{{ serverInfo.run_days || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">端口</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.port') }}</div>
             <div class="text-base">{{ serverInfo.port || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">AOF状态</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.aofStatus') }}</div>
             <div class="text-base">{{ serverInfo.aof_enabled || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">已过期key</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.expiredKeys') }}</div>
             <div class="text-base">{{ serverInfo.expired_keys || '-' }}</div>
           </Col>
           <Col :span="6">
-            <div class="mb-2 text-sm text-gray-500">系统使用key</div>
+            <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.cache.systemUsedKeys') }}</div>
             <div class="text-base">{{ serverInfo.sys_total_keys || '-' }}</div>
           </Col>
         </Row>
@@ -175,26 +175,26 @@ onMounted(() => {
         <Space>
           <Button theme="danger" variant="outline" @click="handleClearAll">
             <template #icon><DeleteIcon /></template>
-            清除所有缓存
+            {{ $t('system.monitor.cache.clearAll') }}
           </Button>
           <Button
             v-if="selectedKeys.length > 0"
             theme="danger"
             @click="handleBatchDelete"
           >
-            批量删除 ({{ selectedKeys.length }})
+            {{ $t('common.batchDelete') }} ({{ selectedKeys.length }})
           </Button>
         </Space>
       </Card>
 
       <!-- Cache Data Management -->
-      <Card title="缓存数据管理">
+      <Card :title="$t('system.monitor.cache.dataManagement')">
         <div class="flex gap-4">
           <!-- Left: Cache Key Table -->
           <div class="w-2/3">
             <Input
               v-model="searchKey"
-              placeholder="输入关键词过滤缓存键"
+              :placeholder="$t('system.monitor.cache.searchKeyPlaceholder')"
               clearable
               class="mb-3 w-full"
             >
@@ -223,7 +223,7 @@ onMounted(() => {
                     @click="handleViewKey(row.name)"
                   >
                     <template #icon><BrowseIcon /></template>
-                    查看
+                    {{ $t('common.detail') }}
                   </Button>
                   <Button
                     size="small"
@@ -232,7 +232,7 @@ onMounted(() => {
                     @click="handleDeleteKey(row.name)"
                   >
                     <template #icon><DeleteIcon /></template>
-                    删除
+                    {{ $t('common.delete') }}
                   </Button>
                 </Space>
               </template>
@@ -244,7 +244,7 @@ onMounted(() => {
             <Textarea
               v-model="cacheContent"
               readonly
-              placeholder="缓存内容..."
+              :placeholder="$t('system.monitor.cache.contentPlaceholder')"
               class="h-full min-h-[400px] w-full"
             />
           </div>

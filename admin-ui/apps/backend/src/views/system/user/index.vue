@@ -230,91 +230,91 @@ onUnmounted(() => {
         <div class="rounded-md bg-white p-4">
           <Form :data="searchForm" label-width="80px" colon>
             <div class="grid grid-cols-3 gap-x-4">
-              <FormItem label="账户" name="username">
+              <FormItem :label="$t('system.user.username')" name="username">
                 <Input
                   v-model="searchForm.username"
-                  placeholder="请输入账户"
+                  :placeholder="$t('ui.placeholder.input', [$t('system.user.username')])"
                   clearable
                 />
               </FormItem>
-              <FormItem label="所属部门" name="dept_ids">
+              <FormItem :label="$t('system.user.dept')" name="dept_ids">
                 <TreeSelect
                   v-model="searchForm.dept_ids"
                   :data="deptTreeData"
                   :keys="{ value: 'id', label: 'label', children: 'children' }"
                   :multiple="true"
                   :tree-props="{ checkStrictly: true }"
-                  placeholder="请选择所属部门"
+                  :placeholder="$t('ui.placeholder.select', [$t('system.user.dept')])"
                   clearable
                   class="w-full"
                 />
               </FormItem>
-              <FormItem label="角色" name="role_id">
+              <FormItem :label="$t('system.user.role')" name="role_id">
                 <Select
                   v-model="searchForm.role_id"
                   :options="roleOptions"
                   :keys="{ value: 'id', label: 'name' }"
-                  placeholder="请选择角色"
+                  :placeholder="$t('ui.placeholder.select', [$t('system.user.role')])"
                   clearable
                   class="w-full"
                 />
               </FormItem>
-              <FormItem label="手机" name="phone">
+              <FormItem :label="$t('system.user.phone')" name="phone">
                 <Input
                   v-model="searchForm.phone"
-                  placeholder="请输入手机"
+                  :placeholder="$t('ui.placeholder.input', [$t('system.user.phone')])"
                   clearable
                 />
               </FormItem>
-              <FormItem label="岗位" name="post_id">
+              <FormItem :label="$t('system.user.post')" name="post_id">
                 <Select
                   v-model="searchForm.post_id"
                   :options="postOptions"
                   :keys="{ value: 'id', label: 'name' }"
-                  placeholder="请选择岗位"
+                  :placeholder="$t('ui.placeholder.select', [$t('system.user.post')])"
                   clearable
                   class="w-full"
                 />
               </FormItem>
-              <FormItem label="邮箱" name="email">
+              <FormItem :label="$t('system.user.email')" name="email">
                 <Input
                   v-model="searchForm.email"
-                  placeholder="请输入邮箱"
+                  :placeholder="$t('ui.placeholder.input', [$t('system.user.email')])"
                   clearable
                 />
               </FormItem>
-              <FormItem label="状态" name="status">
+              <FormItem :label="$t('common.status')" name="status">
                 <Select
                   v-model="searchForm.status"
                   :options="statusOptions"
-                  placeholder="请选择状态"
+                  :placeholder="$t('ui.placeholder.select', [$t('common.status')])"
                   clearable
                   class="w-full"
                 />
               </FormItem>
-              <FormItem label="用户类型" name="user_type">
+              <FormItem :label="$t('system.user.userType')" name="user_type">
                 <Select
                   v-model="searchForm.user_type"
                   :options="userTypeOptions"
-                  placeholder="请选择用户类型"
+                  :placeholder="$t('ui.placeholder.select', [$t('system.user.userType')])"
                   clearable
                   class="w-full"
                 />
               </FormItem>
-              <FormItem label="注册时间" name="created_at" class="col-span-1">
+              <FormItem :label="$t('system.user.registerTime')" name="created_at" class="col-span-1">
                 <DateRangePicker
                   v-model="searchForm.created_at"
-                  :placeholder="['开始时间', '结束时间']"
+                  :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                   clearable
                   class="w-full"
                 />
               </FormItem>
             </div>
             <div class="flex justify-end gap-2 pt-2">
-              <Button theme="default" @click="handleResetWithDept">重置</Button>
+              <Button theme="default" @click="handleResetWithDept">{{ $t('common.reset') }}</Button>
               <Button theme="primary" @click="handleSearch">
                 <template #icon><SearchIcon /></template>
-                查询
+                {{ $t('common.query') }}
               </Button>
             </div>
           </Form>
@@ -326,15 +326,15 @@ onUnmounted(() => {
               <template v-if="!isRecycleBin">
                 <Button theme="primary" @click="handleAdd">
                   <template #icon><AddIcon /></template>
-                  新增
+                  {{ $t('common.create') }}
                 </Button>
                 <Button theme="danger" variant="outline" @click="handleBatchDelete">
                   <template #icon><DeleteIcon /></template>
-                  删除
+                  {{ $t('common.delete') }}
                 </Button>
                 <Button variant="outline" :loading="importLoading" @click="triggerImport">
                   <template #icon><UploadIcon /></template>
-                  导入
+                  {{ $t('common.import') }}
                 </Button>
                 <Button
                   variant="outline"
@@ -342,21 +342,21 @@ onUnmounted(() => {
                   @click="handleDownloadTemplate"
                 >
                   <template #icon><DownloadIcon /></template>
-                  导入模板
+                  {{ $t('common.importTemplate') }}
                 </Button>
                 <Button variant="outline" :loading="exportLoading" @click="handleExport">
                   <template #icon><DownloadIcon /></template>
-                  导出
+                  {{ $t('common.export') }}
                 </Button>
               </template>
               <template v-else>
-                <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-                <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+                <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+                <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
               </template>
             </Space>
 
             <div class="flex items-center gap-2">
-              <Tooltip :content="isFullscreen ? '退出全屏' : '全屏'">
+              <Tooltip :content="isFullscreen ? $t('common.exitFullscreen') : $t('common.fullscreen')">
                 <Button shape="square" variant="outline" @click="toggleFullscreen">
                   <template #icon>
                     <FullscreenExitIcon v-if="isFullscreen" />
@@ -417,7 +417,7 @@ onUnmounted(() => {
                       @click="handleClearCache(row)"
                     >
                       <template #icon><RefreshIcon /></template>
-                      更新缓存
+                      {{ $t('system.user.clearCache') }}
                     </Button>
                   </template>
                   <template v-else>
@@ -428,15 +428,15 @@ onUnmounted(() => {
                       @click="handleEdit(row)"
                     >
                       <template #icon><EditIcon /></template>
-                      编辑
+                      {{ $t('common.edit') }}
                     </Button>
                     <Popconfirm
-                      content="确认删除该用户吗？"
+                      :content="$t('system.user.confirmDelete')"
                       @confirm="handleDelete(row)"
                     >
                       <Button size="small" theme="danger" variant="outline">
                         <template #icon><DeleteIcon /></template>
-                        删除
+                        {{ $t('common.delete') }}
                       </Button>
                     </Popconfirm>
                     <Dropdown
@@ -446,7 +446,7 @@ onUnmounted(() => {
                     >
                       <Button size="small" theme="default" variant="outline">
                         <template #icon><MoreIcon /></template>
-                        更多
+                        {{ $t('common.more') }}
                       </Button>
                     </Dropdown>
                   </template>
@@ -454,19 +454,19 @@ onUnmounted(() => {
 
                 <template v-else>
                   <Popconfirm
-                    content="确认恢复该用户吗？"
+                    :content="$t('system.user.confirmRecovery')"
                     @confirm="handleRecovery(row)"
                   >
                     <Button size="small" theme="primary" variant="outline">
-                      恢复
+                      {{ $t('common.recovery') }}
                     </Button>
                   </Popconfirm>
                   <Popconfirm
-                    content="确认彻底删除该用户吗？"
+                    :content="$t('system.user.confirmPermanentDelete')"
                     @confirm="handleDelete(row)"
                   >
                     <Button size="small" theme="danger" variant="outline">
-                      彻底删除
+                      {{ $t('common.permanentDelete') }}
                     </Button>
                   </Popconfirm>
                 </template>
@@ -488,15 +488,15 @@ onUnmounted(() => {
     <Dialog
       v-model:visible="setHomePageVisible"
       width="520px"
-      header="设置用户后台首页"
+      :header="$t('system.user.setHomePage')"
       destroy-on-close
     >
       <Form label-width="90px">
-        <FormItem label="用户首页">
+        <FormItem :label="$t('system.user.selectHomePage')">
           <Select
             v-model="selectedHomePage"
             :options="homePageOptions"
-            placeholder="请选择用户首页"
+            :placeholder="$t('ui.placeholder.select', [$t('system.user.selectHomePage')])"
             clearable
             class="w-full"
           />
@@ -504,9 +504,9 @@ onUnmounted(() => {
       </Form>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <Button theme="default" @click="setHomePageVisible = false">取消</Button>
+          <Button theme="default" @click="setHomePageVisible = false">{{ $t('common.cancel') }}</Button>
           <Button theme="primary" :loading="setHomePageLoading" @click="handleSetHomePage">
-            保存
+            {{ $t('common.save') }}
           </Button>
         </div>
       </template>

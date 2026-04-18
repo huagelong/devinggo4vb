@@ -5,14 +5,16 @@ import type {
   CrontabTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export const crontabTypeOptions = [
-  { label: '定时任务', value: 1 },
-  { label: 'Cron任务', value: 2 },
+  { label: $t('system.crontab.typeInterval'), value: 1 },
+  { label: $t('system.crontab.typeCron'), value: 2 },
 ];
 
 export const crontabFinallyOptions = [
-  { label: '是', value: 1 },
-  { label: '否', value: 2 },
+  { label: $t('common.yes'), value: 1 },
+  { label: $t('common.no'), value: 2 },
 ];
 
 export function createCrontabSearchForm(): CrontabSearchFormModel {
@@ -44,16 +46,16 @@ export function createCrontabTableColumns(): CrontabTableColumn[] {
       width: 52,
     },
     { colKey: 'id', title: 'ID', width: 80 },
-    { colKey: 'name', title: '任务名称', minWidth: 160 },
-    { colKey: 'type', title: '任务类型', width: 120 },
-    { colKey: 'rule', title: '执行规则', minWidth: 180 },
-    { colKey: 'is_finally', title: '最终执行', width: 100 },
-    { colKey: 'created_at', title: '创建时间', width: 180 },
+    { colKey: 'name', title: $t('system.crontab.name'), minWidth: 160 },
+    { colKey: 'type', title: $t('system.crontab.taskType'), width: 120 },
+    { colKey: 'rule', title: $t('system.crontab.rule'), minWidth: 180 },
+    { colKey: 'is_finally', title: $t('system.crontab.isFinally'), width: 100 },
+    { colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 360,
     },
   ];

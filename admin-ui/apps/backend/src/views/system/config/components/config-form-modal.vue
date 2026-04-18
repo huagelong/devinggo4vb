@@ -38,72 +38,72 @@ const [Form, formApi] = useVbenForm({
       component: 'Select',
       componentProps: {
         options: groupOptions.value,
-        placeholder: '请选择分组',
+        placeholder: $t('ui.placeholder.select'),
       },
       fieldName: 'group_id',
-      label: '所属分组',
+      label: $t('system.config.group'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入配置名称' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterConfigName') },
       fieldName: 'name',
-      label: '配置名称',
+      label: $t('system.config.name'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入配置标识' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterConfigCode') },
       fieldName: 'key',
-      label: '配置标识',
+      label: $t('system.config.code'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入配置值' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterConfigValue') },
       fieldName: 'value',
-      label: '配置值',
+      label: $t('system.config.value'),
     },
     {
       component: 'InputNumber',
       componentProps: { min: 0, max: 999 },
       defaultValue: 0,
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
     },
     {
       component: 'Select',
       componentProps: {
         options: inputComponentOptions,
-        placeholder: '请选择组件',
+        placeholder: $t('ui.placeholder.select'),
       },
       defaultValue: 'input',
       fieldName: 'input_type',
-      label: '输入组件',
+      label: $t('system.config.inputComponent'),
       rules: 'required',
     },
     {
       component: 'Select',
       componentProps: {
         options: statusOptions.value,
-        placeholder: '请选择状态',
+        placeholder: $t('ui.placeholder.select'),
       },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterRemark') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
     {
       component: 'Textarea',
       componentProps: {
         autosize: { minRows: 3, maxRows: 6 },
-        placeholder: '配置下拉/单选/多选数据，JSON 数组格式',
+        placeholder: $t('system.config.optionsPlaceholder'),
       },
       dependencies: {
         show: (values) =>
@@ -111,7 +111,7 @@ const [Form, formApi] = useVbenForm({
         triggerFields: ['input_type'],
       },
       fieldName: 'config_select_data',
-      label: '可选项数据',
+      label: $t('system.config.options'),
     },
   ],
 });
@@ -149,7 +149,7 @@ const [Modal, modalApi] = useVbenModal({
       } else {
         await saveConfig(payload);
       }
-      MessagePlugin.success(payload.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(payload.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -182,8 +182,8 @@ async function fetchGroupOptions() {
 async function fetchStatusOptions() {
   statusOptions.value =
     (await getDictOptions('data_status')) || [
-      { label: '正常', value: 1 },
-      { label: '停用', value: 2 },
+      { label: $t('common.statusEnabled'), value: 1 },
+      { label: $t('common.statusDisabled'), value: 2 },
     ];
   formApi.updateSchema([
     {
@@ -195,7 +195,7 @@ async function fetchStatusOptions() {
 
 async function open(options?: OpenOptions) {
   modalApi.setState({
-    title: options?.data?.id ? '编辑配置' : '新增配置',
+    title: options?.data?.id ? $t('system.config.editTitle') : $t('system.config.addConfigTitle'),
   });
   modalApi.open();
 

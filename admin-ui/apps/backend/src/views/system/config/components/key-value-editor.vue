@@ -3,6 +3,8 @@ import { DeleteIcon, PlusIcon } from 'tdesign-icons-vue-next';
 import { Button, Input, Space } from 'tdesign-vue-next';
 import { computed } from 'vue';
 
+import { $t } from '@vben/locales';
+
 interface KeyValueItem {
   key: string;
   value: string;
@@ -48,13 +50,13 @@ function handleUpdate(index: number, field: keyof KeyValueItem, value: string) {
     >
       <Input
         v-model="item.key"
-        placeholder="键"
+        :placeholder="$t('common.key')"
         class="flex-1"
         @change="(val) => handleUpdate(index, 'key', val as string)"
       />
       <Input
         v-model="item.value"
-        placeholder="值"
+        :placeholder="$t('common.value')"
         class="flex-1"
         @change="(val) => handleUpdate(index, 'value', val as string)"
       />
@@ -70,7 +72,7 @@ function handleUpdate(index: number, field: keyof KeyValueItem, value: string) {
     <Space>
       <Button variant="outline" @click="handleAdd">
         <template #icon><PlusIcon /></template>
-        新增键值
+        {{ $t('common.addKeyValue') }}
       </Button>
     </Space>
   </div>

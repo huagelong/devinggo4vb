@@ -4,6 +4,8 @@ import type {
   NoticeTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createNoticeSearchForm(): NoticeSearchFormModel {
   return {
     created_at: [],
@@ -20,16 +22,16 @@ export function createNoticeTableColumns(): NoticeTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'title', title: '公告标题', minWidth: 200 },
-    { align: 'center', colKey: 'type', title: '公告类型', width: 100 },
-    { colKey: 'content', title: '公告内容', minWidth: 260 },
-    { colKey: 'remark', title: '备注', minWidth: 160 },
-    { colKey: 'created_at', title: '创建时间', minWidth: 180 },
+    { colKey: 'title', title: $t('system.notice.title'), minWidth: 200 },
+    { align: 'center', colKey: 'type', title: $t('system.notice.type'), width: 100 },
+    { colKey: 'content', title: $t('system.notice.content'), minWidth: 260 },
+    { colKey: 'remark', title: $t('common.remark'), minWidth: 160 },
+    { colKey: 'created_at', title: $t('common.createTime'), minWidth: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 220,
     },
   ];

@@ -137,7 +137,7 @@ async function open(groupId: number) {
   searchForm.key = '';
   searchForm.name = '';
   await fetchGroupOptions();
-  modalApi.setState({ title: '管理配置' });
+  modalApi.setState({ title: $t('system.config.manageTitle') });
   modalApi.open();
   await nextTick();
   await fetchTableData();
@@ -154,35 +154,35 @@ defineExpose({
     <div class="flex flex-col gap-4">
       <Form :data="searchForm" label-width="90px" colon>
         <div class="grid grid-cols-3 gap-x-4">
-          <FormItem label="配置名称" name="name">
+          <FormItem :label="$t('system.config.name')" name="name">
             <Input
               v-model="searchForm.name"
-              placeholder="请输入配置名称"
+              :placeholder="$t('system.config.placeholder.enterConfigName')"
               clearable
             />
           </FormItem>
-          <FormItem label="配置标识" name="key">
+          <FormItem :label="$t('system.config.code')" name="key">
             <Input
               v-model="searchForm.key"
-              placeholder="请输入配置标识"
+              :placeholder="$t('system.config.placeholder.enterConfigCode')"
               clearable
             />
           </FormItem>
-          <FormItem label="当前分组">
+          <FormItem :label="$t('system.config.currentGroup')">
             <Select
               v-model="currentGroupId"
               :options="groupOptions"
-              placeholder="请选择分组"
+               :placeholder="$t('system.config.placeholder.selectGroup')"
               class="w-full"
               @change="handleSearch"
             />
           </FormItem>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <Button theme="default" @click="handleReset">重置</Button>
+          <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
           <Button theme="primary" @click="handleSearch">
             <template #icon><SearchIcon /></template>
-            查询
+            {{ $t('common.query') }}
           </Button>
         </div>
       </Form>
@@ -190,18 +190,18 @@ defineExpose({
       <div class="rounded-md bg-white p-4">
         <div class="mb-3 flex items-center justify-between">
           <Space>
-            <Button theme="primary" @click="handleAdd">新增配置</Button>
+            <Button theme="primary" @click="handleAdd">{{ $t('system.config.addConfigTitle') }}</Button>
           </Space>
         </div>
 
         <Table
           :columns="[
-            { colKey: 'name', title: '配置名称', width: 220 },
-            { colKey: 'key', title: '配置标识', width: 180 },
-            { colKey: 'value', title: '配置值', minWidth: 200 },
-            { colKey: 'input_type', title: '组件类型', width: 120 },
-            { colKey: 'sort', title: '排序', width: 80 },
-            { colKey: 'action', title: '操作', width: 180, align: 'center' },
+            { colKey: 'name', title: $t('system.config.name'), width: 220 },
+            { colKey: 'key', title: $t('system.config.code'), width: 180 },
+            { colKey: 'value', title: $t('system.config.value'), minWidth: 200 },
+            { colKey: 'input_type', title: $t('system.config.inputComponent'), width: 120 },
+            { colKey: 'sort', title: $t('common.sort'), width: 80 },
+            { colKey: 'action', title: $t('common.action'), width: 180, align: 'center' },
           ]"
           :data="tableData"
           :loading="loading"
@@ -215,11 +215,11 @@ defineExpose({
           <template #action="{ row }">
             <div class="flex items-center justify-center gap-2">
               <Button size="small" theme="primary" variant="outline" @click="handleEdit(row)">
-                编辑
+                {{ $t('common.edit') }}
               </Button>
-              <Popconfirm content="确认删除该配置吗？" @confirm="handleDelete(row)">
+              <Popconfirm :content="$t('system.config.confirmDelete')" @confirm="handleDelete(row)">
                 <Button size="small" theme="danger" variant="outline">
-                  删除
+                  {{ $t('common.delete') }}
                 </Button>
               </Popconfirm>
             </div>

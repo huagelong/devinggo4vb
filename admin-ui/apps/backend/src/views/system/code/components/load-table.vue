@@ -24,8 +24,8 @@ const selectedNames = ref<string[]>([]);
 
 const columns = [
   { colKey: 'selection', width: 60 },
-  { colKey: 'name', title: '表名称', width: 200 },
-  { colKey: 'comment', title: '表描述', minWidth: 200 },
+  { colKey: 'name', title: $t('system.code.tableName'), width: 200 },
+  { colKey: 'comment', title: $t('system.code.tableComment'), minWidth: 200 },
 ];
 
 function open() {
@@ -86,10 +86,10 @@ defineExpose({ open });
 </script>
 
 <template>
-  <Modal title="装载数据表">
+  <Modal :title="$t('system.code.loadTable')">
     <div class="flex flex-col gap-4">
       <div class="text-sm text-gray-500">
-        选择要装载的数据表，装载后可以在代码生成中配置并生成代码。
+        {{ $t('system.code.loadTableTip') }}
       </div>
 
       <Table
@@ -107,7 +107,7 @@ defineExpose({ open });
       />
 
       <div class="text-sm text-gray-500">
-        已选择 {{ selectedNames.length }} 个表
+        {{ $t('system.code.selectedTableCount', { count: selectedNames.length }) }}
       </div>
     </div>
   </Modal>

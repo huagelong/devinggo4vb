@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { NoticeApi } from '#/api/system/notice';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin, Select } from 'tdesign-vue-next';
 
@@ -20,8 +21,8 @@ type UserSelectOption = { label: string; value: number };
 const emit = defineEmits(['success']);
 
 const fallbackNoticeTypeOptions: DictOption[] = [
-  { label: '通知', value: 1 },
-  { label: '公告', value: 2 },
+  { label: $t('system.notice.noticeType'), value: 1 },
+  { label: $t('system.notice.announcementType'), value: 2 },
 ];
 
 function normalizeNoticeTypeOptions(options: DictOption[]) {
@@ -53,7 +54,7 @@ function createUserSelectProps(disabled?: boolean) {
   return {
     multiple: true,
     filterable: true,
-    placeholder: '请选择接收用户（留空则发送给所有用户）',
+    placeholder: $t('system.notice.selectReceiveUser'),
     loading: userLoading.value,
     options: userOptions.value,
     onSearch: handleUserSearch,
@@ -76,9 +77,9 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入公告标题' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'title',
-      label: '公告标题',
+      label: $t('system.notice.title'),
       rules: 'required',
     },
     {
@@ -86,7 +87,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: createNoticeTypeProps(),
       defaultValue: 1,
       fieldName: 'type',
-      label: '公告类型',
+      label: $t('system.notice.type'),
       rules: 'required',
     },
     {
@@ -94,24 +95,24 @@ const [Form, formApi] = useVbenForm({
       componentProps: createUserSelectProps(),
       defaultValue: [],
       fieldName: 'users',
-      label: '接收用户',
+      label: $t('system.notice.receiveUser'),
     },
     {
       component: 'Textarea',
       componentProps: {
         autosize: { minRows: 8, maxRows: 20 },
-        placeholder: '请输入公告内容（支持 HTML 格式）',
+        placeholder: $t('system.notice.contentPlaceholder'),
       },
       fieldName: 'content',
-      label: '公告内容',
+      label: $t('system.notice.content'),
       rules: 'required',
-      description: '支持 HTML 格式，可使用基础标签排版',
+      description: $t('system.notice.contentDescription'),
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -130,7 +131,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveNotice(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -232,7 +233,7 @@ async function open(data?: NoticeApi.SubmitPayload) {
   updateNoticeTypeSchema();
   updateUserSchema();
   modalApi.setState({
-    title: isEdit.value ? '编辑公告' : '新增公告',
+    title: isEdit.value ? $t('system.notice.editTitle') : $t('system.notice.createTitle'),
   });
   modalApi.open();
   await Promise.all([fetchNoticeTypeOptions(), fetchUserOptions()]);

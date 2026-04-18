@@ -179,27 +179,27 @@ onMounted(() => {
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="80px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="表名称" name="table_name">
+            <FormItem :label="$t('system.code.tableName')" name="table_name">
               <Input
                 v-model="searchForm.table_name"
-                placeholder="请输入表名称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="生成类型" name="type">
+            <FormItem :label="$t('system.code.genType')" name="type">
               <Select
                 v-model="searchForm.type"
                 :options="generateTypeOptions"
-                placeholder="请选择生成类型"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -210,7 +210,7 @@ onMounted(() => {
           <Space>
             <Button theme="primary" @click="handleOpenLoadTable">
               <template #icon><ExportIcon /></template>
-              装载数据表
+              {{ $t('system.code.loadTable') }}
             </Button>
             <Button
               theme="primary"
@@ -219,7 +219,7 @@ onMounted(() => {
               @click="handleBatchGenerate"
             >
               <template #icon><CodeIcon /></template>
-              批量生成代码
+              {{ $t('system.code.batchGenerate') }}
             </Button>
           </Space>
 
@@ -244,7 +244,7 @@ onMounted(() => {
         >
           <template #type="{ row }">
             <Tag :theme="row.type === 'single' ? 'primary' : 'warning'">
-              {{ row.type === 'single' ? '单表CRUD' : '树表CRUD' }}
+              {{ row.type === 'single' ? $t('system.code.singleCrud') : $t('system.code.treeCrud') }}
             </Tag>
           </template>
 
@@ -257,7 +257,7 @@ onMounted(() => {
                 @click="handleOpenPreview(row)"
               >
                 <template #icon><BrowseIcon /></template>
-                预览
+                {{ $t('common.preview') }}
               </Button>
               <Button
                 size="small"
@@ -266,7 +266,7 @@ onMounted(() => {
                 @click="handleSync(row)"
               >
                 <template #icon><RefreshIcon /></template>
-                同步
+                {{ $t('common.sync') }}
               </Button>
               <Button
                 size="small"
@@ -275,7 +275,7 @@ onMounted(() => {
                 @click="handleOpenEdit(row)"
               >
                 <template #icon><EditIcon /></template>
-                编辑
+                {{ $t('common.edit') }}
               </Button>
               <Button
                 size="small"
@@ -284,15 +284,15 @@ onMounted(() => {
                 @click="handleGenerate(row)"
               >
                 <template #icon><CodeIcon /></template>
-                生成
+                {{ $t('common.generate') }}
               </Button>
               <Popconfirm
-                content="确认删除该记录吗？"
+                :content="$t('system.code.confirmDelete')"
                 @confirm="handleDelete(row)"
               >
                 <Button size="small" theme="danger" variant="outline">
                   <template #icon><DeleteIcon /></template>
-                  删除
+                  {{ $t('common.delete') }}
                 </Button>
               </Popconfirm>
             </div>

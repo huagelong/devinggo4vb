@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import {
   SearchIcon,
 } from 'tdesign-icons-vue-next';
@@ -99,7 +101,7 @@ function handleInput(val: string) {
     <div class="flex items-center gap-2">
       <Input
         :value="modelValue"
-        :placeholder="placeholder || '请选择或输入图标名称'"
+        :placeholder="placeholder || $t('ui.placeholder.input')"
         clearable
         @input="handleInput"
         @clear="handleInput('')"
@@ -115,7 +117,7 @@ function handleInput(val: string) {
       <div class="flex flex-col gap-2 p-2">
         <Input
           v-model="searchKeyword"
-          placeholder="搜索图标..."
+          :placeholder="$t('ui.placeholder.input')"
           size="small"
           clearable
         >
@@ -133,7 +135,7 @@ function handleInput(val: string) {
           </div>
         </div>
         <div v-if="filteredIcons.length === 0" class="py-4 text-center text-xs text-gray-400">
-          无匹配图标，可直接在输入框输入名称
+          {{ $t('common.noMatch') }}
         </div>
       </div>
     </template>

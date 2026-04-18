@@ -5,22 +5,24 @@ import type {
   AttachmentTreeItem,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export const storageModeOptions = [
-  { label: '本地存储', value: 1 },
-  { label: '阿里云OSS', value: 2 },
-  { label: '腾讯云COS', value: 3 },
-  { label: '七牛云', value: 4 },
+  { label: $t('system.attachment.localStorage'), value: 1 },
+  { label: $t('system.attachment.aliyunOss'), value: 2 },
+  { label: $t('system.attachment.tencentCos'), value: 3 },
+  { label: $t('system.attachment.qiniu'), value: 4 },
   { label: 'FTP', value: 5 },
 ];
 
 export const defaultAttachmentTreeData: AttachmentTreeItem[] = [
-  { title: '所有', key: 'all' },
-  { title: '图片', key: 'image' },
-  { title: '视频', key: 'video' },
-  { title: '音频', key: 'audio' },
-  { title: '文档', key: 'document' },
-  { title: '压缩包', key: 'archive' },
-  { title: '其他', key: 'other' },
+  { title: $t('system.attachment.filterAll'), key: 'all' },
+  { title: $t('system.attachment.filterImage'), key: 'image' },
+  { title: $t('system.attachment.filterVideo'), key: 'video' },
+  { title: $t('system.attachment.filterAudio'), key: 'audio' },
+  { title: $t('system.attachment.filterDocument'), key: 'document' },
+  { title: $t('system.attachment.filterArchive'), key: 'archive' },
+  { title: $t('system.attachment.filterOther'), key: 'other' },
 ];
 
 export function createAttachmentSearchForm(): AttachmentSearchFormModel {
@@ -43,20 +45,20 @@ export function createAttachmentTableColumns(): AttachmentTableColumn[] {
     { colKey: 'id', title: 'ID', width: 80 },
     {
       colKey: 'url',
-      title: '预览',
+      title: $t('common.preview'),
       width: 80,
     },
-    { colKey: 'object_name', title: '存储名称', minWidth: 200 },
-    { colKey: 'origin_name', title: '原文件名', minWidth: 150 },
-    { colKey: 'storage_mode', title: '存储模式', width: 120 },
-    { colKey: 'mime_type', title: '资源类型', minWidth: 130 },
-    { colKey: 'size_info', title: '文件大小', width: 130 },
-    { colKey: 'created_at', title: '上传时间', width: 180 },
+    { colKey: 'object_name', title: $t('system.attachment.objectName'), minWidth: 200 },
+    { colKey: 'origin_name', title: $t('system.attachment.originName'), minWidth: 150 },
+    { colKey: 'storage_mode', title: $t('system.attachment.storageMode'), width: 120 },
+    { colKey: 'mime_type', title: $t('system.attachment.mimeType'), minWidth: 130 },
+    { colKey: 'size_info', title: $t('system.attachment.fileSize'), width: 130 },
+    { colKey: 'created_at', title: $t('system.attachment.uploadTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 120,
     },
   ];

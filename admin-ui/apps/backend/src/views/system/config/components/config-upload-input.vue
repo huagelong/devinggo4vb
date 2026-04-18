@@ -57,13 +57,13 @@ async function handleFileChange(event: Event) {
     <Space>
       <Input
         :model-value="modelValue"
-        :placeholder="placeholder ?? '请输入或上传链接'"
+        :placeholder="placeholder ?? $t('common.uploadLinkPlaceholder')"
         class="w-80"
         @change="(value) => handleInput(value as string)"
       />
       <Button :loading="uploading" variant="outline" @click="triggerUpload">
         <template #icon><UploadIcon /></template>
-        上传
+        {{ $t('common.uploadFile') }}
       </Button>
     </Space>
     <div v-if="modelValue" class="rounded-md border border-gray-100 p-2">

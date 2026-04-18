@@ -7,6 +7,8 @@ import type {
   DictTypeSearchFormModel,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createDictTypeSearchForm(): DictTypeSearchFormModel {
   return {
     code: '',
@@ -33,16 +35,16 @@ export function createDictTypeTableColumns(): DictTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'name', minWidth: 160, title: '字典名称' },
-    { colKey: 'code', minWidth: 200, title: '字典标识' },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
-    { colKey: 'remark', minWidth: 180, title: '备注' },
-    { colKey: 'created_at', minWidth: 180, title: '创建时间' },
+    { colKey: 'name', minWidth: 160, title: $t('system.dict.name') },
+    { colKey: 'code', minWidth: 200, title: $t('system.dict.code') },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 120 },
+    { colKey: 'remark', minWidth: 180, title: $t('common.remark') },
+    { colKey: 'created_at', minWidth: 180, title: $t('common.createTime') },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 320,
     },
   ];
@@ -88,17 +90,17 @@ export function createDictDataTableColumns(): DictTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'label', minWidth: 160, title: '字典标签' },
-    { colKey: 'value', minWidth: 140, title: '字典键值' },
-    { align: 'center', colKey: 'sort', title: '排序', width: 120 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
-    { colKey: 'remark', minWidth: 180, title: '备注' },
-    { colKey: 'created_at', minWidth: 180, title: '创建时间' },
+    { colKey: 'label', minWidth: 160, title: $t('system.dict.label') },
+    { colKey: 'value', minWidth: 140, title: $t('system.dict.value') },
+    { align: 'center', colKey: 'sort', title: $t('common.sort'), width: 120 },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 120 },
+    { colKey: 'remark', minWidth: 180, title: $t('common.remark') },
+    { colKey: 'created_at', minWidth: 180, title: $t('common.createTime') },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 240,
     },
   ];

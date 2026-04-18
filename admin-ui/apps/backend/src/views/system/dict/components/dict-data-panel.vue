@@ -267,7 +267,7 @@ async function open(row: DictApi.DictTypeItem) {
   isRecycleBin.value = false;
 
   panelModalApi.setState({
-    title: `维护「${row.name}」字典数据`,
+    title: $t('system.dict.maintainDictData', [row.name]),
   });
   panelModalApi.open();
   await fetchTableData();
@@ -282,7 +282,7 @@ defineExpose({
   <PanelModal>
     <div class="flex flex-col gap-4">
       <div class="rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-        当前字典：{{ currentDict ? currentDict.name : '-' }}（{{
+        {{ $t('system.dict.currentDict') }}：{{ currentDict ? currentDict.name : '-' }}（{{
           currentDict ? currentDict.code : '-'
         }}）
       </div>
@@ -290,46 +290,46 @@ defineExpose({
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="90px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="字典标签" name="label">
+            <FormItem :label="$t('system.dict.label')" name="label">
               <Input
                 v-model="searchForm.label"
-                placeholder="请输入字典标签"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="字典键值" name="value">
+            <FormItem :label="$t('system.dict.value')" name="value">
               <Input
                 v-model="searchForm.value"
-                placeholder="请输入字典键值"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem :label="$t('common.status')" name="status">
               <Select
                 v-model="searchForm.status"
                 :options="[
-                  { label: '正常', value: 1 },
-                  { label: '停用', value: 2 },
+                  { label: $t('common.statusEnabled'), value: 1 },
+                  { label: $t('common.statusDisabled'), value: 2 },
                 ]"
-                placeholder="请选择状态"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="创建时间" name="created_at">
+            <FormItem :label="$t('common.createTime')" name="created_at">
               <DateRangePicker
                 v-model="searchForm.created_at"
-                :placeholder="['开始时间', '结束时间']"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                 clearable
                 class="w-full"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -341,21 +341,21 @@ defineExpose({
             <template v-if="!isRecycleBin">
               <Button theme="primary" @click="handleAdd">
                 <template #icon><AddIcon /></template>
-                新增
+                {{ $t('common.create') }}
               </Button>
               <Button theme="danger" variant="outline" @click="handleBatchDelete">
                 <template #icon><DeleteIcon /></template>
-                删除
+                {{ $t('common.delete') }}
               </Button>
             </template>
             <template v-else>
-              <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-              <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+              <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+              <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
             </template>
           </Space>
 
           <Button variant="outline" @click="handleToggleRecycleBin()">
-            {{ isRecycleBin ? '返回列表' : '查看回收站' }}
+            {{ isRecycleBin ? $t('common.backToList') : $t('common.viewRecycleBin') }}
           </Button>
         </div>
 
@@ -393,18 +393,18 @@ defineExpose({
             <div class="flex items-center justify-center gap-1">
               <template v-if="!isRecycleBin">
                 <Button size="small" theme="primary" variant="outline" @click="handleEdit(row)">
-                  编辑
+                  {{ $t('common.edit') }}
                 </Button>
-                <Popconfirm content="确认删除该数据吗？" @confirm="handleDelete(row)">
-                  <Button size="small" theme="danger" variant="outline">删除</Button>
+                <Popconfirm :content="$t('system.dict.confirmDeleteData')" @confirm="handleDelete(row)">
+                  <Button size="small" theme="danger" variant="outline">{{ $t('common.delete') }}</Button>
                 </Popconfirm>
               </template>
               <template v-else>
-                <Popconfirm content="确认恢复该数据吗？" @confirm="handleRecovery(row)">
-                  <Button size="small" theme="primary" variant="outline">恢复</Button>
+                <Popconfirm :content="$t('common.confirmRecovery')" @confirm="handleRecovery(row)">
+                  <Button size="small" theme="primary" variant="outline">{{ $t('common.recovery') }}</Button>
                 </Popconfirm>
-                <Popconfirm content="确认彻底删除该数据吗？" @confirm="handleDelete(row)">
-                  <Button size="small" theme="danger" variant="outline">彻底删除</Button>
+                <Popconfirm :content="$t('common.confirmPermanentDelete')" @confirm="handleDelete(row)">
+                  <Button size="small" theme="danger" variant="outline">{{ $t('common.permanentDelete') }}</Button>
                 </Popconfirm>
               </template>
             </div>

@@ -1,6 +1,8 @@
 import type { ConfigApi } from '#/api/system/config';
 import type { OptionItem } from '#/types/common';
 
+import { $t } from '@vben/locales';
+
 export interface ConfigGroup extends ConfigApi.ConfigGroupItem {}
 
 export type ConfigListItem = ConfigApi.ConfigItem;
@@ -35,13 +37,13 @@ export interface ConfigFormModel {
 export type ConfigGroupOption = OptionItem<number>;
 
 export const inputComponentOptions: ConfigApi.ConfigSelectOption[] = [
-  { label: '文本框', value: 'input' },
-  { label: '文本域', value: 'textarea' },
-  { label: '下拉选择', value: 'select' },
-  { label: '单选', value: 'radio' },
-  { label: '多选', value: 'checkbox' },
-  { label: '开关', value: 'switch' },
-  { label: '图片上传', value: 'upload' },
-  { label: '键值对', value: 'key-value' },
-  { label: '富文本', value: 'editor' },
+  { label: $t('system.config.inputTypeInput'), value: 'input' },
+  { label: $t('system.config.inputTypeTextarea'), value: 'textarea' },
+  { label: $t('system.config.inputTypeSelect'), value: 'select' },
+  { label: $t('system.config.inputTypeRadio'), value: 'radio' },
+  { label: $t('system.config.inputTypeCheckbox'), value: 'checkbox' },
+  { label: $t('system.config.inputTypeSwitch'), value: 'switch' },
+  { label: $t('system.config.inputTypeUpload'), value: 'upload' },
+  { label: $t('system.config.inputTypeKeyValue'), value: 'key-value' },
+  { label: $t('system.config.inputTypeEditor'), value: 'editor' },
 ];

@@ -5,6 +5,8 @@ import type {
   SystemModulesTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createSystemModulesSearchForm(): SystemModulesSearchFormModel {
   return {
     created_at: [],
@@ -31,15 +33,15 @@ export function createSystemModulesTableColumns(): SystemModulesTableColumn[] {
       width: 52,
     },
     { colKey: 'id', title: 'ID', width: 80 },
-    { colKey: 'name', title: '模块名称', minWidth: 160 },
-    { colKey: 'sort', title: '排序', width: 120 },
-    { colKey: 'status', title: '状态', width: 120 },
-    { colKey: 'created_at', title: '创建时间', width: 180 },
+    { colKey: 'name', title: $t('system.systemModules.name'), minWidth: 160 },
+    { colKey: 'sort', title: $t('common.sort'), width: 120 },
+    { colKey: 'status', title: $t('common.status'), width: 120 },
+    { colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 240,
     },
   ];

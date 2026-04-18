@@ -5,13 +5,15 @@ import type {
   RoleTableColumn,
 } from './model';
 
+import { $t } from '#/locales';
+
 export const roleDataScopeOptions = [
-  { label: '全部数据权限', value: 1 },
-  { label: '自定义数据权限', value: 2 },
-  { label: '本部门数据权限', value: 3 },
-  { label: '本部门及以下数据权限', value: 4 },
-  { label: '本人数据权限', value: 5 },
-  { label: '按部门过滤', value: 6 },
+  { label: $t('system.role.allDataScope'), value: 1 },
+  { label: $t('system.role.customDataScope'), value: 2 },
+  { label: $t('system.role.deptDataScope'), value: 3 },
+  { label: $t('system.role.deptAndBelowDataScope'), value: 4 },
+  { label: $t('system.role.selfDataScope'), value: 5 },
+  { label: $t('system.role.deptFilterScope'), value: 6 },
 ];
 
 export function createRoleSearchForm(): RoleSearchFormModel {
@@ -45,18 +47,18 @@ export function createRoleTableColumns(): RoleTableColumn[] {
       width: 52,
     },
     { align: 'center', colKey: 'id', title: 'ID', width: 80 },
-    { align: 'center', colKey: 'name', minWidth: 140, title: '角色名称' },
-    { align: 'center', colKey: 'code', minWidth: 160, title: '角色标识' },
-    { align: 'center', colKey: 'data_scope', minWidth: 160, title: '数据范围' },
-    { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
-    { align: 'center', colKey: 'remark', minWidth: 180, title: '备注' },
-    { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
+    { align: 'center', colKey: 'name', minWidth: 140, title: $t('system.role.name') },
+    { align: 'center', colKey: 'code', minWidth: 160, title: $t('system.role.code') },
+    { align: 'center', colKey: 'data_scope', minWidth: 160, title: $t('system.role.dataScope') },
+    { align: 'center', colKey: 'sort', title: $t('common.sort'), width: 140 },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 120 },
+    { align: 'center', colKey: 'remark', minWidth: 180, title: $t('common.remark') },
+    { align: 'center', colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 420,
     },
   ];

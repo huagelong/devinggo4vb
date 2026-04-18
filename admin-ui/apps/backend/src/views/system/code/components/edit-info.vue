@@ -66,19 +66,19 @@ const tagViewName = ref('');
 
 // 字段配置
 const fieldColumns = [
-  { colKey: 'sort', title: '排序', width: 70 },
-  { colKey: 'column_name', title: '字段名称', width: 150 },
-  { colKey: 'column_comment', title: '字段描述', width: 150 },
-  { colKey: 'column_type', title: '物理类型', width: 120 },
-  { colKey: 'is_required', title: '必填', width: 70 },
-  { colKey: 'is_insert', title: '新增', width: 70 },
-  { colKey: 'is_edit', title: '编辑', width: 70 },
-  { colKey: 'is_list', title: '列表', width: 70 },
-  { colKey: 'is_query', title: '查询', width: 70 },
-  { colKey: 'is_sort', title: '排序', width: 70 },
-  { colKey: 'query_type', title: '查询方式', width: 100 },
-  { colKey: 'view_type', title: '控件类型', width: 120 },
-  { colKey: 'action', title: '操作', width: 100 },
+  { colKey: 'sort', title: $t('system.code.field.sort'), width: 70 },
+  { colKey: 'column_name', title: $t('system.code.field.name'), width: 150 },
+  { colKey: 'column_comment', title: $t('system.code.field.comment'), width: 150 },
+  { colKey: 'column_type', title: $t('system.code.field.type'), width: 120 },
+  { colKey: 'is_required', title: $t('system.code.field.required'), width: 70 },
+  { colKey: 'is_insert', title: $t('system.code.field.insert'), width: 70 },
+  { colKey: 'is_edit', title: $t('system.code.field.edit'), width: 70 },
+  { colKey: 'is_list', title: $t('system.code.field.list'), width: 70 },
+  { colKey: 'is_query', title: $t('system.code.field.query'), width: 70 },
+  { colKey: 'is_sort', title: $t('system.code.field.sort'), width: 70 },
+  { colKey: 'query_type', title: $t('system.code.field.queryType'), width: 100 },
+  { colKey: 'view_type', title: $t('system.code.field.viewType'), width: 120 },
+  { colKey: 'action', title: $t('common.action'), width: 100 },
 ];
 
 const fieldList = ref<FieldConfigRow[]>([]);
@@ -95,7 +95,7 @@ async function open(id: number) {
     tableComment.value = '';
     fieldList.value = [];
     activeTab.value = 'base_config';
-    modalApi.setState({ title: '编辑代码生成信息' });
+    modalApi.setState({ title: $t('system.code.editTitle') });
     modalApi.open();
   } catch (error) {
     logger.error(error);
@@ -156,31 +156,31 @@ defineExpose({ open });
     <div class="flex flex-col gap-4">
       <Tabs v-model:value="activeTab">
         <!-- 基础配置 -->
-        <TabPanel value="base_config" label="配置信息">
+        <TabPanel value="base_config" :label="$t('system.code.baseConfig')">
           <Form :label-width="120" colon>
             <div class="grid grid-cols-2 gap-x-4">
-              <FormItem label="表名称">
+              <FormItem :label="$t('system.code.tableName')">
                 <Input v-model="tableName" disabled />
               </FormItem>
-              <FormItem label="表描述" name="table_comment">
-                <Input v-model="tableComment" placeholder="请输入表描述" />
+              <FormItem :label="$t('system.code.tableComment')" name="table_comment">
+                <Input v-model="tableComment" :placeholder="$t('ui.placeholder.input')" />
               </FormItem>
-              <FormItem label="备注">
-                <Input v-model="remark" placeholder="请输入备注" />
+              <FormItem :label="$t('common.remark')">
+                <Input v-model="remark" :placeholder="$t('ui.placeholder.input')" />
               </FormItem>
-              <FormItem label="所属模块" name="module_name">
-                <Input v-model="moduleName" placeholder="请输入所属模块" />
+              <FormItem :label="$t('system.code.moduleName')" name="module_name">
+                <Input v-model="moduleName" :placeholder="$t('ui.placeholder.input')" />
               </FormItem>
-              <FormItem label="生成类型" name="type">
+              <FormItem :label="$t('system.code.genType')" name="type">
                 <Select v-model="type" :options="generateTypeOptions" />
               </FormItem>
-              <FormItem label="菜单名称" name="menu_name">
-                <Input v-model="menuName" placeholder="请输入菜单名称" />
+              <FormItem :label="$t('system.code.menuName')" name="menu_name">
+                <Input v-model="menuName" :placeholder="$t('ui.placeholder.input')" />
               </FormItem>
-              <FormItem label="组件样式" name="component_type">
+              <FormItem :label="$t('system.code.componentStyle')" name="component_type">
                 <Select v-model="componentType" :options="componentTypeOptions" />
               </FormItem>
-              <FormItem label="模板类型" name="tpl_type">
+              <FormItem :label="$t('system.code.tplType')" name="tpl_type">
                 <Select v-model="tplType" :options="tplTypeOptions" />
               </FormItem>
             </div>
@@ -188,16 +188,16 @@ defineExpose({ open });
             <!-- 树表配置 -->
             <template v-if="type === 'tree'">
               <div class="mt-4 border-t pt-4">
-                <div class="mb-2 text-sm font-medium text-gray-500">树表配置</div>
+                <div class="mb-2 text-sm font-medium text-gray-500">{{ $t('system.code.treeConfig') }}</div>
                 <div class="grid grid-cols-3 gap-x-4">
-                  <FormItem label="树主ID" name="tree_id">
-                    <Input v-model="treeId" placeholder="请输入树主ID字段" />
+                  <FormItem :label="$t('system.code.treeId')" name="tree_id">
+                    <Input v-model="treeId" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
-                  <FormItem label="树父ID" name="tree_parent_id">
-                    <Input v-model="treeParentId" placeholder="请输入树父ID字段" />
+                  <FormItem :label="$t('system.code.treeParentId')" name="tree_parent_id">
+                    <Input v-model="treeParentId" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
-                  <FormItem label="树名称" name="tree_name">
-                    <Input v-model="treeName" placeholder="请输入树名称字段" />
+                  <FormItem :label="$t('system.code.treeName')" name="tree_name">
+                    <Input v-model="treeName" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
                 </div>
               </div>
@@ -206,16 +206,16 @@ defineExpose({ open });
             <!-- Tag页配置 -->
             <template v-if="componentType === 3">
               <div class="mt-4 border-t pt-4">
-                <div class="mb-2 text-sm font-medium text-gray-500">Tag页配置</div>
+                <div class="mb-2 text-sm font-medium text-gray-500">{{ $t('system.code.tagConfig') }}</div>
                 <div class="grid grid-cols-3 gap-x-4">
-                  <FormItem label="标签页ID" name="tag_id">
-                    <Input v-model="tagId" placeholder="请输入标签页ID" />
+                  <FormItem :label="$t('system.code.tagId')" name="tag_id">
+                    <Input v-model="tagId" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
-                  <FormItem label="标签页名称" name="tag_name">
-                    <Input v-model="tagName" placeholder="请输入标签页名称" />
+                  <FormItem :label="$t('system.code.tagName')" name="tag_name">
+                    <Input v-model="tagName" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
-                  <FormItem label="标签显示字段" name="tag_view_name">
-                    <Input v-model="tagViewName" placeholder="请输入标签显示字段" />
+                  <FormItem :label="$t('system.code.tagViewName')" name="tag_view_name">
+                    <Input v-model="tagViewName" :placeholder="$t('ui.placeholder.input')" />
                   </FormItem>
                 </div>
               </div>
@@ -224,37 +224,37 @@ defineExpose({ open });
         </TabPanel>
 
         <!-- 字段配置 -->
-        <TabPanel value="field_config" label="字段配置">
+        <TabPanel value="field_config" :label="$t('system.code.fieldConfig')">
           <div class="mb-2 flex items-center gap-2">
             <Checkbox
               :checked="fieldList.every((f) => f.is_required === 1)"
               @change="(checked: boolean) => handleAllChecked(checked, 'is_required')"
             >
-              全选必填
+              {{ $t('system.code.field.selectAllRequired') }}
             </Checkbox>
             <Checkbox
               :checked="fieldList.every((f) => f.is_insert === 1)"
               @change="(checked: boolean) => handleAllChecked(checked, 'is_insert')"
             >
-              全选新增
+              {{ $t('system.code.field.selectAllInsert') }}
             </Checkbox>
             <Checkbox
               :checked="fieldList.every((f) => f.is_edit === 1)"
               @change="(checked: boolean) => handleAllChecked(checked, 'is_edit')"
             >
-              全选编辑
+              {{ $t('system.code.field.selectAllEdit') }}
             </Checkbox>
             <Checkbox
               :checked="fieldList.every((f) => f.is_list === 1)"
               @change="(checked: boolean) => handleAllChecked(checked, 'is_list')"
             >
-              全选列表
+              {{ $t('system.code.field.selectAllList') }}
             </Checkbox>
             <Checkbox
               :checked="fieldList.every((f) => f.is_query === 1)"
               @change="(checked: boolean) => handleAllChecked(checked, 'is_query')"
             >
-              全选查询
+              {{ $t('system.code.field.selectAllQuery') }}
             </Checkbox>
           </div>
 
@@ -299,14 +299,14 @@ defineExpose({ open });
             </template>
             <template #action="{ row }">
               <Button size="small" theme="primary" @click="handleEditField(row)">
-                配置
+                {{ $t('system.code.baseConfig') }}
               </Button>
             </template>
           </Table>
         </TabPanel>
 
         <!-- 菜单配置 -->
-        <TabPanel value="menu_config" label="菜单配置">
+        <TabPanel value="menu_config" :label="$t('system.code.menuConfig')">
           <div class="py-4">
             <CheckboxGroup v-model="menuButtons" :options="menuButtonOptions" />
           </div>

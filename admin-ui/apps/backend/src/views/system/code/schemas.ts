@@ -4,15 +4,17 @@ import type {
   CodeTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export const generateTypeOptions = [
-  { label: '单表CRUD', value: 'single' },
-  { label: '树表CRUD', value: 'tree' },
+  { label: $t('system.code.singleCrud'), value: 'single' },
+  { label: $t('system.code.treeCrud'), value: 'tree' },
 ];
 
 export const componentTypeOptions = [
-  { label: '模态框', value: 1 },
-  { label: '抽屉', value: 2 },
-  { label: 'Tagҳ', value: 3 },
+  { label: $t('system.code.componentModal'), value: 1 },
+  { label: $t('system.code.componentDrawer'), value: 2 },
+  { label: $t('system.code.tagConfig'), value: 3 },
 ];
 
 export const tplTypeOptions = [
@@ -34,38 +36,38 @@ export const queryTypeOptions = [
 ];
 
 export const viewTypeOptions = [
-  { label: '文本框', value: 'text' },
-  { label: '密码框', value: 'password' },
-  { label: '文本域', value: 'textarea' },
-  { label: '数字输入', value: 'inputNumber' },
-  { label: '开关', value: 'switch' },
-  { label: '滑块', value: 'slider' },
-  { label: '下拉选择', value: 'select' },
-  { label: '树形选择', value: 'treeSelect' },
-  { label: '单选框', value: 'radio' },
-  { label: '复选框', value: 'checkbox' },
-  { label: '日期选择', value: 'date' },
-  { label: '时间选择', value: 'time' },
-  { label: '评分', value: 'rate' },
-  { label: '级联选择', value: 'cascader' },
-  { label: '穿梭框', value: 'transfer' },
-  { label: '用户选择', value: 'selectUser' },
-  { label: '城市联动', value: 'cityLinkage' },
-  { label: '上传组件', value: 'upload' },
-  { label: '富文本', value: 'editor' },
-  { label: '代码编辑器', value: 'codeEditor' },
+  { label: $t('system.code.viewTypes.text'), value: 'text' },
+  { label: $t('system.code.viewTypes.password'), value: 'password' },
+  { label: $t('system.code.viewTypes.textarea'), value: 'textarea' },
+  { label: $t('system.code.viewTypes.inputNumber'), value: 'inputNumber' },
+  { label: $t('system.code.viewTypes.switch'), value: 'switch' },
+  { label: $t('system.code.viewTypes.slider'), value: 'slider' },
+  { label: $t('system.code.viewTypes.select'), value: 'select' },
+  { label: $t('system.code.viewTypes.treeSelect'), value: 'treeSelect' },
+  { label: $t('system.code.viewTypes.radio'), value: 'radio' },
+  { label: $t('system.code.viewTypes.checkbox'), value: 'checkbox' },
+  { label: $t('system.code.viewTypes.date'), value: 'date' },
+  { label: $t('system.code.viewTypes.time'), value: 'time' },
+  { label: $t('system.code.viewTypes.rate'), value: 'rate' },
+  { label: $t('system.code.viewTypes.cascader'), value: 'cascader' },
+  { label: $t('system.code.viewTypes.transfer'), value: 'transfer' },
+  { label: $t('system.code.viewTypes.selectUser'), value: 'selectUser' },
+  { label: $t('system.code.viewTypes.cityLinkage'), value: 'cityLinkage' },
+  { label: $t('system.code.viewTypes.upload'), value: 'upload' },
+  { label: $t('system.code.viewTypes.editor'), value: 'editor' },
+  { label: $t('system.code.viewTypes.codeEditor'), value: 'codeEditor' },
 ];
 
 export const menuButtonOptions = [
-  { label: '新增(save)', value: 'save' },
-  { label: '更新(update)', value: 'update' },
-  { label: '读取(read)', value: 'read' },
-  { label: '删除(delete)', value: 'delete' },
-  { label: '回收站(recycle)', value: 'recycle' },
-  { label: '状态切换(changeStatus)', value: 'changeStatus' },
-  { label: '数字操作(numberOperation)', value: 'numberOperation' },
-  { label: '导入(import)', value: 'import' },
-  { label: '导出(export)', value: 'export' },
+  { label: $t('system.code.buttons.save'), value: 'save' },
+  { label: $t('system.code.buttons.update'), value: 'update' },
+  { label: $t('system.code.buttons.read'), value: 'read' },
+  { label: $t('system.code.buttons.delete'), value: 'delete' },
+  { label: $t('system.code.buttons.recycle'), value: 'recycle' },
+  { label: $t('system.code.buttons.changeStatus'), value: 'changeStatus' },
+  { label: $t('system.code.buttons.numberOperation'), value: 'numberOperation' },
+  { label: $t('system.code.buttons.import'), value: 'import' },
+  { label: $t('system.code.buttons.export'), value: 'export' },
 ];
 
 export function createCodeSearchForm(): CodeSearchFormModel {
@@ -79,13 +81,13 @@ export function createCodeTableColumns(): CodeTableColumn[] {
   return [
     { colKey: 'row-select', title: '', width: 52, fixed: 'left' },
     { colKey: 'id', title: 'ID', width: 80 },
-    { colKey: 'table_name', title: '表名称', minWidth: 200 },
-    { colKey: 'table_comment', title: '表描述', minWidth: 200 },
-    { colKey: 'type', title: '生成类型', width: 120 },
-    { colKey: 'module_name', title: '所属模块', width: 150 },
-    { colKey: 'menu_name', title: '菜单名称', width: 150 },
-    { colKey: 'created_at', title: '创建时间', width: 180 },
-    { colKey: 'action', title: '操作', width: 320, fixed: 'right' },
+    { colKey: 'table_name', title: $t('system.code.tableName'), minWidth: 200 },
+    { colKey: 'table_comment', title: $t('system.code.tableComment'), minWidth: 200 },
+    { colKey: 'type', title: $t('system.code.genType'), width: 120 },
+    { colKey: 'module_name', title: $t('system.code.moduleName'), width: 150 },
+    { colKey: 'menu_name', title: $t('system.code.menuName'), width: 150 },
+    { colKey: 'created_at', title: $t('common.createTime'), width: 180 },
+    { colKey: 'action', title: $t('common.action'), width: 320, fixed: 'right' },
   ];
 }
 

@@ -29,23 +29,23 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入分组名称' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterGroupName') },
       fieldName: 'name',
-      label: '分组名称',
+      label: $t('system.config.groupName'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入分组标识' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterGroupCode') },
       fieldName: 'code',
-      label: '分组标识',
+      label: $t('system.config.groupCode'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('system.config.placeholder.enterRemark') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -71,7 +71,7 @@ const [Modal, modalApi] = useVbenModal({
 });
 
 async function open() {
-  modalApi.setState({ title: '新增配置分组' });
+  modalApi.setState({ title: $t('system.config.addGroupTitle') });
   modalApi.open();
   await formApi.resetForm();
   formApi.setValues(createConfigGroupFormDefaultValues());

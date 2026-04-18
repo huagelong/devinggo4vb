@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { EchartsUIType } from '@vben/plugins/echarts';
 
@@ -7,6 +7,7 @@ import { onMounted, ref } from 'vue';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 
 import { getDashboardLoginChartApi } from '#/api/core/dashboard';
+import { $t } from '#/locales';
 
 const chartRef = ref<EchartsUIType>();
 const { renderEcharts } = useEcharts(chartRef);
@@ -68,7 +69,7 @@ onMounted(async () => {
       ],
       series: [
         {
-          name: '登录次数',
+          name: $t('dashboard.analytics.loginTimes'),
           type: 'line',
           smooth: true,
           data: data.chartsData || [],

@@ -191,43 +191,43 @@ onMounted(() => {
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="80px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="任务名称" name="name">
+            <FormItem :label="$t('system.crontab.name')" name="name">
               <Input
                 v-model="searchForm.name"
-                placeholder="请输入任务名称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="任务类型" name="type">
+            <FormItem :label="$t('system.crontab.taskType')" name="type">
               <Select
                 v-model="searchForm.type"
                 :options="crontabTypeOptions"
-                placeholder="请选择任务类型"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
               />
             </FormItem>
-            <FormItem label="最终执行" name="is_finally">
+            <FormItem :label="$t('system.crontab.isFinally')" name="is_finally">
               <Select
                 v-model="searchForm.is_finally"
                 :options="crontabFinallyOptions"
-                placeholder="请选择"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
               />
             </FormItem>
-            <FormItem label="创建时间" name="created_at" class="col-span-2">
+            <FormItem :label="$t('common.createTime')" name="created_at" class="col-span-2">
               <DateRangePicker
                 v-model="searchForm.created_at"
-                :placeholder="['开始时间', '结束时间']"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                 clearable
                 class="w-full"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -239,16 +239,16 @@ onMounted(() => {
             <template v-if="!isRecycleBin">
               <Button theme="primary" @click="handleAdd">
                 <template #icon><PlusIcon /></template>
-                新增
+                {{ $t('common.create') }}
               </Button>
               <Button theme="danger" variant="outline" @click="handleBatchDelete">
                 <template #icon><DeleteIcon /></template>
-                删除
+                {{ $t('common.delete') }}
               </Button>
             </template>
             <template v-else>
-              <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-              <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+              <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+              <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
             </template>
           </Space>
 
@@ -274,13 +274,13 @@ onMounted(() => {
         >
           <template #type="{ row }">
             <Tag theme="primary">
-              {{ row.type === 1 ? '定时任务' : 'Cron任务' }}
+              {{ row.type === 1 ? $t('system.crontab.typeInterval') : $t('system.crontab.typeCron') }}
             </Tag>
           </template>
 
           <template #is_finally="{ row }">
             <Tag :theme="row.is_finally === 1 ? 'success' : 'default'">
-              {{ row.is_finally === 1 ? '是' : '否' }}
+              {{ row.is_finally === 1 ? $t('common.yes') : $t('common.no') }}
             </Tag>
           </template>
 
@@ -294,7 +294,7 @@ onMounted(() => {
                   @click="handleOpenLog(row)"
                 >
                   <template #icon><HistoryIcon /></template>
-                  日志
+                  {{ $t('system.crontab.logTitle') }}
                 </Button>
                 <Button
                   size="small"
@@ -303,7 +303,7 @@ onMounted(() => {
                   @click="handleRun(row)"
                 >
                   <template #icon><PlayIcon /></template>
-                  执行
+                  {{ $t('common.execute') }}
                 </Button>
                 <Button
                   size="small"
@@ -312,34 +312,34 @@ onMounted(() => {
                   @click="handleEdit(row)"
                 >
                   <template #icon><EditIcon /></template>
-                  编辑
+                  {{ $t('common.edit') }}
                 </Button>
                 <Popconfirm
-                  content="确认删除该任务吗？"
+                  :content="$t('system.crontab.confirmDelete')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
                     <template #icon><DeleteIcon /></template>
-                    删除
+                    {{ $t('common.delete') }}
                   </Button>
                 </Popconfirm>
               </template>
 
               <template v-else>
                 <Popconfirm
-                  content="确认恢复该任务吗？"
+                  :content="$t('system.crontab.confirmRecovery')"
                   @confirm="handleRecovery(row)"
                 >
                   <Button size="small" theme="primary" variant="outline">
-                    恢复
+                    {{ $t('common.recovery') }}
                   </Button>
                 </Popconfirm>
                 <Popconfirm
-                  content="确认彻底删除该任务吗？"
+                  :content="$t('system.crontab.confirmPermanentDelete')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
-                    彻底删除
+                    {{ $t('common.permanentDelete') }}
                   </Button>
                 </Popconfirm>
               </template>

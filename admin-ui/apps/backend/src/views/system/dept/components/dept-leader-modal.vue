@@ -57,23 +57,23 @@ const leaderPagination = reactive({
 });
 
 const statusOptions = [
-  { label: '正常', value: 1 },
-  { label: '停用', value: 2 },
+  { label: $t('common.statusEnabled'), value: 1 },
+  { label: $t('common.statusDisabled'), value: 2 },
 ];
 
 const leaderColumns = [
-  { colKey: 'username', title: '用户名', minWidth: 140 },
-  { colKey: 'nickname', title: '用户昵称', minWidth: 140 },
-  { colKey: 'phone', title: '手机', minWidth: 140 },
-  { colKey: 'email', title: '邮箱', minWidth: 180 },
-  { colKey: 'status', title: '状态', width: 100, align: 'center' as const },
+  { colKey: 'username', title: $t('system.dept.username'), minWidth: 140 },
+  { colKey: 'nickname', title: $t('system.dept.nickname'), minWidth: 140 },
+  { colKey: 'phone', title: $t('system.dept.phone'), minWidth: 140 },
+  { colKey: 'email', title: $t('system.dept.email'), minWidth: 180 },
+  { colKey: 'status', title: $t('common.status'), width: 100, align: 'center' as const },
   {
     colKey: 'leader_add_time',
-    title: '设置领导时间',
+    title: $t('system.dept.leaderAddTime'),
     width: 180,
     align: 'center' as const,
   },
-  { colKey: 'action', title: '操作', width: 120, align: 'center' as const },
+  { colKey: 'action', title: $t('common.action'), width: 120, align: 'center' as const },
 ];
 
 function handleLeaderSelectChange(keys: Array<number | string>) {
@@ -243,7 +243,7 @@ async function open(row: { id: number; name?: string }) {
   leaderPagination.current = 1;
 
   modalApi.setState({
-    title: '部门领导列表',
+    title: $t('system.dept.leaderManage'),
   });
   modalApi.open();
 
@@ -259,28 +259,28 @@ defineExpose({
   <Modal>
     <div class="flex flex-col gap-4">
       <div class="rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
-        部门的领导人可以跨部门设置
+        {{ $t('system.dept.crossDeptLeaderTip') }}
       </div>
 
       <div class="rounded-md border border-gray-100 bg-gray-50 p-4">
-        <div class="mb-3 text-sm font-medium text-gray-700">新增领导</div>
+        <div class="mb-3 text-sm font-medium text-gray-700">{{ $t('system.dept.addLeader') }}</div>
         <Form :data="candidateSearchForm" label-width="90px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="用户名" name="username">
+            <FormItem :label="$t('system.dept.username')" name="username">
               <Input
                 v-model="candidateSearchForm.username"
-                placeholder="请输入用户名"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="用户昵称" name="nickname">
+            <FormItem :label="$t('system.dept.nickname')" name="nickname">
               <Input
                 v-model="candidateSearchForm.nickname"
-                placeholder="请输入用户昵称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="候选用户" name="candidate_ids" class="col-span-2">
+            <FormItem :label="$t('system.dept.candidateUser')" name="candidate_ids" class="col-span-2">
               <Select
                 v-model="selectedCandidateIds"
                 :loading="candidateLoading"
@@ -288,13 +288,13 @@ defineExpose({
                 multiple
                 clearable
                 filterable
-                placeholder="请选择要添加为领导的用户"
+                :placeholder="$t('system.dept.selectLeaderUser')"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleCandidateSearch">查询候选用户</Button>
-            <Button theme="primary" @click="handleAddLeaders">新增领导</Button>
+            <Button theme="default" @click="handleCandidateSearch">{{ $t('system.dept.queryCandidateUser') }}</Button>
+            <Button theme="primary" @click="handleAddLeaders">{{ $t('system.dept.addLeader') }}</Button>
           </div>
         </Form>
       </div>
@@ -302,39 +302,39 @@ defineExpose({
       <div class="rounded-md border border-gray-100 bg-white p-4">
         <Form :data="leaderSearchForm" label-width="90px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="用户名" name="username">
+            <FormItem :label="$t('system.dept.username')" name="username">
               <Input
                 v-model="leaderSearchForm.username"
-                placeholder="请输入用户名"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="用户昵称" name="nickname">
+            <FormItem :label="$t('system.dept.nickname')" name="nickname">
               <Input
                 v-model="leaderSearchForm.nickname"
-                placeholder="请输入用户昵称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem :label="$t('common.status')" name="status">
               <Select
                 v-model="leaderSearchForm.status"
                 :options="statusOptions"
-                placeholder="请选择状态"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleLeaderReset">重置</Button>
-            <Button theme="primary" @click="handleLeaderSearch">查询</Button>
+            <Button theme="default" @click="handleLeaderReset">{{ $t('common.reset') }}</Button>
+            <Button theme="primary" @click="handleLeaderSearch">{{ $t('common.search') }}</Button>
           </div>
         </Form>
 
         <div class="mb-3 mt-4">
           <Space>
             <Button theme="danger" variant="outline" @click="handleBatchDeleteLeaders">
-              删除选中
+              {{ $t('system.dept.deleteSelected') }}
             </Button>
           </Space>
         </div>
@@ -352,16 +352,16 @@ defineExpose({
           @select-change="handleLeaderSelectChange"
         >
           <template #status="{ row }">
-            <span>{{ Number(row.status) === 1 ? '正常' : '停用' }}</span>
+            <span>{{ Number(row.status) === 1 ? $t('common.statusEnabled') : $t('common.statusDisabled') }}</span>
           </template>
 
           <template #action="{ row }">
             <Popconfirm
-              content="确认删除该领导吗？"
+              :content="$t('system.dept.confirmDeleteLeader')"
               @confirm="handleDeleteLeader(Number(row.id))"
             >
               <Button size="small" theme="danger" variant="outline">
-                删除
+                {{ $t('common.delete') }}
               </Button>
             </Popconfirm>
           </template>

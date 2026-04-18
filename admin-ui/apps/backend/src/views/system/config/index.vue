@@ -248,7 +248,7 @@ onMounted(() => {
                 @click="configGroupModalRef?.open()"
               >
                 <template #icon><AddIcon /></template>
-                新增分组
+                {{ $t('system.config.addGroup') }}
               </Button>
               <Button
                 theme="default"
@@ -260,7 +260,7 @@ onMounted(() => {
                 "
               >
                 <template #icon><SettingIcon /></template>
-                管理配置
+                {{ $t('system.config.manageTitle') }}
               </Button>
               <Button
                 v-if="activeGroupKey && activeGroupKey > 2"
@@ -268,7 +268,7 @@ onMounted(() => {
                 variant="outline"
                 @click="handleDeleteGroup(activeGroupKey)"
               >
-                删除分组
+                {{ $t('system.config.deleteGroup') }}
               </Button>
             </Space>
           </div>
@@ -313,7 +313,7 @@ onMounted(() => {
                   </div>
                   <div class="mt-4 flex justify-end">
                     <Button theme="primary" @click="handleSubmit(group.id)">
-                      保存配置
+                      {{ $t('system.config.saveConfig') }}
                     </Button>
                   </div>
                 </Form>
@@ -321,7 +321,7 @@ onMounted(() => {
                   v-else
                   class="flex min-h-[200px] items-center justify-center text-gray-500"
                 >
-                  <InfoCircleIcon class="mr-2" /> 配置加载中...
+                  <InfoCircleIcon class="mr-2" /> {{ $t('system.config.configLoading') }}
                 </div>
               </TabPanel>
             </Tabs>
@@ -330,20 +330,20 @@ onMounted(() => {
             v-else
             class="flex min-h-[200px] items-center justify-center text-gray-500"
           >
-            暂无配置分组，先新增一个吧。
+            {{ $t('system.config.noConfigGroup') }}
           </div>
         </div>
 
         <div class="rounded-md bg-white p-4 lg:w-1/2">
           <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold">新增配置</h3>
+            <h3 class="text-lg font-semibold">{{ $t('system.config.addConfigTitle') }}</h3>
             <Button theme="primary" @click="configFormModalRef?.open()">
               <template #icon><AddIcon /></template>
-              新增
+              {{ $t('common.create') }}
             </Button>
           </div>
           <p class="text-sm text-gray-500">
-            新增配置后可在左侧对应分组中实时看到并维护值。
+            {{ $t('system.config.addConfigTip') }}
           </p>
         </div>
       </div>

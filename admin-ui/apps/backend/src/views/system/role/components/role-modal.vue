@@ -5,6 +5,7 @@ import type { RoleApi } from '#/api/system/role';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -35,19 +36,19 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入角色名称',
+        placeholder: $t('ui.placeholder.input', [$t('system.role.name')]),
       },
       fieldName: 'name',
-      label: '角色名称',
+      label: $t('system.role.name'),
       rules: 'required',
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入角色标识',
+        placeholder: $t('ui.placeholder.input', [$t('system.role.code')]),
       },
       fieldName: 'code',
-      label: '角色标识',
+      label: $t('system.role.code'),
       rules: 'required',
     },
     {
@@ -58,30 +59,30 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 1,
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: {
         options: [
-          { label: '正常', value: 1 },
-          { label: '停用', value: 2 },
+          { label: $t('common.statusEnabled'), value: 1 },
+          { label: $t('common.statusDisabled'), value: 2 },
         ],
       },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: $t('ui.placeholder.input', [$t('common.remark')]),
       },
       fieldName: 'remark',
       formItemClass: 'col-span-2',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -106,7 +107,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveRole(payload);
       }
 
-      MessagePlugin.success(payload.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(payload.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -126,7 +127,7 @@ async function open(data?: Partial<RoleApi.SubmitPayload>) {
   };
 
   modalApi.setState({
-    title: data?.id ? '编辑角色' : '新增角色',
+    title: data?.id ? $t('system.role.editTitle') : $t('system.role.createTitle'),
   });
   modalApi.open();
 
@@ -136,7 +137,7 @@ async function open(data?: Partial<RoleApi.SubmitPayload>) {
     await nextTick();
     await formApi.resetValidate();
   } catch (error) {
-    logger.error('加载角色表单失败', error);
+    logger.error($t('common.formLoadFailed'), error);
   }
 }
 

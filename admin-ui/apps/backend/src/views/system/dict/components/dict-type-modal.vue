@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DictApi } from '#/api/system/dict';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -34,16 +35,16 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入字典名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'name',
-      label: '字典名称',
+      label: $t('system.dict.name'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入字典标识' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'code',
-      label: '字典标识',
+      label: $t('system.dict.code'),
       rules: 'required',
     },
     {
@@ -51,14 +52,14 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: statusOptions.value },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -78,7 +79,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveDictType(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -92,14 +93,14 @@ const [Modal, modalApi] = useVbenModal({
 
 async function open(data?: DictApi.DictTypeSubmitPayload) {
   modalApi.setState({
-    title: data?.id ? '编辑字典' : '新增字典',
+    title: data?.id ? $t('system.dict.editTitle') : $t('system.dict.createTitle'),
   });
   modalApi.open();
 
   statusOptions.value =
     (await getDictOptions('data_status')) || [
-      { label: '正常', value: 1 },
-      { label: '停用', value: 2 },
+      { label: $t('common.statusEnabled'), value: 1 },
+      { label: $t('common.statusDisabled'), value: 2 },
     ];
 
   formApi.updateSchema([

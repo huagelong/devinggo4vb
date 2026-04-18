@@ -6,7 +6,7 @@ import type { PrimaryTableCol, RadioValue } from 'tdesign-vue-next';
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 
 import { useWindowSize } from '@vueuse/core';
-import { $t } from '@vben/locales';
+import { $t } from '#/locales';
 import {
   Button,
   DateRangePicker,
@@ -61,11 +61,11 @@ const selectedRowKeys = ref<number[]>([]);
 
 const columns: PrimaryTableCol[] = [
   { colKey: 'row-select', type: 'multiple' as const, width: 50 },
-  { title: '发送人', colKey: 'send_user.nickname', width: 120 },
-  { title: '消息标题', colKey: 'title', ellipsis: true },
-  { title: '消息类型', colKey: 'content_type', width: 100 },
-  { title: '发送时间', colKey: 'created_at', width: 180 },
-  { title: '操作', colKey: 'action', width: 150, align: 'center' },
+  { title: $t('dashboard.message.sender'), colKey: 'send_user.nickname', width: 120 },
+  { title: $t('dashboard.message.msgTitle'), colKey: 'title', ellipsis: true },
+  { title: $t('dashboard.message.msgType'), colKey: 'content_type', width: 100 },
+  { title: $t('dashboard.message.sendTime'), colKey: 'created_at', width: 180 },
+  { title: $t('common.action'), colKey: 'action', width: 150, align: 'center' },
 ];
 
 const loadDict = async () => {
@@ -103,7 +103,7 @@ const fetchData = async () => {
     tableData.value = res?.items ?? [];
     pagination.total = res?.pageInfo?.total ?? 0;
   } catch (error) {
-    logger.error('获取消息列表失败', error);
+    logger.error($t('dashboard.message.loadFailed'), error);
   } finally {
     tableLoading.value = false;
   }
@@ -146,8 +146,8 @@ const handleBatchDelete = () => {
     return;
   }
   const dialog = DialogPlugin.confirm({
-    header: '确认删除',
-    body: '确定要删除所选数据吗？',
+    header: $t('dashboard.message.confirmDeleteSelected'),
+    body: $t('dashboard.message.confirmDeleteSelectedBody'),
     onConfirm: async () => {
       await deleteQueueMessageApi({ ids: selectedRowKeys.value });
       MessagePlugin.success($t('common.deleteSuccess'));
@@ -160,8 +160,8 @@ const handleBatchDelete = () => {
 
 const handleDelete = (row: MessageApi.QueueMessageItem) => {
   const dialog = DialogPlugin.confirm({
-    header: '确认删除',
-    body: '确定要删除该数据吗？',
+    header: $t('dashboard.message.confirmDeleteSelected'),
+    body: $t('dashboard.message.confirmDeleteSingleBody'),
     onConfirm: async () => {
       await deleteQueueMessageApi({ ids: [row.id] });
       MessagePlugin.success($t('common.deleteSuccess'));
@@ -188,13 +188,13 @@ onMounted(() => {
   loadDict()
     .then(() => fetchData())
     .catch((error: unknown) => {
-      logger.error('加载消息数据失败', error);
+      logger.error($t('dashboard.message.loadDataFailed'), error);
     });
   // Start real-time push connection
   try {
     startRealtime();
   } catch (error) {
-    logger.error('启动实时推送失败', error);
+    logger.error($t('dashboard.message.pushFailed'), error);
   }
 });
 
@@ -205,7 +205,7 @@ onUnmounted(() => {
 // Watch for new push notifications and auto-refresh
 watch(latestNotification, (notification) => {
   if (notification) {
-    MessagePlugin.info(`收到新消息: ${notification.title}`);
+    MessagePlugin.info($t('dashboard.message.newMessage', [notification.title]));
     fetchData(); // refresh the message list
   }
 });
@@ -223,7 +223,7 @@ watch(latestNotification, (notification) => {
         @click="handleChangeType('all')"
       >
         <span class="icon i-lucide:mail"></span>
-        全部
+        {{ $t('dashboard.message.all') }}
       </div>
       <div
         v-for="item in dictOptions"
@@ -249,16 +249,16 @@ watch(latestNotification, (notification) => {
       <!-- Search Form -->
       <div class="flex gap-4 items-center mb-4 flex-wrap text-sm">
         <div class="flex items-center gap-2">
-          <span class="text-gray-600 whitespace-nowrap shrink-0">消息标题</span>
+          <span class="text-gray-600 whitespace-nowrap shrink-0">{{ $t('dashboard.message.msgTitle') }}</span>
           <Input
             v-model="searchForm.title"
-            placeholder="请输入消息标题"
+            :placeholder="$t('page.profile.placeholder.messageTitle')"
             class="w-48"
             clearable
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-gray-600 whitespace-nowrap shrink-0">发送时间</span>
+          <span class="text-gray-600 whitespace-nowrap shrink-0">{{ $t('dashboard.message.sendTime') }}</span>
           <DateRangePicker
             v-model="searchForm.created_at"
             allow-input
@@ -268,11 +268,11 @@ watch(latestNotification, (notification) => {
         </div>
         <Button theme="primary" @click="onSearch">
           <template #icon><SearchIcon /></template>
-          搜索
+          {{ $t('common.search') }}
         </Button>
         <Button theme="default" @click="onReset">
           <template #icon><RefreshIcon /></template>
-          重置
+          {{ $t('common.reset') }}
         </Button>
       </div>
 
@@ -281,16 +281,16 @@ watch(latestNotification, (notification) => {
         <div class="flex gap-3 items-center">
           <Button theme="danger" @click="handleBatchDelete">
             <template #icon><DeleteIcon /></template>
-            删除
+            {{ $t('common.delete') }}
           </Button>
           <RadioGroup
             v-model="searchForm.read_status"
             variant="outline"
             @change="(val: RadioValue) => handleChangeStatus(val as string)"
           >
-            <RadioButton value="all">全部</RadioButton>
-            <RadioButton value="1">未读</RadioButton>
-            <RadioButton value="2">已读</RadioButton>
+            <RadioButton value="all">{{ $t('dashboard.message.all') }}</RadioButton>
+            <RadioButton value="1">{{ $t('dashboard.message.unread') }}</RadioButton>
+            <RadioButton value="2">{{ $t('dashboard.message.read') }}</RadioButton>
           </RadioGroup>
         </div>
         <div class="flex gap-2">
@@ -328,10 +328,10 @@ watch(latestNotification, (notification) => {
           <template #action="{ row }">
             <div class="flex gap-4 items-center justify-center">
               <Link theme="primary" hover="color" @click="handleDetail(row)">
-                <span class="i-lucide:eye mr-1"></span> 详细
+                <span class="i-lucide:eye mr-1"></span> {{ $t('common.detail') }}
               </Link>
               <Link theme="danger" hover="color" @click="handleDelete(row)">
-                <span class="i-lucide:trash mr-1"></span> 删除
+                <span class="i-lucide:trash mr-1"></span> {{ $t('common.delete') }}
               </Link>
             </div>
           </template>
@@ -342,7 +342,7 @@ watch(latestNotification, (notification) => {
     <!-- Detail Dialog -->
     <Dialog
       v-model:visible="detailVisible"
-      header="消息详情"
+      :header="$t('dashboard.message.msgDetail')"
       :footer="false"
       width="800px"
       placement="center"
@@ -352,7 +352,7 @@ watch(latestNotification, (notification) => {
         <h2 class="text-2xl font-bold">{{ detailData.title }}</h2>
         <div class="flex justify-between text-gray-500 text-sm border-b pb-2">
           <span>{{ getTypeName(detailData.content_type) }}</span>
-          <span>创建时间: {{ detailData.created_at }}</span>
+          <span>{{ $t('dashboard.message.createdAt') }}: {{ detailData.created_at }}</span>
         </div>
         <div
           class="bg-gray-50 p-4 rounded min-h-[200px]"

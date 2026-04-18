@@ -5,6 +5,8 @@ import type {
   PostTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createPostSearchForm(): PostSearchFormModel {
   return {
     code: '',
@@ -33,17 +35,17 @@ export function createPostTableColumns(): PostTableColumn[] {
       width: 52,
     },
     { align: 'center', colKey: 'id', title: 'ID', width: 80 },
-    { align: 'center', colKey: 'name', minWidth: 140, title: '岗位名称' },
-    { align: 'center', colKey: 'code', minWidth: 140, title: '岗位标识' },
-    { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
-    { align: 'center', colKey: 'remark', minWidth: 160, title: '备注' },
-    { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
+    { align: 'center', colKey: 'name', minWidth: 140, title: $t('system.post.name') },
+    { align: 'center', colKey: 'code', minWidth: 140, title: $t('system.post.code') },
+    { align: 'center', colKey: 'sort', title: $t('common.sort'), width: 140 },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 120 },
+    { align: 'center', colKey: 'remark', minWidth: 160, title: $t('common.remark') },
+    { align: 'center', colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 220,
     },
   ];

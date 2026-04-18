@@ -20,7 +20,7 @@ import {
   TimelineItem,
 } from 'tdesign-vue-next';
 
-import { $t } from '@vben/locales';
+import { $t } from '#/locales';
 
 import {
   getLoginLogListApi,
@@ -225,7 +225,7 @@ onMounted(() => {
             class="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <span class="text-2xl">+</span>
-            <span class="text-xs">本地上传</span>
+            <span class="text-xs">{{ $t('page.profile.localUpload') }}</span>
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@ onMounted(() => {
           shape="round"
           size="large"
         >
-          {{ role === 'superAdmin' ? '超级管理员' : role }}
+          {{ role === 'superAdmin' ? $t('page.profile.superAdmin') : role }}
         </Tag>
       </div>
     </div>
@@ -251,7 +251,7 @@ onMounted(() => {
         class="flex-1 p-4 bg-white rounded shadow-sm dark:bg-[var(--vben-color-background-elevated)] min-h-[500px]"
       >
         <Tabs v-model="leftTab" class="h-full">
-          <TabPanel value="info" label="个人资料">
+          <TabPanel value="info" :label="$t('page.profile.personalInfo')">
             <div class="pt-6 mt-4">
               <Form
                 :data="userInfoForm"
@@ -259,31 +259,31 @@ onMounted(() => {
                 label-width="100px"
                 @submit="handleUpdateInfo"
               >
-                <FormItem label="账号名" name="username">
+                <FormItem :label="$t('page.profile.username')" name="username">
                   <Input v-model="userInfoForm.username" disabled />
                 </FormItem>
-                <FormItem label="昵称" name="nickname">
+                <FormItem :label="$t('page.profile.nickname')" name="nickname">
                   <Input
                     v-model="userInfoForm.nickname"
-                    placeholder="请输入昵称"
+                    :placeholder="$t('page.profile.placeholder.nickname')"
                   />
                 </FormItem>
-                <FormItem label="手机" name="phone">
+                <FormItem :label="$t('page.profile.phone')" name="phone">
                   <Input
                     v-model="userInfoForm.phone"
-                    placeholder="请输入手机号"
+                    :placeholder="$t('page.profile.placeholder.phone')"
                   />
                 </FormItem>
-                <FormItem label="邮箱" name="email">
+                <FormItem :label="$t('page.profile.email')" name="email">
                   <Input
                     v-model="userInfoForm.email"
-                    placeholder="请输入邮箱"
+                    :placeholder="$t('page.profile.placeholder.email')"
                   />
                 </FormItem>
-                <FormItem label="个人签名" name="signed">
+                <FormItem :label="$t('page.profile.personalSign')" name="signed">
                   <Textarea
                     v-model="userInfoForm.signed"
-                    placeholder="请输入个人签名"
+                    :placeholder="$t('page.profile.placeholder.personalSign')"
                     :maxlength="255"
                     :autosize="{ minRows: 3, maxRows: 5 }"
                   />
@@ -294,14 +294,14 @@ onMounted(() => {
                     type="submit"
                     class="bg-gray-800 text-white hover:bg-gray-700"
                   >
-                    保存
+                    {{ $t('page.profile.save') }}
                   </Button>
                 </FormItem>
               </Form>
             </div>
           </TabPanel>
 
-          <TabPanel value="security" label="安全设置">
+          <TabPanel value="security" :label="$t('page.profile.securitySetting')">
             <div class="pt-6 mt-4">
               <Form
                 :data="securityForm"
@@ -309,29 +309,29 @@ onMounted(() => {
                 label-width="100px"
                 @submit="handleUpdatePassword"
               >
-                <FormItem label="旧密码" name="oldPassword" required-mark>
+                <FormItem :label="$t('page.profile.oldPassword')" name="oldPassword" required-mark>
                   <Input
                     type="password"
                     v-model="securityForm.oldPassword"
-                    placeholder="请输入旧密码"
+                    :placeholder="$t('page.profile.placeholder.oldPassword')"
                   />
                 </FormItem>
-                <FormItem label="新密码" name="newPassword" required-mark>
+                <FormItem :label="$t('page.profile.newPassword')" name="newPassword" required-mark>
                   <Input
                     type="password"
                     v-model="securityForm.newPassword"
-                    placeholder="请输入新密码"
+                    :placeholder="$t('page.profile.placeholder.newPassword')"
                   />
                 </FormItem>
                 <FormItem
-                  label="确认密码"
+                  :label="$t('page.profile.confirmPassword')"
                   name="newPasswordConfirmation"
                   required-mark
                 >
                   <Input
                     type="password"
                     v-model="securityForm.newPasswordConfirmation"
-                    placeholder="请再次输入新密码"
+                    :placeholder="$t('page.profile.placeholder.confirmPassword')"
                   />
                 </FormItem>
                 <FormItem>
@@ -340,7 +340,7 @@ onMounted(() => {
                     type="submit"
                     class="bg-gray-800 text-white hover:bg-gray-700"
                   >
-                    保存
+                    {{ $t('page.profile.save') }}
                   </Button>
                 </FormItem>
               </Form>
@@ -354,7 +354,7 @@ onMounted(() => {
         class="flex-1 p-4 bg-white rounded shadow-sm dark:bg-[var(--vben-color-background-elevated)] min-h-[500px]"
       >
         <Tabs v-model="rightTab" class="h-full">
-          <TabPanel value="loginLog" label="登录日志">
+          <TabPanel value="loginLog" :label="$t('page.profile.loginLog')">
             <div class="pt-6 mt-4 overflow-y-auto max-h-[400px]">
               <Timeline>
                 <TimelineItem
@@ -365,26 +365,23 @@ onMounted(() => {
                   <div
                     class="text-sm font-medium text-gray-800 dark:text-gray-200"
                   >
-                    您于 {{ log.login_time || log.created_at }} 登录系统，{{
-                      log.status === 1 ? '登录成功' : '登录失败'
-                    }}
+                    {{ $t('page.profile.loginLogTemplate', [log.login_time || log.created_at, log.status === 1 ? $t('page.profile.loginSuccess') : $t('page.profile.loginFailed')]) }}
                   </div>
                   <div class="mt-1 text-xs text-gray-500">
-                    地理位置: {{ log.ip_location || '未知' }}，操作系统:
-                    {{ log.os || '未知' }}
+                    {{ $t('page.profile.ipLocation') }}: {{ log.ip_location || $t('page.profile.unknown') }}，{{ $t('page.profile.os') }}: {{ log.os || $t('page.profile.unknown') }}
                   </div>
                 </TimelineItem>
                 <div
                   v-if="loginLogs.length === 0"
                   class="text-center text-gray-400 py-10"
                 >
-                  暂无日志
+                  {{ $t('page.profile.noLogs') }}
                 </div>
               </Timeline>
             </div>
           </TabPanel>
 
-          <TabPanel value="opLog" label="操作日志">
+          <TabPanel value="opLog" :label="$t('page.profile.operLog')">
             <div class="pt-6 mt-4 overflow-y-auto max-h-[400px]">
               <Timeline>
                 <TimelineItem
@@ -395,19 +392,17 @@ onMounted(() => {
                   <div
                     class="text-sm font-medium text-gray-800 dark:text-gray-200"
                   >
-                    您于 {{ log.created_at }} 执行了
-                    {{ log.service_name || '操作' }}
+                    {{ $t('page.profile.operLogTemplate', [log.created_at, log.service_name || $t('page.profile.operated')]) }}
                   </div>
                   <div class="mt-1 text-xs text-gray-500">
-                    地理位置: {{ log.ip_location || '未知' }}，方式:
-                    {{ log.method }}，路径: {{ log.router }}
+                    {{ $t('page.profile.ipLocation') }}: {{ log.ip_location || $t('page.profile.unknown') }}，{{ $t('page.profile.method') }}: {{ log.method }}，{{ $t('page.profile.path') }}: {{ log.router }}
                   </div>
                 </TimelineItem>
                 <div
                   v-if="operationLogs.length === 0"
                   class="text-center text-gray-400 py-10"
                 >
-                  暂无日志
+                  {{ $t('page.profile.noLogs') }}
                 </div>
               </Timeline>
             </div>

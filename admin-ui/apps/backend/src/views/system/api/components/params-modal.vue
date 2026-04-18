@@ -50,8 +50,8 @@ import {
 } from '../schemas';
 
 const typeLabelMap: Record<ApiColumnType, string> = {
-  1: '请求参数',
-  2: '响应参数',
+  1: $t('system.api.requestParams'),
+  2: $t('system.api.responseParams'),
 };
 
 type ColumnModalInstance = {
@@ -70,8 +70,8 @@ const templateLoading = ref(false);
 const dataTypeOptions = ref<DictOption[]>([]);
 const statusOptions = ref<DictOption[]>([]);
 const requiredOptions: DictOption[] = [
-  { label: '否', value: 1 },
-  { label: '是', value: 2 },
+  { label: $t('common.no'), value: 1 },
+  { label: $t('common.yes'), value: 2 },
 ];
 
 const { getDictOptions } = useDictOptions();
@@ -89,7 +89,7 @@ const displayColumns = computed({
 });
 
 const modalTitle = computed(() => {
-  if (!currentApi.value) return '参数管理';
+  if (!currentApi.value) return $t('system.api.paramsManage');
   return `${currentApi.value.name} - ${typeLabelMap[currentType.value]}`;
 });
 
@@ -182,7 +182,7 @@ async function handleDelete(row: ApiColumnListItem) {
     await fetchTableData();
   } catch (error) {
     logger.error(error);
-    message.error(isRecycleBin.value ? '彻底删除失败，请稍后重试' : '删除失败，请稍后重试');
+    message.error(isRecycleBin.value ? $t('common.permanentDeleteFailed') : $t('common.deleteFailed'));
   }
 }
 
@@ -286,7 +286,7 @@ async function handleExport() {
     const response = await exportApiColumnList(
       buildRequestParams(false) as ApiColumnApi.ListQuery,
     );
-    downloadResponseBlob(response, '接口参数列表.xlsx');
+    downloadResponseBlob(response, 'api_params.xlsx');
     message.success($t('common.exportSuccess'));
   } catch (error) {
     logger.error(error);
@@ -300,7 +300,7 @@ async function handleDownloadTemplate() {
   templateLoading.value = true;
   try {
     const response = await downloadApiColumnTemplate();
-    downloadResponseBlob(response, '接口参数导入模板.xlsx');
+    downloadResponseBlob(response, 'api_params_template.xlsx');
     message.success($t('common.templateDownloadSuccess'));
   } catch (error) {
     logger.error(error);
@@ -337,54 +337,54 @@ defineExpose({
       <div class="rounded-md bg-white p-4">
         <Form :data="searchForm" label-width="90px" colon>
           <div class="grid grid-cols-4 gap-x-4">
-            <FormItem label="字段名称" name="name">
+            <FormItem :label="$t('system.api.fieldName')" name="name">
               <Input
                 v-model="searchForm.name"
-                placeholder="请输入字段名称"
+                :placeholder="$t('ui.placeholder.input')"
                 clearable
               />
             </FormItem>
-            <FormItem label="数据类型" name="data_type">
+            <FormItem :label="$t('system.api.dataType')" name="data_type">
               <Select
                 v-model="searchForm.data_type"
                 :options="dataTypeOptions"
-                placeholder="请选择数据类型"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="状态" name="status">
+            <FormItem :label="$t('common.status')" name="status">
               <Select
                 v-model="searchForm.status"
                 :options="statusOptions"
-                placeholder="请选择状态"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="是否必填" name="is_required">
+            <FormItem :label="$t('system.api.isRequired')" name="is_required">
               <Select
                 v-model="searchForm.is_required"
                 :options="requiredOptions"
-                placeholder="请选择"
+                :placeholder="$t('ui.placeholder.select')"
                 clearable
                 class="w-full"
               />
             </FormItem>
-            <FormItem label="创建时间" name="created_at" class="col-span-2">
+            <FormItem :label="$t('common.createTime')" name="created_at" class="col-span-2">
               <DateRangePicker
                 v-model="searchForm.created_at"
-                :placeholder="['开始时间', '结束时间']"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                 clearable
                 class="w-full"
               />
             </FormItem>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleReset">重置</Button>
+            <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
             <Button theme="primary" @click="handleSearch">
               <template #icon><SearchIcon /></template>
-              查询
+              {{ $t('common.query') }}
             </Button>
           </div>
         </Form>
@@ -396,15 +396,15 @@ defineExpose({
             <template v-if="!isRecycleBin">
               <Button theme="primary" @click="handleAdd">
                 <template #icon><AddIcon /></template>
-                新增
+                {{ $t('common.create') }}
               </Button>
               <Button theme="danger" variant="outline" @click="handleBatchDelete">
                 <template #icon><DeleteIcon /></template>
-                删除
+                {{ $t('common.delete') }}
               </Button>
               <Button variant="outline" :loading="importLoading" @click="triggerImport">
                 <template #icon><UploadIcon /></template>
-                导入
+                {{ $t('common.import') }}
               </Button>
               <Button
                 variant="outline"
@@ -412,22 +412,22 @@ defineExpose({
                 @click="handleDownloadTemplate"
               >
                 <template #icon><DownloadIcon /></template>
-                导入模板
+                {{ $t('common.importTemplate') }}
               </Button>
               <Button variant="outline" :loading="exportLoading" @click="handleExport">
                 <template #icon><DownloadIcon /></template>
-                导出
+                {{ $t('common.export') }}
               </Button>
             </template>
             <template v-else>
-              <Button theme="success" @click="handleBatchRecovery">恢复</Button>
-              <Button theme="danger" @click="handleBatchDelete">彻底删除</Button>
+              <Button theme="success" @click="handleBatchRecovery">{{ $t('common.recovery') }}</Button>
+              <Button theme="danger" @click="handleBatchDelete">{{ $t('common.permanentDelete') }}</Button>
             </template>
           </Space>
 
           <Space>
             <Button variant="outline" @click="handleToggleRecycleBin">
-              {{ isRecycleBin ? '返回列表' : '回收站' }}
+              {{ isRecycleBin ? $t('common.backToList') : $t('common.recycleBin') }}
             </Button>
           </Space>
         </div>
@@ -451,7 +451,7 @@ defineExpose({
           </template>
 
           <template #is_required="{ row }">
-            {{ row.is_required === 2 ? '是' : '否' }}
+            {{ row.is_required === 2 ? $t('common.yes') : $t('common.no') }}
           </template>
 
           <template #status="{ row }">
@@ -471,32 +471,32 @@ defineExpose({
                   variant="outline"
                   @click="handleEdit(row)"
                 >
-                  编辑
+                  {{ $t('common.edit') }}
                 </Button>
                 <Popconfirm
-                  content="确认删除该参数吗？"
+                  :content="$t('system.api.confirmDeleteParam')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
-                    删除
+                    {{ $t('common.delete') }}
                   </Button>
                 </Popconfirm>
               </template>
               <template v-else>
                 <Popconfirm
-                  content="确认恢复该参数吗？"
+                  :content="$t('system.api.confirmRecoveryParam')"
                   @confirm="handleRecovery(row)"
                 >
                   <Button size="small" theme="primary" variant="outline">
-                    恢复
+                    {{ $t('common.recovery') }}
                   </Button>
                 </Popconfirm>
                 <Popconfirm
-                  content="确认彻底删除该参数吗？"
+                  :content="$t('system.api.confirmPermanentDeleteParam')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">
-                    彻底删除
+                    {{ $t('common.permanentDelete') }}
                   </Button>
                 </Popconfirm>
               </template>

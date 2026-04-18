@@ -1,10 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { PostApi } from '#/api/system/post';
 
 import { nextTick } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -33,19 +34,19 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入岗位名称',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'name',
-      label: '岗位名称',
+      label: $t('system.post.name'),
       rules: 'required',
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入岗位标识',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'code',
-      label: '岗位标识',
+      label: $t('system.post.code'),
       rules: 'required',
     },
     {
@@ -56,29 +57,29 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 1,
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: {
         options: [
-          { label: '正常', value: 1 },
-          { label: '停用', value: 2 },
+          { label: $t('common.statusEnabled'), value: 1 },
+          { label: $t('common.statusDisabled'), value: 2 },
         ],
       },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -98,7 +99,7 @@ const [Modal, modalApi] = useVbenModal({
         await savePost(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -112,7 +113,7 @@ const [Modal, modalApi] = useVbenModal({
 
 async function open(data?: Partial<PostApi.SubmitPayload>) {
   modalApi.setState({
-    title: data?.id ? '编辑岗位' : '新增岗位',
+    title: data?.id ? $t('system.post.editTitle') : $t('system.post.createTitle'),
   });
   modalApi.open();
 

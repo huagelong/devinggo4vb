@@ -18,6 +18,7 @@ import {
   WorkbenchTodo,
   WorkbenchTrends,
 } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
@@ -91,19 +92,19 @@ const quickNavItems: WorkbenchQuickNavItem[] = [
   {
     color: '#1fdaca',
     icon: 'ion:home-outline',
-    title: '首页',
+    title: $t('dashboard.workspace.home'),
     url: '/',
   },
   {
     color: '#bf0c2c',
     icon: 'ion:grid-outline',
-    title: '仪表盘',
+    title: $t('dashboard.workspace.dashboard'),
     url: '/dashboard',
   },
   {
     color: '#00d8ff',
     icon: 'ion:bar-chart-outline',
-    title: '图表',
+    title: $t('dashboard.workspace.chart'),
     url: '/analytics',
   },
 ];
@@ -222,25 +223,25 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
       :avatar="userStore.userInfo?.avatar || preferences.app.defaultAvatar"
     >
       <template #title>
-        早安, {{ userStore.userInfo?.realName }}, 开始您一天的工作吧！
+        {{ $t('dashboard.workspace.greeting', [userStore.userInfo?.realName]) }}
       </template>
-      <template #description> 今日晴，20℃ - 32℃！ </template>
+      <template #description> {{ $t('dashboard.workspace.weather') }} </template>
     </WorkbenchHeader>
 
     <div class="mt-5 flex flex-col lg:flex-row">
       <div class="mr-4 w-full lg:w-3/5">
-        <WorkbenchProject :items="projectItems" title="项目" @click="navTo" />
-        <WorkbenchTrends :items="trendItems" class="mt-5" title="最新动态" />
+        <WorkbenchProject :items="projectItems" :title="$t('dashboard.workspace.project')" @click="navTo" />
+        <WorkbenchTrends :items="trendItems" class="mt-5" :title="$t('dashboard.workspace.latestTrends')" />
       </div>
       <div class="w-full lg:w-2/5">
         <WorkbenchQuickNav
           :items="quickNavItems"
           class="mt-5 lg:mt-0"
-          title="快捷导航"
+          :title="$t('dashboard.workspace.quickNav')"
           @click="navTo"
         />
-        <WorkbenchTodo :items="todoItems" class="mt-5" title="待办事项" />
-        <AnalysisChartCard class="mt-5" title="访问来源">
+        <WorkbenchTodo :items="todoItems" class="mt-5" :title="$t('dashboard.workspace.todoItems')" />
+        <AnalysisChartCard class="mt-5" :title="$t('dashboard.workspace.accessSource')">
           <AnalyticsTrends />
         </AnalysisChartCard>
       </div>

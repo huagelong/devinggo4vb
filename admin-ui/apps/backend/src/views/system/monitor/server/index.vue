@@ -43,11 +43,11 @@ function formatUptime(seconds: number): string {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  const parts: string[] = [];
-  if (days > 0) parts.push(`${days}天`);
-  if (hours > 0) parts.push(`${hours}小时`);
-  if (minutes > 0) parts.push(`${minutes}分钟`);
-  return parts.join(' ') || `${seconds}秒`;
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days}${$t('system.monitor.server.day')}`);
+    if (hours > 0) parts.push(`${hours}${$t('system.monitor.server.hour')}`);
+    if (minutes > 0) parts.push(`${minutes}${$t('system.monitor.server.minute')}`);
+    return parts.join(' ') || `${seconds}${$t('system.monitor.server.second')}`;
 }
 
 async function fetchServerInfo() {
@@ -100,44 +100,44 @@ onUnmounted(() => {
       <Card v-if="!hasServerApi">
         <div class="flex flex-col items-center justify-center py-12 text-gray-400">
           <ServerIcon class="mb-4 text-6xl" />
-          <div class="text-lg">服务器监控接口暂未开放</div>
-          <div class="text-sm">后端 API (/system/server/monitor) 待实现后自动启用</div>
+          <div class="text-lg">{{ $t('system.monitor.server.apiNotAvailable') }}</div>
+          <div class="text-sm">{{ $t('system.monitor.server.apiNotAvailableDesc') }}</div>
         </div>
       </Card>
 
       <!-- Server Info Content -->
       <template v-else>
         <!-- System Overview -->
-        <Card title="系统概览">
+        <Card :title="$t('system.monitor.server.systemOverview')">
           <template #actions>
             <Tag
               :theme="loading ? 'default' : 'success'"
               variant="light"
             >
-              {{ loading ? '刷新中...' : '实时监控中' }}
+              {{ loading ? $t('system.monitor.server.refreshing') : $t('system.monitor.server.realtimeMonitoring') }}
             </Tag>
           </template>
           <Row :gutter="24">
             <Col :span="6">
               <div class="mb-2 flex items-center gap-2 text-sm text-gray-500">
                 <DesktopIcon />
-                操作系统
+                {{ $t('system.monitor.server.os') }}
               </div>
               <div class="text-base">{{ serverInfo?.os || '-' }}</div>
             </Col>
             <Col :span="6">
               <div class="mb-2 flex items-center gap-2 text-sm text-gray-500">
                 <ServerIcon />
-                架构
+                {{ $t('system.monitor.server.arch') }}
               </div>
               <div class="text-base">{{ serverInfo?.arch || '-' }}</div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">主机名</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.hostname') }}</div>
               <div class="text-base">{{ serverInfo?.hostname || '-' }}</div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">运行时间</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.uptime') }}</div>
               <div class="text-base">
                 {{ serverInfo?.uptime ? formatUptime(serverInfo.uptime) : '-' }}
               </div>
@@ -145,11 +145,11 @@ onUnmounted(() => {
           </Row>
           <Row :gutter="24" class="mt-4">
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">服务器时间</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.serverTime') }}</div>
               <div class="text-base">{{ serverInfo?.server_time || '-' }}</div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">Go 版本</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.goVersion') }}</div>
               <div class="text-base">{{ serverInfo?.go_runtime?.go_version || '-' }}</div>
             </Col>
             <Col :span="6">
@@ -157,7 +157,7 @@ onUnmounted(() => {
               <div class="text-base">{{ serverInfo?.go_runtime?.goroutines || '-' }}</div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">GC 统计</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.gcStats') }}</div>
               <div class="text-base">{{ serverInfo?.go_runtime?.gc_stats || '-' }}</div>
             </Col>
           </Row>
@@ -166,7 +166,7 @@ onUnmounted(() => {
         <!-- CPU & Memory -->
         <Row :gutter="16">
           <Col :span="12">
-            <Card title="CPU 使用率">
+            <Card :title="$t('system.monitor.server.cpuUsage')">
               <div class="flex flex-col items-center py-4">
                 <Progress
                   :percentage="serverInfo?.cpu?.usage ?? 0"
@@ -184,16 +184,16 @@ onUnmounted(() => {
                   <Space>
                     <span>
                       <CpuIcon />
-                      核心数: {{ serverInfo?.cpu?.num ?? '-' }}
+                      {{ $t('system.monitor.server.cores') }}: {{ serverInfo?.cpu?.num ?? '-' }}
                     </span>
-                    <span>型号: {{ serverInfo?.cpu?.model ?? '-' }}</span>
+                    <span>{{ $t('system.monitor.server.model') }}: {{ serverInfo?.cpu?.model ?? '-' }}</span>
                   </Space>
                 </div>
               </div>
             </Card>
           </Col>
           <Col :span="12">
-            <Card title="内存使用率">
+            <Card :title="$t('system.monitor.server.memoryUsage')">
               <div class="flex flex-col items-center py-4">
                 <Progress
                   :percentage="serverInfo?.memory?.usage ?? 0"
@@ -210,13 +210,13 @@ onUnmounted(() => {
                 <div class="mt-4 text-sm text-gray-500">
                   <Space>
                     <span>
-                      已用: {{ formatBytes(serverInfo?.memory?.used ?? 0) }}
+                      {{ $t('system.monitor.server.used') }}: {{ formatBytes(serverInfo?.memory?.used ?? 0) }}
                     </span>
                     <span>
-                      总量: {{ formatBytes(serverInfo?.memory?.total ?? 0) }}
+                      {{ $t('system.monitor.server.total') }}: {{ formatBytes(serverInfo?.memory?.total ?? 0) }}
                     </span>
                     <span>
-                      可用: {{ formatBytes(serverInfo?.memory?.free ?? 0) }}
+                      {{ $t('system.monitor.server.available') }}: {{ formatBytes(serverInfo?.memory?.free ?? 0) }}
                     </span>
                   </Space>
                 </div>
@@ -226,7 +226,7 @@ onUnmounted(() => {
         </Row>
 
         <!-- Disk Info -->
-        <Card title="磁盘信息">
+        <Card :title="$t('system.monitor.server.diskInfo')">
           <Row :gutter="16">
             <Col
               v-for="(disk, index) in serverInfo?.disks ?? []"
@@ -248,12 +248,12 @@ onUnmounted(() => {
                 />
                 <div class="mt-2 text-xs text-gray-500">
                   <Space>
-                    <span>文件系统: {{ disk.file_system }}</span>
+                    <span>{{ $t('system.monitor.server.fileSystem') }}: {{ disk.file_system }}</span>
                     <span>
-                      总量: {{ formatBytes(disk.total) }}
+                      {{ $t('system.monitor.server.total') }}: {{ formatBytes(disk.total) }}
                     </span>
                     <span>
-                      已用: {{ formatBytes(disk.used) }}
+                      {{ $t('system.monitor.server.used') }}: {{ formatBytes(disk.used) }}
                     </span>
                   </Space>
                 </div>
@@ -264,27 +264,27 @@ onUnmounted(() => {
             v-if="!serverInfo?.disks?.length"
             class="py-8 text-center text-gray-400"
           >
-            暂无磁盘信息
+            {{ $t('system.monitor.server.noDiskInfo') }}
           </div>
         </Card>
 
         <!-- Go Runtime -->
-        <Card title="Go 运行时">
+        <Card :title="$t('system.monitor.server.goRuntime')">
           <Row :gutter="24">
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">Heap 分配</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.heapAlloc') }}</div>
               <div class="text-base">
                 {{ formatBytes(serverInfo?.go_runtime?.heap_alloc ?? 0) }}
               </div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">Heap 系统内存</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.heapSysMemory') }}</div>
               <div class="text-base">
                 {{ formatBytes(serverInfo?.go_runtime?.heap_sys ?? 0) }}
               </div>
             </Col>
             <Col :span="6">
-              <div class="mb-2 text-sm text-gray-500">栈使用</div>
+              <div class="mb-2 text-sm text-gray-500">{{ $t('system.monitor.server.stackInUse') }}</div>
               <div class="text-base">
                 {{ formatBytes(serverInfo?.go_runtime?.stack_in_use ?? 0) }}
               </div>

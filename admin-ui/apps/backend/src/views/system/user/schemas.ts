@@ -5,6 +5,8 @@ import type {
   UserTableColumn,
 } from './model';
 
+import { $t } from '#/locales';
+
 export function createUserSearchForm(): UserSearchFormModel {
   return {
     created_at: [],
@@ -27,22 +29,22 @@ export function createUserTableColumns(): UserTableColumn[] {
       type: 'multiple',
       width: 50,
     },
-    { align: 'center', colKey: 'avatar', title: '头像', width: 80 },
-    { align: 'center', colKey: 'username', minWidth: 100, title: '账户' },
-    { align: 'center', colKey: 'dept_name', minWidth: 100, title: '所属部门' },
-    { align: 'center', colKey: 'nickname', minWidth: 100, title: '昵称' },
-    { align: 'center', colKey: 'role_name', minWidth: 100, title: '角色' },
-    { align: 'center', colKey: 'phone', minWidth: 120, title: '手机' },
-    { align: 'center', colKey: 'post_name', minWidth: 100, title: '岗位' },
-    { align: 'center', colKey: 'email', minWidth: 150, title: '邮箱' },
-    { align: 'center', colKey: 'status', title: '状态', width: 100 },
-    { align: 'center', colKey: 'user_type', title: '用户类型', width: 100 },
-    { align: 'center', colKey: 'created_at', title: '注册时间', width: 160 },
+    { align: 'center', colKey: 'avatar', title: $t('system.user.avatar'), width: 80 },
+    { align: 'center', colKey: 'username', minWidth: 100, title: $t('system.user.username') },
+    { align: 'center', colKey: 'dept_name', minWidth: 100, title: $t('system.user.dept') },
+    { align: 'center', colKey: 'nickname', minWidth: 100, title: $t('system.user.nickname') },
+    { align: 'center', colKey: 'role_name', minWidth: 100, title: $t('system.user.role') },
+    { align: 'center', colKey: 'phone', minWidth: 120, title: $t('system.user.phone') },
+    { align: 'center', colKey: 'post_name', minWidth: 100, title: $t('system.user.post') },
+    { align: 'center', colKey: 'email', minWidth: 150, title: $t('system.user.email') },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 100 },
+    { align: 'center', colKey: 'user_type', title: $t('system.user.userType'), width: 100 },
+    { align: 'center', colKey: 'created_at', title: $t('system.user.registerTime'), width: 160 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 220,
     },
   ];
@@ -60,7 +62,7 @@ export function createUserColumnOptions(
 }
 
 export const userActionDropdownOptions: UserActionDropdownItem[] = [
-  { content: '重置密码', value: 'reset_password' },
-  { content: '更新缓存', value: 'clear_cache' },
-  { content: '设置首页', value: 'set_homepage' },
+  { content: $t('system.user.resetPassword'), value: 'reset_password' },
+  { content: $t('system.user.clearCache'), value: 'clear_cache' },
+  { content: $t('system.user.setHome'), value: 'set_homepage' },
 ];

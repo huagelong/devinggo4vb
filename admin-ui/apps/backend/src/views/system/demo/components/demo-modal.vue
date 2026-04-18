@@ -1,9 +1,10 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DemoApi } from '#/api/system/demo';
 
 import { nextTick } from 'vue';
 
+import { $t } from '@vben/locales';
 import { useVbenModal } from '@vben/common-ui';
 
 import { MessagePlugin } from 'tdesign-vue-next';
@@ -33,35 +34,35 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       fieldName: 'name',
-      label: '名称',
+      label: $t('common.name'),
       componentProps: {
-        placeholder: '请输入'
+        placeholder: $t('ui.placeholder.input')
       },
       rules: 'required',
     },
     {
       component: 'Input',
       fieldName: 'code',
-      label: '编码',
+      label: $t('system.demo.code'),
       componentProps: {
-        placeholder: '请输入'
+        placeholder: $t('ui.placeholder.input')
       },
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       defaultValue: 1,
       componentProps: {
-        options: [{"label":"正常","value":1},{"label":"已禁用","value":2}],
+        options: [{label: $t('common.statusEnabled'), value: 1}, {label: $t('common.disabled'), value: 2}],
       },
       rules: 'required',
     },
     {
       component: 'InputNumber',
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       defaultValue: 1,
       componentProps: {
         min: 0,
@@ -72,56 +73,56 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'InputNumber',
       fieldName: 'price',
-      label: '数字',
+      label: $t('system.demo.price'),
       componentProps: {
         min: 0,
         max: 1000,
-        placeholder: '请输入'
+        placeholder: $t('ui.placeholder.input')
       },
     },
     {
       component: 'Upload',
       fieldName: 'cover',
-      label: '图片',
+      label: $t('system.demo.cover'),
       componentProps: {
         accept: 'image/*',
-        placeholder: '请上传图片',
+        placeholder: $t('system.demo.uploadImage'),
       },
       formItemClass: 'col-span-2',
     },
     {
       component: 'Input',
       fieldName: 'email',
-      label: '邮箱',
+      label: $t('system.demo.email'),
       componentProps: {
         type: 'email',
-        placeholder: '请输入邮箱',
+        placeholder: $t('system.demo.enterEmail'),
       },
       rules: 'email',
     },
     {
       component: 'Input',
       fieldName: 'phone',
-      label: '手机号',
+      label: $t('system.demo.phone'),
       componentProps: {
-        placeholder: '请输入手机号',
+        placeholder: $t('system.demo.enterPhone'),
       },
     },
     {
       component: 'DatePicker',
       fieldName: 'birthday',
-      label: '日期',
+      label: $t('system.demo.birthday'),
       componentProps: {
-        placeholder: '请选择日期',
+        placeholder: $t('system.demo.selectDate'),
         clearable: true,
       },
     },
     {
       component: 'Textarea',
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: $t('system.demo.enterRemark'),
         autosize: { minRows: 3, maxRows: 6 },
       },
       formItemClass: 'col-span-2',
@@ -144,7 +145,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveDemo(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -158,7 +159,7 @@ const [Modal, modalApi] = useVbenModal({
 
 async function open(data?: Partial<DemoApi.SubmitPayload & { id?: number }>) {
   modalApi.setState({
-    title: data?.id ? '编辑演示' : '新增演示',
+    title: data?.id ? $t('system.demo.editTitle') : $t('system.demo.createTitle'),
   });
   modalApi.open();
 

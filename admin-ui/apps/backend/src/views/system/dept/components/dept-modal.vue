@@ -5,6 +5,7 @@ import type { DeptApi } from '#/api/system/dept';
 import { nextTick } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -35,36 +36,36 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         data: [],
         keys: { label: 'label', value: 'value', children: 'children' },
-        placeholder: '请选择上级部门',
+        placeholder: $t('ui.placeholder.select'),
       },
       fieldName: 'parent_id',
-      label: '上级部门',
+      label: $t('system.dept.parentDept'),
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入部门名称',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'name',
-      label: '部门名称',
+      label: $t('system.dept.name'),
       rules: 'required',
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入负责人',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'leader',
-      label: '负责人',
+      label: $t('system.dept.leader'),
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: '请输入手机号',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'phone',
-      label: '手机',
-      rules: 'pattern:^1[3-9]\\d{9}$#请输入正确的手机号',
+      label: $t('system.dept.phone'),
+      rules: 'pattern:^1[3-9]\\d{9}$#' + $t('system.dept.invalidPhone'),
     },
     {
       component: 'InputNumber',
@@ -74,30 +75,30 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 1,
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: {
         options: [
-          { label: '正常', value: 1 },
-          { label: '停用', value: 2 },
+          { label: $t('common.statusEnabled'), value: 1 },
+          { label: $t('common.statusDisabled'), value: 2 },
         ],
       },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: $t('ui.placeholder.input'),
       },
       fieldName: 'remark',
       formItemClass: 'col-span-2',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -117,7 +118,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveDept(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -131,7 +132,7 @@ const [Modal, modalApi] = useVbenModal({
 
 async function open(data?: Partial<DeptApi.SubmitPayload>) {
   modalApi.setState({
-    title: data?.id ? '编辑部门' : '新增部门',
+    title: data?.id ? $t('system.dept.editTitle') : $t('system.dept.createTitle'),
   });
   modalApi.open();
 
@@ -159,7 +160,7 @@ async function open(data?: Partial<DeptApi.SubmitPayload>) {
     await nextTick();
     await formApi.resetValidate();
   } catch (error) {
-    logger.error('加载部门表单失败', error);
+    logger.error($t('common.deptFormLoadFailed'), error);
   }
 }
 

@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -46,16 +47,16 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         data: parentMenuOptions.value,
         keys: { children: 'children', label: 'label', value: 'value' },
-        placeholder: '请选择上级菜单',
+        placeholder: $t('ui.placeholder.select'),
       },
       fieldName: 'parent_id',
-      label: '上级菜单',
+      label: $t('system.menu.parentMenu'),
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入菜单名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'name',
-      label: '菜单名称',
+      label: $t('system.menu.title'),
       rules: 'required',
     },
     {
@@ -63,55 +64,55 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: menuTypeOptions },
       defaultValue: 'M',
       fieldName: 'type',
-      label: '菜单类型',
+      label: $t('system.menu.type'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入菜单标识' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'code',
-      label: '菜单标识',
+      label: $t('system.menu.code'),
       rules: 'required',
     },
     {
       component: IconSelect,
-      componentProps: { placeholder: '请选择或输入图标名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       dependencies: {
         show: (values) => isFieldVisible('icon', values?.type),
         triggerFields: ['type'],
       },
       fieldName: 'icon',
-      label: '图标',
+      label: $t('system.menu.icon'),
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入路由地址' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       dependencies: {
         show: (values) => isFieldVisible('route', values?.type),
         triggerFields: ['type'],
       },
       fieldName: 'route',
-      label: '路由地址',
+      label: $t('system.menu.router'),
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入组件路径' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       dependencies: {
         show: (values) => isFieldVisible('component', values?.type),
         triggerFields: ['type'],
       },
       fieldName: 'component',
-      label: '组件路径',
+      label: $t('system.menu.component'),
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入重定向地址' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       dependencies: {
         show: (values) => isFieldVisible('redirect', values?.type),
         triggerFields: ['type'],
       },
       fieldName: 'redirect',
-      label: '重定向',
+      label: $t('system.menu.redirect'),
     },
     {
       component: 'InputNumber',
@@ -122,7 +123,7 @@ const [Form, formApi] = useVbenForm({
         triggerFields: ['type'],
       },
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       rules: 'required',
     },
     {
@@ -134,7 +135,7 @@ const [Form, formApi] = useVbenForm({
         triggerFields: ['type'],
       },
       fieldName: 'is_hidden',
-      label: '是否隐藏',
+      label: $t('system.menu.isHidden'),
     },
     {
       component: 'RadioGroup',
@@ -145,7 +146,7 @@ const [Form, formApi] = useVbenForm({
         triggerFields: ['type'],
       },
       fieldName: 'restful',
-      label: '生成按钮',
+      label: $t('system.menu.generateButton'),
     },
     {
       component: 'RadioGroup',
@@ -154,15 +155,15 @@ const [Form, formApi] = useVbenForm({
       },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
       formItemClass: 'col-span-2',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -189,7 +190,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveMenu(payload);
       }
 
-      MessagePlugin.success(payload.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(payload.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -217,14 +218,14 @@ async function fetchParentOptions() {
     parentMenuOptions.value = [
       {
         id: 0,
-        label: '顶级菜单',
+        label: $t('system.menu.topMenu'),
         value: 0,
         children: tree as MenuApi.TreeOptionItem[],
       },
     ];
   } catch (error) {
     logger.error(error);
-    parentMenuOptions.value = [{ id: 0, label: '顶级菜单', value: 0 }];
+    parentMenuOptions.value = [{ id: 0, label: $t('system.menu.topMenu'), value: 0 }];
   }
 
   formApi.updateSchema([
@@ -239,14 +240,14 @@ async function fetchParentOptions() {
 
 async function open(data?: Partial<MenuApi.SubmitPayload>) {
   modalApi.setState({
-    title: data?.id ? '编辑菜单' : '新增菜单',
+    title: data?.id ? $t('system.menu.editTitle') : $t('system.menu.createTitle'),
   });
   modalApi.open();
 
   try {
     statusOptions.value = (await getDictOptions('data_status')) || [
-      { label: '正常', value: 1 },
-      { label: '停用', value: 2 },
+      { label: $t('common.statusEnabled'), value: 1 },
+      { label: $t('common.statusDisabled'), value: 2 },
     ];
 
     formApi.updateSchema([
@@ -271,7 +272,7 @@ async function open(data?: Partial<MenuApi.SubmitPayload>) {
     await nextTick();
     await formApi.resetValidate();
   } catch (error) {
-    logger.error('加载菜单表单失败', error);
+    logger.error($t('system.menu.formLoadFailed'), error);
   }
 }
 

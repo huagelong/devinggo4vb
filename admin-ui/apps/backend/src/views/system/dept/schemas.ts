@@ -5,6 +5,8 @@ import type {
   DeptTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createDeptSearchForm(): DeptSearchFormModel {
   return {
     created_at: [],
@@ -37,17 +39,17 @@ export function createDeptTableColumns(): DeptTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'name', minWidth: 180, title: '部门名称' },
-    { align: 'center', colKey: 'leader', minWidth: 120, title: '负责人' },
-    { align: 'center', colKey: 'phone', minWidth: 150, title: '手机' },
-    { align: 'center', colKey: 'sort', title: '排序', width: 140 },
-    { align: 'center', colKey: 'status', title: '状态', width: 120 },
-    { align: 'center', colKey: 'created_at', title: '创建时间', width: 180 },
+    { colKey: 'name', minWidth: 180, title: $t('system.dept.name') },
+    { align: 'center', colKey: 'leader', minWidth: 120, title: $t('system.dept.leader') },
+    { align: 'center', colKey: 'phone', minWidth: 150, title: $t('system.dept.phone') },
+    { align: 'center', colKey: 'sort', title: $t('common.sort'), width: 140 },
+    { align: 'center', colKey: 'status', title: $t('common.status'), width: 120 },
+    { align: 'center', colKey: 'created_at', title: $t('common.createTime'), width: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 320,
     },
   ];

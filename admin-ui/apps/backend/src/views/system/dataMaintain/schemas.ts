@@ -4,6 +4,8 @@ import type {
   DataMaintainTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createDataMaintainSearchForm(): DataMaintainSearchFormModel {
   return {
     group_name: 'default',
@@ -13,17 +15,17 @@ export function createDataMaintainSearchForm(): DataMaintainSearchFormModel {
 
 export function createDataMaintainTableColumns(): DataMaintainTableColumn[] {
   return [
-    { colKey: 'name', title: '表名', minWidth: 220 },
-    { colKey: 'comment', title: '表注释', minWidth: 220 },
-    { colKey: 'engine', title: '引擎', width: 140 },
-    { colKey: 'collation', title: '字符集', width: 160 },
-    { colKey: 'rows', title: '行数', width: 120 },
-    { colKey: 'create_time', title: '创建时间', minWidth: 180 },
+    { colKey: 'name', title: $t('system.dataMaintain.tableName'), minWidth: 220 },
+    { colKey: 'comment', title: $t('system.dataMaintain.tableComment'), minWidth: 220 },
+    { colKey: 'engine', title: $t('system.dataMaintain.engine'), width: 140 },
+    { colKey: 'collation', title: $t('system.dataMaintain.collation'), width: 160 },
+    { colKey: 'rows', title: $t('system.dataMaintain.rows'), width: 120 },
+    { colKey: 'create_time', title: $t('common.createTime'), minWidth: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 260,
     },
   ];

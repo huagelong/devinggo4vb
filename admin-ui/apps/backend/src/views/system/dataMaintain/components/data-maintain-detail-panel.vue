@@ -69,19 +69,19 @@ defineExpose({
   >
     <div class="mb-2 flex items-center justify-between">
       <div class="text-sm font-medium text-gray-700">
-        表详情：{{ currentTable?.name || '-' }}
+        {{ $t('system.dataMaintain.tableDetail', [currentTable?.name || '-']) }}
       </div>
-      <Button size="small" variant="text" @click="close">收起</Button>
+      <Button size="small" variant="text" @click="close">{{ $t('common.collapse') }}</Button>
     </div>
 
     <div class="mb-3 grid grid-cols-3 gap-3 text-sm text-gray-600">
-      <div>引擎：{{ currentTable?.engine || '-' }}</div>
-      <div>字符集：{{ currentTable?.collation || '-' }}</div>
-      <div>行数：{{ currentTable?.rows ?? '-' }}</div>
+      <div>{{ $t('system.dataMaintain.engine') }}：{{ currentTable?.engine || '-' }}</div>
+      <div>{{ $t('system.dataMaintain.collation') }}：{{ currentTable?.collation || '-' }}</div>
+      <div>{{ $t('system.dataMaintain.rows') }}：{{ currentTable?.rows ?? '-' }}</div>
     </div>
 
     <div v-if="!hasDetailedApi" class="text-sm text-gray-500">
-      当前后端未开放字段详情接口，已预留展示区域。
+      {{ $t('system.dataMaintain.detailApiNotAvailable') }}
     </div>
 
     <Table
@@ -91,15 +91,15 @@ defineExpose({
       :loading="loading"
       :data="detailColumns"
       :columns="[
-        { colKey: 'field', title: '字段名', width: 220 },
-        { colKey: 'type', title: '类型', width: 180 },
-        { colKey: 'comment', title: '注释', minWidth: 240 },
+        { colKey: 'field', title: $t('system.dataMaintain.fieldColName'), width: 220 },
+        { colKey: 'type', title: $t('system.dataMaintain.fieldColType'), width: 180 },
+        { colKey: 'comment', title: $t('system.dataMaintain.fieldColComment'), minWidth: 240 },
       ]"
     />
 
     <div class="mt-3 flex items-center gap-2 text-xs text-gray-500">
-      <Tag theme="warning" variant="light">能力预留</Tag>
-      <span>详细字段、优化、碎片整理待后端接口开放后无缝启用。</span>
+      <Tag theme="warning" variant="light">{{ $t('system.dataMaintain.capabilityReserved') }}</Tag>
+      <span>{{ $t('system.dataMaintain.capabilityReservedDesc') }}</span>
     </div>
   </div>
 </template>

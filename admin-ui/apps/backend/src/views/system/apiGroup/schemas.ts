@@ -5,6 +5,8 @@ import type {
   ApiGroupTableColumn,
 } from './model';
 
+import { $t } from '@vben/locales';
+
 export function createApiGroupSearchForm(): ApiGroupSearchFormModel {
   return {
     name: '',
@@ -21,16 +23,16 @@ export function createApiGroupTableColumns(): ApiGroupTableColumn[] {
       type: 'multiple',
       width: 52,
     },
-    { colKey: 'name', title: '分组名称', minWidth: 220 },
-    { colKey: 'status', title: '状态', width: 120, align: 'center' },
-    { colKey: 'remark', title: '备注', minWidth: 200 },
-    { colKey: 'created_at', title: '创建时间', minWidth: 180 },
-    { colKey: 'updated_at', title: '更新时间', minWidth: 180 },
+    { colKey: 'name', title: $t('system.apiGroup.name'), minWidth: 220 },
+    { colKey: 'status', title: $t('common.status'), width: 120, align: 'center' },
+    { colKey: 'remark', title: $t('common.remark'), minWidth: 200 },
+    { colKey: 'created_at', title: $t('common.createTime'), minWidth: 180 },
+    { colKey: 'updated_at', title: $t('common.updateTime'), minWidth: 180 },
     {
       align: 'center',
       colKey: 'action',
       fixed: 'right',
-      title: '操作',
+      title: $t('common.action'),
       width: 200,
     },
   ];

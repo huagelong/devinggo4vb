@@ -126,7 +126,7 @@ async function open(role: RoleApi.ListItem) {
   dataScope.value = Number(role.data_scope ?? 1);
 
   modalApi.setState({
-    title: '数据权限',
+    title: $t('system.role.dataPermission'),
   });
   modalApi.open();
 
@@ -155,34 +155,34 @@ defineExpose({
 <template>
   <Modal>
     <Form :data="currentRole ?? {}" label-width="100px" colon>
-      <FormItem label="角色名称" name="name">
+      <FormItem :label="$t('system.role.name')" name="name">
         <Input :model-value="currentRole?.name ?? ''" disabled />
       </FormItem>
-      <FormItem label="角色标识" name="code">
+      <FormItem :label="$t('system.role.code')" name="code">
         <Input :model-value="currentRole?.code ?? ''" disabled />
       </FormItem>
-      <FormItem label="数据边界" name="data_scope">
+      <FormItem :label="$t('system.role.dataScope')" name="data_scope">
         <Select
           v-model="dataScope"
           :options="roleDataScopeOptions"
-          placeholder="请选择数据范围"
+          :placeholder="$t('ui.placeholder.select', [$t('system.role.dataScope')])"
         />
       </FormItem>
 
       <template v-if="shouldShowDeptTree">
-        <FormItem label="搜索部门" name="search">
-          <Input v-model="searchText" placeholder="过滤部门" clearable />
+        <FormItem :label="$t('system.role.searchDept')" name="search">
+          <Input v-model="searchText" :placeholder="$t('common.filterDept')" clearable />
         </FormItem>
-        <FormItem label="部门列表" name="dept_ids">
+        <FormItem :label="$t('system.role.deptList')" name="dept_ids">
           <div class="w-full">
             <Space class="mb-3">
-              <Checkbox @change="handleExpand">展开/折叠</Checkbox>
-              <Checkbox @change="handleSelect">全选/全不选</Checkbox>
+              <Checkbox @change="handleExpand">{{ $t('common.expandCollapse') }}</Checkbox>
+              <Checkbox @change="handleSelect">{{ $t('common.selectAllNone') }}</Checkbox>
               <Checkbox
                 :checked="cancelLinkage"
                 @change="handleLinkage"
               >
-                关闭父子级联动
+                {{ $t('common.disableParentChildLink') }}
               </Checkbox>
             </Space>
             <div class="tree-container">
@@ -190,7 +190,7 @@ defineExpose({
                 v-if="loading"
                 class="flex h-[320px] items-center justify-center text-sm text-gray-500"
               >
-                部门加载中...
+                {{ $t('common.deptLoading') }}
               </div>
               <Tree
                 v-else

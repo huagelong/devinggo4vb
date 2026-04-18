@@ -48,16 +48,16 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入字典标签' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'label',
-      label: '字典标签',
+      label: $t('system.dict.label'),
       rules: 'required',
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入字典键值' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'value',
-      label: '字典键值',
+      label: $t('system.dict.value'),
       rules: 'required',
     },
     {
@@ -65,7 +65,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: { min: 0, max: 1000 },
       defaultValue: 1,
       fieldName: 'sort',
-      label: '排序',
+      label: $t('common.sort'),
       rules: 'required',
     },
     {
@@ -73,14 +73,14 @@ const [Form, formApi] = useVbenForm({
       componentProps: { options: statusOptions.value },
       defaultValue: 1,
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -104,7 +104,7 @@ const [Modal, modalApi] = useVbenModal({
         await saveDictData(values);
       }
 
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -124,14 +124,14 @@ interface OpenOptions {
 async function open(options: OpenOptions) {
   currentTypeInfo.value = options.typeInfo;
   modalApi.setState({
-    title: options.data?.id ? '编辑字典数据' : `新增「${options.typeInfo.name ?? ''}」数据`,
+    title: options.data?.id ? $t('system.dict.editDictData') : $t('system.dict.createDictData', [options.typeInfo.name ?? '']),
   });
   modalApi.open();
 
   statusOptions.value =
     (await getDictOptions('data_status')) || [
-      { label: '正常', value: 1 },
-      { label: '停用', value: 2 },
+      { label: $t('common.statusEnabled'), value: 1 },
+      { label: $t('common.statusDisabled'), value: 2 },
     ];
 
   formApi.updateSchema([

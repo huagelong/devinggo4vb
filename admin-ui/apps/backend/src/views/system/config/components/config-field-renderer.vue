@@ -3,6 +3,8 @@ import type { ConfigFieldMeta } from '../model';
 
 import { computed } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import {
   Checkbox,
   CheckboxGroup,
@@ -51,19 +53,19 @@ const switchValues = computed(() => {
       v-if="field.input_type === 'input'"
       v-model="innerValue"
       allow-clear
-      placeholder="请输入内容"
+      :placeholder="$t('common.enterContent')"
     />
     <Textarea
       v-else-if="field.input_type === 'textarea' || field.input_type === 'editor'"
       v-model="innerValue"
       :autosize="{ minRows: 3, maxRows: 6 }"
-      placeholder="请输入内容"
+      :placeholder="$t('common.enterContent')"
     />
     <Select
       v-else-if="field.input_type === 'select'"
       v-model="innerValue"
       :options="selectOptions"
-      placeholder="请选择"
+      :placeholder="$t('ui.placeholder.select')"
       clearable
       class="w-full"
     />
@@ -110,7 +112,7 @@ const switchValues = computed(() => {
       v-else
       v-model="innerValue"
       allow-clear
-      placeholder="请输入内容"
+      :placeholder="$t('common.enterContent')"
     />
   </div>
 </template>

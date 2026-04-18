@@ -1,9 +1,11 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { DeptApi } from '#/api/system/dept';
 import type { IdType } from '#/types/common';
 
 import { onMounted, ref } from 'vue';
+
+import { $t } from '#/locales';
 
 import {
   CaretDownSmallIcon,
@@ -35,7 +37,7 @@ async function fetchDeptTree() {
     treeData.value = [
       {
         id: -1,
-        label: '所有部门',
+        label: $t('system.user.allDepts'),
         children: res || [],
       },
     ];
@@ -85,7 +87,7 @@ function filterTreeNode(node: unknown) {
     <div
       class="flex items-center justify-between gap-2 border-b border-gray-100 p-3"
     >
-      <Input v-model="searchText" placeholder="搜索部门" class="flex-1">
+      <Input v-model="searchText" :placeholder="$t('system.user.searchDept')" class="flex-1">
         <template #prefixIcon>
           <SearchIcon />
         </template>
@@ -94,7 +96,7 @@ function filterTreeNode(node: unknown) {
         class="cursor-pointer whitespace-nowrap text-[14px] text-blue-500 hover:text-blue-600"
         @click="toggleExpand"
       >
-        {{ isFolding ? '展开' : '折叠' }}
+        {{ isFolding ? $t('common.collapse') : $t('common.expandCollapse') }}
       </div>
     </div>
     <div class="custom-tree-wrap flex-1 overflow-auto p-2">

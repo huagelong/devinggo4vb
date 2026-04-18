@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { logger } from '#/utils/logger';
 import type { ApiGroupFormModel } from '../model';
 import type { DictOption } from '#/composables/crud/use-dict-options';
@@ -6,6 +6,7 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { MessagePlugin } from 'tdesign-vue-next';
 
@@ -19,8 +20,8 @@ const emit = defineEmits(['success']);
 
 const statusOptions = ref<DictOption[]>([]);
 const fallbackStatusOptions: DictOption[] = [
-  { label: '正常', value: 1 },
-  { label: '停用', value: 2 },
+  { label: $t('common.statusEnabled'), value: 1 },
+  { label: $t('common.statusDisabled'), value: 2 },
 ];
 
 const { getDictOptions } = useDictOptions();
@@ -39,23 +40,23 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入分组名称' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'name',
-      label: '分组名称',
+      label: $t('system.apiGroup.name'),
       rules: 'required',
     },
     {
       component: 'RadioGroup',
       componentProps: { options: statusOptions.value },
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
       rules: 'required',
     },
     {
       component: 'Textarea',
-      componentProps: { placeholder: '请输入备注' },
+      componentProps: { placeholder: $t('ui.placeholder.input') },
       fieldName: 'remark',
-      label: '备注',
+      label: $t('common.remark'),
     },
   ],
 });
@@ -72,7 +73,7 @@ const [Modal, modalApi] = useVbenModal({
       } else {
         await saveApiGroup(values);
       }
-      MessagePlugin.success(values.id ? '更新成功' : '新增成功');
+      MessagePlugin.success(values.id ? $t('common.updateSuccess') : $t('common.createSuccess'));
       emit('success');
       modalApi.close();
     } catch (error) {
@@ -104,7 +105,7 @@ async function fetchStatusOptions() {
 
 async function open(data?: ApiGroupFormModel) {
   modalApi.setState({
-    title: data?.id ? '编辑分组' : '新增分组',
+    title: data?.id ? $t('system.apiGroup.editTitle') : $t('system.apiGroup.createTitle'),
   });
   modalApi.open();
   await fetchStatusOptions();

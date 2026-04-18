@@ -115,7 +115,7 @@ onMounted(() => {
     <div class="flex h-full gap-3">
       <!-- Left Tree Slider -->
       <div class="w-48 flex-shrink-0 rounded-md bg-white p-2">
-        <div class="mb-2 px-2 text-sm font-medium text-gray-500">文件类型</div>
+        <div class="mb-2 px-2 text-sm font-medium text-gray-500">{{ $t('system.upload.fileType') }}</div>
         <Tree
           v-model="selectedTreeKey"
           :data="treeData"
@@ -147,12 +147,12 @@ onMounted(() => {
                   <template #icon>
                     <UploadIcon />
                   </template>
-                  上传文件
+                  {{ $t('common.uploadFile') }}
                 </Button>
               </template>
             </Upload>
             <div v-if="uploadingFiles > 0" class="text-sm text-gray-500">
-              正在上传 {{ uploadingFiles }} 个文件...
+              {{ $t('common.uploadingCount', [uploadingFiles]) }}
             </div>
           </div>
         </div>
@@ -161,33 +161,33 @@ onMounted(() => {
         <div class="rounded-md bg-white p-4">
           <Form :data="searchForm" label-width="80px" colon>
             <div class="grid grid-cols-4 gap-x-4">
-              <FormItem label="文件名" name="origin_name">
+              <FormItem :label="$t('system.upload.fileName')" name="origin_name">
                 <Input
                   v-model="searchForm.origin_name"
-                  placeholder="请输入文件名"
+                  :placeholder="$t('ui.placeholder.input')"
                   clearable
                 />
               </FormItem>
-              <FormItem label="存储方式" name="storage_mode">
+              <FormItem :label="$t('system.upload.storageMode')" name="storage_mode">
                 <RadioGroup v-model="searchForm.storage_mode">
-                  <Radio :value="1">本地</Radio>
-                  <Radio :value="2">云存储</Radio>
+                  <Radio :value="1">{{ $t('common.local') }}</Radio>
+                  <Radio :value="2">{{ $t('common.cloudStorage') }}</Radio>
                 </RadioGroup>
               </FormItem>
-              <FormItem label="创建时间" name="created_at" class="col-span-2">
+              <FormItem :label="$t('common.createTime')" name="created_at" class="col-span-2">
                 <DateRangePicker
                   v-model="searchForm.created_at"
-                  :placeholder="['开始时间', '结束时间']"
+                  :placeholder="[$t('common.startTime'), $t('common.endTime')]"
                   clearable
                   class="w-full"
                 />
               </FormItem>
             </div>
             <div class="flex justify-end gap-2 pt-2">
-              <Button theme="default" @click="handleReset">重置</Button>
+              <Button theme="default" @click="handleReset">{{ $t('common.reset') }}</Button>
               <Button theme="primary" @click="handleSearch">
                 <template #icon><SearchIcon /></template>
-                查询
+                {{ $t('common.query') }}
               </Button>
             </div>
           </Form>
@@ -197,9 +197,9 @@ onMounted(() => {
         <div class="flex min-h-0 flex-1 flex-col rounded-md bg-white p-4">
           <div class="mb-3 flex items-center justify-between">
             <Space>
-              <Button theme="danger" variant="outline" @click="handleBatchDelete">
+                <Button theme="danger" variant="outline" @click="handleBatchDelete">
                 <template #icon><DeleteIcon /></template>
-                删除
+                {{ $t('common.delete') }}
               </Button>
             </Space>
 
@@ -218,15 +218,15 @@ onMounted(() => {
             >
               <div class="text-center">
                 <div class="mb-4 text-6xl">📁</div>
-                <div class="text-lg">暂无文件</div>
-                <div class="text-sm">点击上方按钮上传文件</div>
+                <div class="text-lg">{{ $t('system.upload.noFile') }}</div>
+                <div class="text-sm">{{ $t('system.upload.clickToUpload') }}</div>
               </div>
             </div>
 
             <div v-else class="text-center text-gray-500">
-              文件上传管理功能开发中...
+              {{ $t('system.upload.wipTitle') }}
               <br />
-              当前版本：基础框架已完成，等待后端 API 对接
+              {{ $t('system.upload.wipDesc') }}
             </div>
           </div>
         </div>
