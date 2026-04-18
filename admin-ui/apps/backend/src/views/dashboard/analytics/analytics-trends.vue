@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { EchartsUIType } from '@vben/plugins/echarts';
 
 import { onMounted, ref } from 'vue';
@@ -81,7 +82,7 @@ onMounted(async () => {
       ],
     });
   } catch (error) {
-    console.error('Failed to load dashboard login chart', error);
+    logger.error('Failed to load dashboard login chart', error);
   }
 });
 </script>

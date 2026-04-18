@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
@@ -88,7 +89,7 @@ async function initData() {
       },
     ];
   } catch (error) {
-    console.error('Failed to load dashboard statistics', error);
+    logger.error('Failed to load dashboard statistics', error);
   }
 }
 

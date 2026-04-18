@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
+import { logger } from '#/utils/logger';
 import type {
   WorkbenchProjectItem,
   WorkbenchQuickNavItem,
@@ -207,7 +208,7 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
   }
   if (nav.url?.startsWith('/')) {
     router.push(nav.url).catch((error) => {
-      console.error('Navigation failed:', error);
+      logger.error('Navigation failed:', error);
     });
   } else {
     console.warn(`Unknown URL for navigation item: ${nav.title} -> ${nav.url}`);

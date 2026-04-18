@@ -1,7 +1,9 @@
-﻿import type { Ref } from 'vue';
+import type { Ref } from 'vue';
 import type { IdType } from '#/types/common';
 
 import { ref } from 'vue';
+
+import { logger } from '#/utils/logger';
 
 import {
   changeUserStatus,
