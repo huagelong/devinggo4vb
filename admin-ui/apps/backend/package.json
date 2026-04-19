@@ -47,6 +47,7 @@
     "file2md5": "^1.3.0",
     "pinia": "catalog:",
     "pusher-js": "^8.5.0",
+    "webcrypto-liner-shim": "^1.4.8",
     "tdesign-icons-vue-next": "catalog:",
     "tdesign-vue-next": "catalog:",
     "vue": "catalog:",
