@@ -3,6 +3,8 @@ import type { OptionItem } from '#/types/common';
 
 import { computed } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import {
   DeleteIcon,
   RefreshIcon,
@@ -65,13 +67,13 @@ function handleSelectAllChange(value: unknown) {
 
 <template>
   <div class="flex items-center gap-2">
-    <Tooltip content="刷新">
+    <Tooltip :content="$t('common.refresh')">
       <Button shape="square" variant="outline" @click="emit('refresh')">
         <template #icon><RefreshIcon /></template>
       </Button>
     </Tooltip>
 
-    <Tooltip :content="isRecycleBin ? '返回列表' : '显示回收站'">
+    <Tooltip :content="isRecycleBin ? $t('common.backToList') : $t('common.viewRecycleBin')">
       <Button shape="square" variant="outline" @click="emit('toggle-recycle')">
         <template #icon>
           <RollbackIcon v-if="isRecycleBin" />
@@ -80,7 +82,7 @@ function handleSelectAllChange(value: unknown) {
       </Button>
     </Tooltip>
 
-    <Tooltip content="列配置">
+    <Tooltip :content="$t('common.columnConfig')">
       <Popup placement="bottom-right" trigger="click">
         <Button shape="square" variant="outline">
           <template #icon><SettingIcon /></template>
@@ -93,7 +95,7 @@ function handleSelectAllChange(value: unknown) {
               :indeterminate="isIndeterminate"
               @change="handleSelectAllChange"
             >
-              全选
+              {{ $t('common.selectAll') }}
             </Checkbox>
             <div class="my-2 h-px bg-gray-100" />
             <CheckboxGroup

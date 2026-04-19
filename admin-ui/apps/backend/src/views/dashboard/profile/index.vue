@@ -74,7 +74,7 @@ async function fetchUserInfo() {
       userInfoForm.avatar = res.user.avatar || '';
     }
   } catch (error) {
-    logger.error('获取个人信息失败', error);
+    logger.error($t('common.profileUpdateFailed'), error);
   }
 }
 
@@ -115,7 +115,7 @@ async function handleUpdatePassword() {
     securityForm.newPassword = '';
     securityForm.newPasswordConfirmation = '';
   } catch (error) {
-    logger.error('密码修改失败', error);
+    logger.error($t('common.passwordChangeFailed'), error);
   }
 }
 
@@ -143,7 +143,7 @@ function triggerUpload() {
         MessagePlugin.success($t('common.avatarUploadSuccess'));
       }
     } catch (error) {
-      logger.error('上传失败', error);
+      logger.error($t('common.uploadFailed'), error);
       MessagePlugin.error($t('common.avatarUploadFailed'));
     } finally {
       fileInput.remove();
@@ -165,7 +165,7 @@ async function fetchLogs() {
       operationLogs.value = opRes.items;
     }
   } catch (error) {
-    logger.error('获取日志失败', error);
+    logger.error($t('common.logFetchFailed'), error);
   }
 }
 

@@ -41,6 +41,7 @@
   "profileUpdateSuccess": "Profile updated successfully",
   "profileUpdateFailed": "Profile update failed",
   "passwordChangeSuccess": "Password changed successfully",
+  "passwordChangeFailed": "Password change failed",
   "avatarUploadSuccess": "Avatar uploaded successfully",
   "avatarUploadFailed": "Avatar upload failed",
   "cacheInfoFailed": "Failed to get cache info",
@@ -204,5 +205,8 @@
   "deleteSingleDataConfirm": "Are you sure to delete this data?",
   "confirmRecoveryDept": "Are you sure to recover this department?",
   "confirmPermanentDeleteDept": "Are you sure to permanently delete this department?",
-  "deptFormLoadFailed": "Failed to load department form"
+  "deptFormLoadFailed": "Failed to load department form",
+  "columnConfig": "Column Settings",
+  "selectAll": "Select All",
+  "operationFailed": "Operation failed"
 }

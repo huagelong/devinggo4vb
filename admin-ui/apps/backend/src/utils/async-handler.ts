@@ -1,3 +1,5 @@
+import { $t } from '@vben/locales';
+
 import { logger } from './logger';
 
 /**
@@ -14,7 +16,7 @@ import { logger } from './logger';
  * async function open(id: string) {
  *   const data = await withAsync(
  *     () => getUserInfoApi(id),
- *     { errorMessage: '获取用户信息失败' },
+ *     { errorMessage: $t('common.profileUpdateFailed') },
  *   );
  *   if (!data) return;
  *   formApi.setValues(data);
@@ -25,7 +27,7 @@ import { logger } from './logger';
  *   modalApi.open();
  *   const data = await getUserInfoApi(id);
  *   formApi.setValues(data);
- * }, { errorMessage: '加载数据失败' });
+ * }, { errorMessage: $t('common.operationFailed') });
  */
 export async function withAsync<T>(
   fn: () => Promise<T>,
@@ -39,7 +41,7 @@ export async function withAsync<T>(
   try {
     return await fn();
   } catch (error) {
-    logger.error(errorMessage ?? '操作失败', error);
+    logger.error(errorMessage ?? $t('common.operationFailed'), error);
 
     if (errorMessage) {
       const { MessagePlugin } = await import('tdesign-vue-next');

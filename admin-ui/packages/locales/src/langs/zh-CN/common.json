@@ -41,6 +41,7 @@
   "profileUpdateSuccess": "个人资料更新成功",
   "profileUpdateFailed": "个人资料更新失败",
   "passwordChangeSuccess": "密码修改成功",
+  "passwordChangeFailed": "密码修改失败",
   "avatarUploadSuccess": "头像上传成功",
   "avatarUploadFailed": "头像上传失败",
   "cacheInfoFailed": "获取缓存信息失败",
@@ -204,5 +205,8 @@
   "deleteSingleDataConfirm": "确认删除该数据吗？",
   "confirmRecoveryDept": "确认恢复该部门吗？",
   "confirmPermanentDeleteDept": "确认彻底删除该部门吗？",
-  "deptFormLoadFailed": "部门表单加载失败"
+  "deptFormLoadFailed": "部门表单加载失败",
+  "columnConfig": "列配置",
+  "selectAll": "全选",
+  "operationFailed": "操作失败"
 }
