@@ -47,6 +47,7 @@
   "cacheInfoFailed": "Failed to get cache info",
   "cacheViewFailed": "Failed to view cache",
   "clearAllCache": "Clear all cache",
+  "confirmClearAllCache": "Are you sure you want to clear all cache?",
   "clearCacheSuccess": "All cache cleared successfully",
   "clearCacheFailed": "Clear failed",
   "selectCacheFirst": "Please select cache to delete",

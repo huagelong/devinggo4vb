@@ -10,6 +10,7 @@ import { $t } from '@vben/locales';
 
 import {
   Button,
+  Dialog,
   Form,
   FormItem,
   Input,
@@ -55,6 +56,8 @@ const leaderPagination = reactive({
   showPageSize: true,
   total: 0,
 });
+
+const addLeaderDialogVisible = ref(false);
 
 const statusOptions = [
   { label: $t('common.statusEnabled'), value: 1 },
@@ -218,6 +221,15 @@ function handleCandidateSearch() {
   void fetchCandidateUsers();
 }
 
+function openAddLeaderDialog() {
+  addLeaderDialogVisible.value = true;
+  void fetchCandidateUsers();
+}
+
+function closeAddLeaderDialog() {
+  addLeaderDialogVisible.value = false;
+}
+
 function handleLeaderPageChange(pageInfo: { current: number; pageSize: number }) {
   leaderPagination.current = pageInfo.current;
   leaderPagination.pageSize = pageInfo.pageSize;
@@ -226,7 +238,7 @@ function handleLeaderPageChange(pageInfo: { current: number; pageSize: number })
 
 const [Modal, modalApi] = useVbenModal({
   footer: false,
-  class: 'w-[1200px]',
+  class: 'w-[1400px] h-[700px]',
 });
 
 async function open(row: { id: number; name?: string }) {
@@ -258,87 +270,70 @@ defineExpose({
 <template>
   <Modal>
     <div class="flex flex-col gap-4">
+      <!-- Tip Alert -->
       <div class="rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
         {{ $t('system.dept.crossDeptLeaderTip') }}
       </div>
 
-      <div class="rounded-md border border-gray-100 bg-gray-50 p-4">
-        <div class="mb-3 text-sm font-medium text-gray-700">{{ $t('system.dept.addLeader') }}</div>
-        <Form :data="candidateSearchForm" label-width="90px" colon>
-          <div class="grid grid-cols-4 gap-x-4">
-            <FormItem :label="$t('system.dept.username')" name="username">
-              <Input
-                v-model="candidateSearchForm.username"
-                :placeholder="$t('ui.placeholder.input')"
-                clearable
-              />
-            </FormItem>
-            <FormItem :label="$t('system.dept.nickname')" name="nickname">
-              <Input
-                v-model="candidateSearchForm.nickname"
-                :placeholder="$t('ui.placeholder.input')"
-                clearable
-              />
-            </FormItem>
-            <FormItem :label="$t('system.dept.candidateUser')" name="candidate_ids" class="col-span-2">
-              <Select
-                v-model="selectedCandidateIds"
-                :loading="candidateLoading"
-                :options="candidateOptions"
-                multiple
-                clearable
-                filterable
-                :placeholder="$t('system.dept.selectLeaderUser')"
-              />
-            </FormItem>
-          </div>
-          <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleCandidateSearch">{{ $t('system.dept.queryCandidateUser') }}</Button>
-            <Button theme="primary" @click="handleAddLeaders">{{ $t('system.dept.addLeader') }}</Button>
-          </div>
-        </Form>
-      </div>
-
+      <!-- Search Form -->
       <div class="rounded-md border border-gray-100 bg-white p-4">
-        <Form :data="leaderSearchForm" label-width="90px" colon>
-          <div class="grid grid-cols-4 gap-x-4">
+        <Form :data="leaderSearchForm" label-width="90px" colon size="small">
+          <div class="grid grid-cols-3 gap-x-4 items-end">
             <FormItem :label="$t('system.dept.username')" name="username">
               <Input
                 v-model="leaderSearchForm.username"
-                :placeholder="$t('ui.placeholder.input')"
+                :placeholder="$t('ui.placeholder.input', [$t('system.dept.username')])"
                 clearable
+                size="small"
               />
             </FormItem>
             <FormItem :label="$t('system.dept.nickname')" name="nickname">
               <Input
                 v-model="leaderSearchForm.nickname"
-                :placeholder="$t('ui.placeholder.input')"
+                :placeholder="$t('ui.placeholder.input', [$t('system.dept.nickname')])"
                 clearable
+                size="small"
               />
             </FormItem>
             <FormItem :label="$t('common.status')" name="status">
               <Select
                 v-model="leaderSearchForm.status"
                 :options="statusOptions"
-                :placeholder="$t('ui.placeholder.select')"
+                :placeholder="$t('ui.placeholder.select', [$t('common.status')])"
                 clearable
+                size="small"
               />
             </FormItem>
           </div>
-          <div class="flex justify-end gap-2 pt-2">
-            <Button theme="default" @click="handleLeaderReset">{{ $t('common.reset') }}</Button>
-            <Button theme="primary" @click="handleLeaderSearch">{{ $t('common.search') }}</Button>
+
+          <div class="flex justify-end gap-2 pt-3">
+            <Button size="small" theme="default" @click="handleLeaderReset">{{ $t('common.reset') }}</Button>
+            <Button size="small" theme="primary" @click="handleLeaderSearch">
+              {{ $t('common.search') }}
+            </Button>
           </div>
         </Form>
+      </div>
 
-        <div class="mb-3 mt-4">
-          <Space>
-            <Button theme="danger" variant="outline" @click="handleBatchDeleteLeaders">
-              {{ $t('system.dept.deleteSelected') }}
-            </Button>
-          </Space>
-        </div>
+      <!-- Action Toolbar -->
+      <div class="flex items-center justify-between rounded-md border border-gray-100 bg-white px-4 py-3">
+        <Space>
+          <Button size="small" theme="primary" @click="openAddLeaderDialog">
+            {{ $t('system.dept.addLeader') }}
+          </Button>
+          <Button size="small" theme="danger" variant="outline" @click="handleBatchDeleteLeaders">
+            {{ $t('system.dept.deleteSelected') }}
+          </Button>
+        </Space>
+        <Space>
+          <Button size="small" theme="default" variant="outline" @click="fetchLeaderList">
+            {{ $t('common.refresh') }}
+          </Button>
+        </Space>
+      </div>
 
+      <!-- Leader Table -->
+      <div class="rounded-md border border-gray-100 bg-white p-4">
         <Table
           :columns="leaderColumns"
           :data="leaderList"
@@ -348,6 +343,7 @@ defineExpose({
           row-key="id"
           hover
           stripe
+          size="small"
           @page-change="handleLeaderPageChange"
           @select-change="handleLeaderSelectChange"
         >
@@ -367,6 +363,57 @@ defineExpose({
           </template>
         </Table>
       </div>
+
+      <Dialog v-model:visible="addLeaderDialogVisible" width="720px" placement="center" title="$t('system.dept.addLeader')">
+        <div class="space-y-4">
+          <Form :data="candidateSearchForm" label-width="90px" colon size="small">
+            <div class="grid grid-cols-3 gap-x-4 items-end">
+              <FormItem :label="$t('system.dept.username')" name="username">
+                <Input
+                  v-model="candidateSearchForm.username"
+                  :placeholder="$t('ui.placeholder.input', [$t('system.dept.username')])"
+                  clearable
+                  size="small"
+                />
+              </FormItem>
+              <FormItem :label="$t('system.dept.nickname')" name="nickname">
+                <Input
+                  v-model="candidateSearchForm.nickname"
+                  :placeholder="$t('ui.placeholder.input', [$t('system.dept.nickname')])"
+                  clearable
+                  size="small"
+                />
+              </FormItem>
+              <div class="flex gap-2">
+                <Button size="small" theme="default" @click="handleCandidateSearch">
+                  {{ $t('common.search') }}
+                </Button>
+              </div>
+            </div>
+          </Form>
+
+          <Select
+            v-model="selectedCandidateIds"
+            :loading="candidateLoading"
+            :options="candidateOptions"
+            multiple
+            clearable
+            filterable
+            size="small"
+            :placeholder="$t('system.dept.selectLeaderUser')"
+            class="w-full"
+          />
+
+          <div class="flex justify-end gap-2">
+            <Button size="small" theme="default" variant="outline" @click="closeAddLeaderDialog">
+              {{ $t('common.cancel') }}
+            </Button>
+            <Button size="small" theme="primary" @click="handleAddLeaders">
+              {{ $t('system.dept.addLeader') }}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   </Modal>
 </template>

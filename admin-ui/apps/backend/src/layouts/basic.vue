@@ -17,7 +17,7 @@ import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
-import { message } from '#/adapter/tdesign';
+import { dialog, message } from '#/adapter/tdesign';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import { clearAllCache } from '#/api/system/monitor';
@@ -130,13 +130,22 @@ async function handleLogout() {
   await authStore.logout(false);
 }
 
-async function handleClearAllCache() {
-  try {
-    await clearAllCache();
-    message.success($t('common.clearCacheSuccess2'));
-  } catch {
-    message.error($t('common.clearCacheFailed2'));
-  }
+function handleClearAllCache() {
+  const dialogInstance = dialog.confirm({
+    body: $t('common.confirmClearAllCache'),
+    header: $t('common.prompt'),
+    onClose: () => dialogInstance.hide(),
+    onConfirm: async () => {
+      try {
+        await clearAllCache();
+        message.success($t('common.clearCacheSuccess2'));
+      } catch {
+        message.error($t('common.clearCacheFailed2'));
+      } finally {
+        dialogInstance.hide();
+      }
+    },
+  });
 }
 
 function handleNoticeClear() {
