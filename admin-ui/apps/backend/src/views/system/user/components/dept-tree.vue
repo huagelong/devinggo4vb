@@ -42,6 +42,10 @@ const filter = computed(() => {
   };
 });
 
+const expandButtonText = computed(() =>
+  expanded.value.length > 0 ? $t('common.expandCollapse') : $t('common.collapse'),
+);
+
 async function fetchDeptTree() {
   try {
     const res = await getDeptTree();
@@ -118,7 +122,7 @@ function filterTreeNode(node: unknown) {
         class="cursor-pointer whitespace-nowrap text-[14px] text-blue-500 hover:text-blue-600"
         @click="toggleExpand"
       >
-        {{ isFolding ? $t('common.collapse') : $t('common.expandCollapse') }}
+        {{ expandButtonText }}
       </div>
     </div>
     <div class="custom-tree-wrap flex-1 overflow-auto p-2">
