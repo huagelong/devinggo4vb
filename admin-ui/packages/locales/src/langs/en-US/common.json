@@ -182,7 +182,7 @@
   "gridMode": "Grid View",
   "filterDept": "Filter Department",
   "filterMenu": "Filter Menu",
-  "expandCollapse": "Expand/Collapse",
+  "expandCollapse": "Expand",
   "selectAllNone": "Select All/None",
   "disableParentChildLink": "Disable Parent-Child Link",
   "deptLoading": "Loading departments...",

@@ -182,7 +182,7 @@
   "gridMode": "橱窗模式",
   "filterDept": "过滤部门",
   "filterMenu": "过滤菜单",
-  "expandCollapse": "展开/折叠",
+  "expandCollapse": "展开",
   "selectAllNone": "全选/全不选",
   "disableParentChildLink": "关闭父子级联动",
   "deptLoading": "部门加载中...",
