@@ -130,5 +130,14 @@
   "请输入配置组标识": "Please enter config group code",
   "请输入配置组ID": "Please enter config group ID",
   "请输入选择用户": "Please select users",
-  "请选择要删除的配置": "Please select configuration to delete"
+  "请选择要删除的配置": "Please select configuration to delete",
+  "sessionId或token缺失": "Missing sessionId or token",
+  "claims为空": "Claims is empty",
+  "sessionId缺失": "SessionId is missing",
+  "请求已过期": "Request expired",
+  "重复请求": "Repeated request",
+  "请求参数错误": "Invalid request parameters",
+  "未授权": "Unauthorized",
+  "无权限访问": "Access denied",
+  "资源未找到": "Resource not found"
 }

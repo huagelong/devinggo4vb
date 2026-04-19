@@ -44,7 +44,7 @@ func (s *sMiddleware) parseSessionId(r *ghttp.Request) (sessionId string, err er
 
 	//权限检查
 	if g.IsEmpty(token) {
-		return "", myerror.MissingParameter(ctx, "missing sessionId or token")
+		return "", myerror.MissingParameter(ctx, "sessionId或token缺失")
 	}
 
 	claims, err := service.Token().ParseToken(ctx, token.String())
@@ -53,7 +53,7 @@ func (s *sMiddleware) parseSessionId(r *ghttp.Request) (sessionId string, err er
 	}
 	data := claims.Data
 	if g.IsEmpty(data) {
-		return "", myerror.ValidationFailed(ctx, "claims is empty")
+		return "", myerror.ValidationFailed(ctx, "claims为空")
 	}
 
 	if g.IsEmpty(sessionIdTmp) {
@@ -64,7 +64,7 @@ func (s *sMiddleware) parseSessionId(r *ghttp.Request) (sessionId string, err er
 			return "", err
 		}
 		if g.IsEmpty(user) {
-			return "", myerror.ValidationFailed(ctx, "sessionId miss")
+			return "", myerror.ValidationFailed(ctx, "sessionId缺失")
 		} else {
 			return gconv.String(user.Id), nil
 		}

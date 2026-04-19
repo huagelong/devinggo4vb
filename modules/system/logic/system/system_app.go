@@ -437,7 +437,7 @@ func (s *sSystemApp) VerifyEasyMode(ctx context.Context, appId string, apiId int
 	diffTime := 60
 	nowDiff := gconv.Int(gtime.Timestamp() - timestampInt)
 	if nowDiff > diffTime {
-		return false, myerror.ValidationFailed(ctx, "Request Expired!")
+		return false, myerror.ValidationFailed(ctx, "请求已过期")
 	}
 	result, err := cache.SetIfNotExist(ctx, redisKey, 1, gconv.Duration(diffTime)*time.Second)
 	if err != nil {
@@ -446,7 +446,7 @@ func (s *sSystemApp) VerifyEasyMode(ctx context.Context, appId string, apiId int
 	}
 	//g.Log().Info(ctx, "result:", result)
 	if !result {
-		return false, myerror.ValidationFailed(ctx, "Repeated requests!")
+		return false, myerror.ValidationFailed(ctx, "重复请求")
 	}
 
 	check, app, err := s.VerifyPre(ctx, appId, apiId)

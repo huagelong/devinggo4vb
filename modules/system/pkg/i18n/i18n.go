@@ -13,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/i18n/gi18n"
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
@@ -73,15 +74,19 @@ func normalizeLanguage(lang string) string {
 	return lang
 }
 
-// InitI18n 初始化国际化配置
-func InitI18n(ctx context.Context) {
+// InitI18n 初始化国际化配置，将语言信息注入 GoFrame 原生 context
+func InitI18n(ctx context.Context) context.Context {
 	initI18nPath()
 
 	lang := GetLanguageFromRequest(ctx)
-	g.I18n().SetLanguage(lang)
 
-	// 将语言信息存入上下文，方便后续使用
+	// 注入到 GoFrame 原生 context，gvalid 验证器和 gi18n 会通过 LanguageFromCtx 读取
+	ctx = gi18n.WithLanguage(ctx, lang)
+
+	// 同时保留项目自定义 context，方便业务代码使用
 	contexts.SetLanguage(ctx, lang)
+
+	return ctx
 }
 
 // T 翻译文本（简单版本）

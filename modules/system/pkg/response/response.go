@@ -9,6 +9,7 @@ package response
 import (
 	"devinggo/modules/system/codes"
 	"devinggo/modules/system/pkg/contexts"
+	"devinggo/modules/system/pkg/i18n"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -184,7 +185,8 @@ func ErrorWithCode(r *ghttp.Request, code int, message string) {
 
 // BadRequest 参数错误响应（400）
 func BadRequest(r *ghttp.Request, message ...string) {
-	msg := "请求参数错误"
+	ctx := r.GetCtx()
+	msg := i18n.T(ctx, "请求参数错误")
 	if len(message) > 0 {
 		msg = message[0]
 	}
@@ -194,7 +196,8 @@ func BadRequest(r *ghttp.Request, message ...string) {
 
 // Unauthorized 未授权响应（401）
 func Unauthorized(r *ghttp.Request, message ...string) {
-	msg := "未授权"
+	ctx := r.GetCtx()
+	msg := i18n.T(ctx, "未授权")
 	if len(message) > 0 {
 		msg = message[0]
 	}
@@ -204,7 +207,8 @@ func Unauthorized(r *ghttp.Request, message ...string) {
 
 // Forbidden 无权限响应（403）
 func Forbidden(r *ghttp.Request, message ...string) {
-	msg := "无权限访问"
+	ctx := r.GetCtx()
+	msg := i18n.T(ctx, "无权限访问")
 	if len(message) > 0 {
 		msg = message[0]
 	}
@@ -214,7 +218,8 @@ func Forbidden(r *ghttp.Request, message ...string) {
 
 // NotFound 资源未找到响应（404）
 func NotFound(r *ghttp.Request, message ...string) {
-	msg := "资源未找到"
+	ctx := r.GetCtx()
+	msg := i18n.T(ctx, "资源未找到")
 	if len(message) > 0 {
 		msg = message[0]
 	}
