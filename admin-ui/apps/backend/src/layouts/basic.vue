@@ -17,8 +17,10 @@ import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
+import { message } from '#/adapter/tdesign';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
+import { clearAllCache } from '#/api/system/monitor';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
 const notifications = ref<NotificationItem[]>([
@@ -128,6 +130,15 @@ async function handleLogout() {
   await authStore.logout(false);
 }
 
+async function handleClearAllCache() {
+  try {
+    await clearAllCache();
+    message.success($t('common.clearCacheSuccess2'));
+  } catch {
+    message.error($t('common.clearCacheFailed2'));
+  }
+}
+
 function handleNoticeClear() {
   notifications.value = [];
 }
@@ -178,6 +189,7 @@ watch(
         :description="userStore.userInfo?.email ?? ''"
         tag-text="Pro"
         @logout="handleLogout"
+        @clearAllCache="handleClearAllCache"
       />
     </template>
     <template #notification>

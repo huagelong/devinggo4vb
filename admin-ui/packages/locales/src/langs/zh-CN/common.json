@@ -46,6 +46,7 @@
   "avatarUploadFailed": "头像上传失败",
   "cacheInfoFailed": "获取缓存信息失败",
   "cacheViewFailed": "查看缓存失败",
+  "clearAllCache": "清空全部缓存",
   "clearCacheSuccess": "清除所有缓存成功",
   "clearCacheFailed": "清除失败",
   "selectCacheFirst": "请选择要删除的缓存",

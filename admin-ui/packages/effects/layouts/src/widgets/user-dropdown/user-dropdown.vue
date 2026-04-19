@@ -6,10 +6,10 @@ import type { AnyFunction } from '@vben/types';
 import { computed, useTemplateRef, watch } from 'vue';
 
 import { useHoverToggle } from '@vben/hooks';
-import { LockKeyhole, LogOut } from '@vben/icons';
+import { LockKeyhole, LogOut, RotateCw } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { preferences, usePreferences } from '@vben/preferences';
-import { useAccessStore } from '@vben/stores';
+import { useAccessStore, useUserStore } from '@vben/stores';
 import { isWindowsOs } from '@vben/utils';
 
 import { useVbenModal } from '@vben-core/popup-ui';
@@ -82,11 +82,15 @@ const props = withDefaults(defineProps<Props>(), {
   hoverDelay: 500,
 });
 
-const emit = defineEmits<{ logout: [] }>();
+const emit = defineEmits<{ logout: []; clearAllCache: [] }>();
 
 const { globalLockScreenShortcutKey, globalLogoutShortcutKey } =
   usePreferences();
 const accessStore = useAccessStore();
+const userStore = useUserStore();
+const canClearAllCache = computed(() =>
+  userStore.userRoles.includes('superAdmin'),
+);
 const [LockModal, lockModalApi] = useVbenModal({
   connectedComponent: LockScreenModal,
 });
@@ -144,6 +148,11 @@ function handleLogout() {
   // emit
   logoutModalApi.open();
   openPopover.value = false;
+}
+
+function handleClearAllCache() {
+  openPopover.value = false;
+  emit('clearAllCache');
 }
 
 function handleSubmitLogout() {
@@ -251,6 +260,14 @@ if (enableShortcutKey.value) {
           <DropdownMenuShortcut v-if="enableLockScreenShortcutKey">
             {{ altView }} L
           </DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="preferences.widget.lockScreen && canClearAllCache"
+          class="mx-1 flex cursor-pointer items-center rounded-sm py-1 leading-8"
+          @click="handleClearAllCache"
+        >
+          <RotateCw class="mr-2 size-4" />
+          {{ $t('common.clearAllCache') }}
         </DropdownMenuItem>
         <DropdownMenuSeparator v-if="preferences.widget.lockScreen" />
         <DropdownMenuItem

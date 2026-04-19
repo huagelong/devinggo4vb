@@ -46,6 +46,7 @@
   "avatarUploadFailed": "Avatar upload failed",
   "cacheInfoFailed": "Failed to get cache info",
   "cacheViewFailed": "Failed to view cache",
+  "clearAllCache": "Clear all cache",
   "clearCacheSuccess": "All cache cleared successfully",
   "clearCacheFailed": "Clear failed",
   "selectCacheFirst": "Please select cache to delete",
