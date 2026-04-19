@@ -201,5 +201,8 @@
   "permanentDeleteConfirm": "确认彻底删除该{0}吗？",
   "selectDeleteData": "请先选择要删除的数据",
   "deleteDataConfirm": "确认删除所选数据吗？",
-  "deleteSingleDataConfirm": "确认删除该数据吗？"
+  "deleteSingleDataConfirm": "确认删除该数据吗？",
+  "confirmRecoveryDept": "确认恢复该部门吗？",
+  "confirmPermanentDeleteDept": "确认彻底删除该部门吗？",
+  "deptFormLoadFailed": "部门表单加载失败"
 }

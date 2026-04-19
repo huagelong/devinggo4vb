@@ -201,5 +201,8 @@
   "permanentDeleteConfirm": "Are you sure to permanently delete this {0}?",
   "selectDeleteData": "Please select data to delete first",
   "deleteDataConfirm": "Are you sure to delete selected data?",
-  "deleteSingleDataConfirm": "Are you sure to delete this data?"
+  "deleteSingleDataConfirm": "Are you sure to delete this data?",
+  "confirmRecoveryDept": "Are you sure to recover this department?",
+  "confirmPermanentDeleteDept": "Are you sure to permanently delete this department?",
+  "deptFormLoadFailed": "Failed to load department form"
 }
