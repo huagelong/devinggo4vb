@@ -12,7 +12,7 @@ export const menuTypeOptions: Array<{ label: string; value: MenuTypeValue }> = [
   { label: $t('system.menu.typeDir'), value: 'M' },
   { label: $t('system.menu.typeButton'), value: 'B' },
   { label: $t('system.menu.externalLink'), value: 'L' },
-  { label: 'iFrame', value: 'I' },
+  { label: $t('system.menu.iframe'), value: 'I' },
 ];
 
 export const menuHiddenOptions = [
@@ -30,7 +30,7 @@ export const menuTypeTagMap: Record<string, { label: string; theme: 'default' | 
     M: { label: $t('system.menu.typeDir'), theme: 'primary' },
     B: { label: $t('system.menu.typeButton'), theme: 'warning' },
     L: { label: $t('system.menu.externalLink'), theme: 'success' },
-    I: { label: 'iFrame', theme: 'default' },
+    I: { label: $t('system.menu.iframe'), theme: 'default' },
   };
 
 export function createMenuSearchForm(): MenuSearchFormModel {

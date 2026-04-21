@@ -311,7 +311,7 @@ onMounted(() => {
               </template>
               <template v-else>
                 <Popconfirm
-                  :content="$t('common.confirmRecovery')"
+                  :content="$t('system.systemModules.confirmRecovery')"
                   @confirm="handleRecovery(row)"
                 >
                   <Button size="small" theme="primary" variant="outline">
@@ -319,7 +319,7 @@ onMounted(() => {
                   </Button>
                 </Popconfirm>
                 <Popconfirm
-                  :content="$t('common.confirmPermanentDelete')"
+                  :content="$t('system.systemModules.confirmPermanentDelete')"
                   @confirm="handleDelete(row)"
                 >
                   <Button size="small" theme="danger" variant="outline">

@@ -400,10 +400,10 @@ defineExpose({
                 </Popconfirm>
               </template>
               <template v-else>
-                <Popconfirm :content="$t('common.confirmRecovery')" @confirm="handleRecovery(row)">
+                <Popconfirm :content="$t('system.dict.confirmRecovery')" @confirm="handleRecovery(row)">
                   <Button size="small" theme="primary" variant="outline">{{ $t('common.recovery') }}</Button>
                 </Popconfirm>
-                <Popconfirm :content="$t('common.confirmPermanentDelete')" @confirm="handleDelete(row)">
+                <Popconfirm :content="$t('system.dict.confirmPermanentDelete')" @confirm="handleDelete(row)">
                   <Button size="small" theme="danger" variant="outline">{{ $t('common.permanentDelete') }}</Button>
                 </Popconfirm>
               </template>

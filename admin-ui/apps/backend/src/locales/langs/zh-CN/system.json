@@ -349,6 +349,10 @@
     "internalLink": "内链",
     "iframe": "内嵌",
     "topMenu": "顶级菜单",
+    "addChild": "新增子菜单",
+    "confirmDelete": "确认删除该菜单吗？",
+    "confirmRecovery": "确认恢复该菜单吗？",
+    "confirmPermanentDelete": "确认彻底删除该菜单吗？",
     "formLoadFailed": "菜单表单加载失败"
   },
   "app": {
@@ -365,7 +369,17 @@
     "name": "应用组名称",
     "editTitle": "编辑应用组",
     "createTitle": "新增应用组",
-    "confirmDelete": "确认删除该应用组吗？"
+    "confirmDelete": "确认删除该应用组吗？",
+    "confirmRecovery": "确认恢复该应用组吗？",
+    "confirmPermanentDelete": "确认彻底删除该应用组吗？"
+  },
+  "apiGroup": {
+    "name": "接口组名称",
+    "editTitle": "编辑接口组",
+    "createTitle": "新增接口组",
+    "confirmDelete": "确认删除该接口组吗？",
+    "confirmRecovery": "确认恢复该接口组吗？",
+    "confirmPermanentDelete": "确认彻底删除该接口组吗？"
   },
   "crontab": {
     "name": "任务名称",
@@ -375,6 +389,8 @@
     "editTitle": "编辑定时任务",
     "createTitle": "新增定时任务",
     "confirmDelete": "确认删除该定时任务吗？",
+    "confirmRecovery": "确认恢复该定时任务吗？",
+    "confirmPermanentDelete": "确认彻底删除该定时任务吗？",
     "logTitle": "任务日志",
     "logContent": "日志内容"
   },
