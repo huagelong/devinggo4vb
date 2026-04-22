@@ -64,7 +64,7 @@ func (qb *QueryBuilder) WithOrder(orderBy string, orderType ...string) *QueryBui
 		if len(orderType) > 0 && !g.IsEmpty(orderType[0]) {
 			orderTypeStr = orderType[0]
 		}
-		qb.model = qb.model.Order(orderBy, orderTypeStr)
+		qb.model = qb.model.Order(orderBy + " " + orderTypeStr)
 	}
 	return qb
 }
@@ -130,7 +130,11 @@ func (qb *QueryBuilder) WithPageListReq(req *model.PageListReq, params ...g.Map)
 	qb.WithPage(pageNum, pageSize)
 
 	if !g.IsEmpty(req.OrderBy) {
-		qb.WithOrder(req.OrderBy, req.OrderType)
+		orderTypeStr := "asc"
+		if !g.IsEmpty(req.OrderType) {
+			orderTypeStr = req.OrderType
+		}
+		qb.model = qb.model.Order(req.OrderBy + " " + orderTypeStr)
 	} else {
 		qb.model = qb.model.OrderDesc("id")
 	}
@@ -157,7 +161,11 @@ func (qb *QueryBuilder) WithListReq(req *model.ListReq, params ...g.Map) *QueryB
 	}
 
 	if !g.IsEmpty(req.OrderBy) {
-		qb.WithOrder(req.OrderBy, req.OrderType)
+		orderTypeStr := "asc"
+		if !g.IsEmpty(req.OrderType) {
+			orderTypeStr = req.OrderType
+		}
+		qb.model = qb.model.Order(req.OrderBy + " " + orderTypeStr)
 	}
 
 	return qb

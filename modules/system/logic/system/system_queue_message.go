@@ -18,6 +18,7 @@ import (
 	"devinggo/modules/system/pkg/orm"
 	"devinggo/modules/system/pkg/utils"
 	"devinggo/modules/system/service"
+	"fmt"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -41,9 +42,13 @@ func (s *sSystemQueueMessage) Model(ctx context.Context) *gdb.Model {
 }
 
 func (s *sSystemQueueMessage) GetReceiveUserPageList(ctx context.Context, req *model.PageListReq, messageId int64) (rs []*res.MessageReceiveUser, total int, err error) {
-	m := service.SystemUser().Model(ctx).Fields(dao.SystemQueueMessageReceive.Table()+".read_status as read_status_int", dao.SystemUser.Table()+".username", dao.SystemUser.Table()+".nickname").InnerJoinOnFields(dao.SystemQueueMessageReceive.Table(), "id", "=", "user_id")
+	m := service.SystemUser().Model(ctx).Fields(
+		fmt.Sprintf(`"%s"."read_status" as read_status_int`, dao.SystemQueueMessageReceive.Table()),
+		fmt.Sprintf(`"%s"."username"`, dao.SystemUser.Table()),
+		fmt.Sprintf(`"%s"."nickname"`, dao.SystemUser.Table()),
+	).InnerJoinOnFields(dao.SystemQueueMessageReceive.Table(), "id", "=", "user_id")
 	m = m.Where(dao.SystemQueueMessageReceive.Table()+".message_id", messageId)
-	m = m.OrderDesc(dao.SystemUser.Table() + ".created_at")
+	req.OrderBy = fmt.Sprintf(`"%s"."%s"`, dao.SystemUser.Table(), dao.SystemUser.Columns().CreatedAt)
 	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&rs, &total)
 	if utils.IsError(err) {
 		return
@@ -85,7 +90,7 @@ func (s *sSystemQueueMessage) GetPageList(ctx context.Context, req *model.PageLi
 		m = m.Where(dao.SystemQueueMessageReceive.Table()+".read_status", readStatusInt)
 	}
 
-	m = m.OrderDesc("message_id")
+	req.OrderBy = fmt.Sprintf(`"%s"."%s"`, dao.SystemQueueMessageReceive.Table(), dao.SystemQueueMessageReceive.Columns().MessageId)
 	var receiveRes []*entity.SystemQueueMessageReceive
 	err = orm.NewQuery(m).WithPageListReq(req).ScanAndCount(&receiveRes, &total)
 	if utils.IsError(err) {
