@@ -376,9 +376,9 @@ defineExpose({
 
       <!-- Search Form -->
       <div class="rounded-md border border-gray-100 bg-white p-4">
-        <Form :data="leaderSearchForm" label-width="90px" colon size="small">
-          <div class="grid grid-cols-3 gap-x-4 items-end">
-            <FormItem :label="$t('system.dept.username')" name="username">
+<Form :data="leaderSearchForm" label-width="90px" colon size="small">
+            <div class="grid grid-cols-3 gap-x-4">
+              <FormItem :label="$t('system.dept.username')" name="username">
               <Input
                 v-model="leaderSearchForm.username"
                 :placeholder="$t('ui.placeholder.input', [$t('system.dept.username')])"
@@ -472,7 +472,7 @@ defineExpose({
       >
         <div class="space-y-4">
           <Form :data="candidateSearchForm" label-width="90px" colon size="small">
-            <div class="grid grid-cols-4 gap-x-4 items-end">
+            <div class="grid grid-cols-4 gap-x-4">
               <FormItem :label="$t('system.user.username')" name="username">
                 <Input
                   v-model="candidateSearchForm.username"
@@ -506,7 +506,7 @@ defineExpose({
                 />
               </FormItem>
             </div>
-            <div class="grid grid-cols-3 gap-x-4 items-end mt-4">
+            <div class="grid grid-cols-3 gap-x-4 mt-4">
               <FormItem :label="$t('system.user.dept')" name="dept_id">
                 <Select
                   v-model="candidateSearchForm.dept_id"
