@@ -132,9 +132,14 @@ const [Modal, modalApi] = useVbenModal({
         status: Number(values.status ?? 1),
       };
 
-      if (values.config_select_data) {
+      if (values.config_select_data?.trim()) {
         try {
-          payload.config_select_data = JSON.parse(values.config_select_data);
+          const parsed = JSON.parse(values.config_select_data);
+          if (!Array.isArray(parsed)) {
+            MessagePlugin.error($t('common.jsonArrayRequired'));
+            return;
+          }
+          payload.config_select_data = values.config_select_data;
         } catch {
           MessagePlugin.error($t('common.jsonArrayRequired'));
           return;

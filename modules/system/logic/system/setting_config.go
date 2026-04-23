@@ -76,6 +76,12 @@ func (s *sSettingConfig) GetList(ctx context.Context, in *req.SettingConfigSearc
 		OrderBy:   "sort",
 		OrderType: "desc",
 	}
+	if !g.IsEmpty(in.OrderBy) {
+		inReq.OrderBy = in.OrderBy
+	}
+	if !g.IsEmpty(in.OrderType) {
+		inReq.OrderType = in.OrderType
+	}
 	m := s.handleSearch(ctx, in)
 	m = orm.NewQuery(m).WithListReq(inReq).Build()
 	err = m.Scan(&out)

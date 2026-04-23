@@ -183,7 +183,11 @@ function formatSubmitValue(
   field: ConfigFieldMeta,
   value: unknown,
 ): ConfigApi.UpdateByKeysPayload[string] {
-  if (field.input_type === 'key-value') {
+  if (
+    field.input_type === 'key-value' ||
+    Array.isArray(value) ||
+    (value !== null && typeof value === 'object')
+  ) {
     try {
       return JSON.stringify(value ?? []);
     } catch {

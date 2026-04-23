@@ -80,5 +80,10 @@
       "confirmPassword": "Please re-enter new password",
       "messageTitle": "Please enter message title"
     }
+  },
+  "common": {
+    "execute": "Execute",
+    "executeSuccess": "Execute successfully",
+    "executeFailed": "Execute failed"
   }
 }

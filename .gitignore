@@ -43,3 +43,4 @@ manifest/config/config.yaml
 hack/config.yaml
 devinggo.exe
 .spec-workflow
+.gocache
