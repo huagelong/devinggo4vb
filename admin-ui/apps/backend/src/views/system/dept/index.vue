@@ -22,6 +22,7 @@ import { DeleteIcon, EditIcon, PlusIcon, SearchIcon, UserIcon } from 'tdesign-ic
 import {
   Button,
   DateRangePicker,
+  EnhancedTable as Table,
   Form,
   FormItem,
   Input,
@@ -30,7 +31,6 @@ import {
   Select,
   Space,
   Switch,
-  Table,
 } from 'tdesign-vue-next';
 
 import DeptLeaderModal from './components/dept-leader-modal.vue';
@@ -70,6 +70,7 @@ const displayColumns = computed({
 
 const {
   clearSelectedRowKeys,
+  expandedTreeNodes,
   fetchTableData,
   handleReset,
   handleSearch,
@@ -83,6 +84,10 @@ const {
 } = useDeptPage();
 
 const { getDictOptions } = useDictOptions();
+
+function handleExpandedTreeNodesChange(value: Array<number | string>) {
+  expandedTreeNodes.value = value;
+}
 
 async function fetchStatusOptions() {
   const options = await getDictOptions('data_status');
@@ -301,12 +306,18 @@ onMounted(() => {
           v-model:display-columns="displayColumns"
           :columns="columns"
           :data="tableData"
+          :expanded-tree-nodes="expandedTreeNodes"
           :loading="loading"
           :selected-row-keys="selectedRowKeys"
-          :tree="{ childrenKey: 'children', defaultExpandAll: true }"
+          :tree="{
+            childrenKey: 'children',
+            defaultExpandAll: true,
+            treeNodeColumnIndex: 1,
+          }"
           row-key="id"
           hover
           stripe
+          @expanded-tree-nodes-change="handleExpandedTreeNodesChange"
           @select-change="handleSelectChange"
         >
           <template #sort="{ row }">

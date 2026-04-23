@@ -29,6 +29,7 @@ import {
 import {
   Button,
   DateRangePicker,
+  EnhancedTable as Table,
   Form,
   FormItem,
   Input,
@@ -37,7 +38,6 @@ import {
   Select,
   Space,
   Switch,
-  Table,
   Tag,
 } from 'tdesign-vue-next';
 

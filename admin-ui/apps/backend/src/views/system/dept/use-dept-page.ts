@@ -13,10 +13,31 @@ import { createDeptSearchForm } from './schemas';
 export function useDeptPage() {
   const searchForm = reactive(createDeptSearchForm());
   const tableData = ref<DeptApi.ListTreeItem[]>([]);
+  const expandedTreeNodes = ref<Array<number | string>>([]);
   const loading = ref(false);
   const selectedRowKeys = ref<Array<number | string>>([]);
   const isRecycleBin = ref(false);
   let fetchRequestId = 0;
+
+  function normalizeDeptTree(items: DeptApi.ListTreeItem[] = []): DeptApi.ListTreeItem[] {
+    return items.map((item) => {
+      const children = Array.isArray(item.children)
+        ? normalizeDeptTree(item.children)
+        : undefined;
+      return { ...item, children };
+    });
+  }
+
+  function collectExpandedTreeNodes(items: DeptApi.ListTreeItem[] = []): Array<number | string> {
+    const nodes: Array<number | string> = [];
+    for (const item of items) {
+      nodes.push(item.id);
+      if (Array.isArray(item.children) && item.children.length > 0) {
+        nodes.push(...collectExpandedTreeNodes(item.children));
+      }
+    }
+    return nodes;
+  }
 
   function buildParams() {
     const params: Partial<DeptApi.ListQuery> = {};
@@ -51,7 +72,9 @@ export function useDeptPage() {
         ? await getRecycleDeptList(params)
         : await getDeptPageList(params);
       if (requestId !== fetchRequestId) return;
-      tableData.value = result;
+      const treeData = normalizeDeptTree(result);
+      tableData.value = treeData;
+      expandedTreeNodes.value = collectExpandedTreeNodes(treeData);
     } catch (error) {
       if (requestId !== fetchRequestId) return;
       logger.error(error);
@@ -86,6 +109,7 @@ export function useDeptPage() {
     handleSelectChange,
     isRecycleBin,
     loading,
+    expandedTreeNodes,
     searchForm,
     selectedRowKeys,
     tableData,

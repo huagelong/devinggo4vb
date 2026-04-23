@@ -45,7 +45,11 @@ async function initSetupVbenForm() {
         if (value === undefined || value === null || value === '') {
           return true;
         }
-        const [patternStr, message] = params.split('#');
+        const rawParam = Array.isArray(params) ? params[0] : params?.[0] ?? params;
+        if (typeof rawParam !== 'string') {
+          return true;
+        }
+        const [patternStr, message] = rawParam.split('#');
         const regex = new RegExp(patternStr);
         if (!regex.test(String(value))) {
           return message || $t('ui.formRules.formatInvalid', [ctx.label]);
