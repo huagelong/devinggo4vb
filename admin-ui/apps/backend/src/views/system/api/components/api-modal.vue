@@ -5,7 +5,7 @@ import type { OptionItem, IdType } from '#/types/common';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 import type { ApiManageApi } from '#/api/system/api';
 
-import { nextTick, ref } from 'vue';
+import { markRaw, nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -67,7 +67,7 @@ const [Form, formApi] = useVbenForm({
       label: 'ID',
     },
     {
-      component: Select,
+      component: markRaw(Select),
       componentProps: createSelectProps(groupOptions.value, $t('ui.placeholder.select')),
       fieldName: 'group_id',
       label: $t('system.api.group'),
@@ -88,7 +88,7 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
-      component: Select,
+      component: markRaw(Select),
       componentProps: createSelectProps(requestModeOptions.value, $t('ui.placeholder.select')),
       fieldName: 'request_mode',
       label: $t('system.api.requestMode'),

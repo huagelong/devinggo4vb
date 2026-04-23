@@ -334,6 +334,8 @@
   },
   "menu": {
     "title": "菜单名称",
+    "code": "菜单标识",
+    "parentMenu": "上级菜单",
     "type": "菜单类型",
     "router": "路由地址",
     "component": "组件路径",
@@ -350,6 +352,8 @@
     "iframe": "内嵌",
     "topMenu": "顶级菜单",
     "addChild": "新增子菜单",
+    "isHidden": "是否隐藏",
+    "generateButton": "是否生成按钮",
     "confirmDelete": "确认删除该菜单吗？",
     "confirmRecovery": "确认恢复该菜单吗？",
     "confirmPermanentDelete": "确认彻底删除该菜单吗？",

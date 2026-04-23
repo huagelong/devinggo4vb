@@ -4,7 +4,7 @@ import type { ApiColumnFormModel, ApiColumnListItem, ApiColumnType } from '../mo
 import type { DictOption } from '#/composables/crud/use-dict-options';
 import type { ApiColumnApi } from '#/api/system/api-column';
 
-import { nextTick, reactive, ref } from 'vue';
+import { markRaw, nextTick, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -81,7 +81,7 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
-      component: Select,
+      component: markRaw(Select),
       componentProps: createSelectProps(dataTypeOptions.value, $t('ui.placeholder.select')),
       fieldName: 'data_type',
       label: $t('system.api.dataType'),

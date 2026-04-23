@@ -3,7 +3,7 @@ import { logger } from '#/utils/logger';
 import type { NoticeApi } from '#/api/system/notice';
 import type { DictOption } from '#/composables/crud/use-dict-options';
 
-import { nextTick, ref } from 'vue';
+import { markRaw, nextTick, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -91,7 +91,7 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
-      component: Select,
+      component: markRaw(Select),
       componentProps: createUserSelectProps(),
       defaultValue: [],
       fieldName: 'users',
