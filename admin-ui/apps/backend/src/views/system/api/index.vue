@@ -34,10 +34,9 @@ import type { DictOption } from '#/composables/crud/use-dict-options';
 import { useDictOptions } from '#/composables/crud/use-dict-options';
 
 import ApiModal from './components/api-modal.vue';
-import ParamsModal from './components/params-modal.vue';
-import type { ApiListItem, ApiTableColumn, ApiColumnType } from './model';
+import type { ApiListItem, ApiTableColumn } from './model';
 import {
-  createApiColumnOptions,
+  createApiTableColumnOptions,
   createApiTableColumns,
 } from './schemas';
 import { useApiCrud } from './use-api-crud';
@@ -48,15 +47,10 @@ type ApiModalInstance = {
   open: (data?: Partial<ApiListItem>) => void;
 };
 
-type ParamsModalInstance = {
-  open: (row: ApiListItem, type: ApiColumnType) => void;
-};
-
 const apiModalRef = ref<ApiModalInstance>();
-const paramsModalRef = ref<ParamsModalInstance>();
 
 const columns: ApiTableColumn[] = createApiTableColumns();
-const columnOptions = createApiColumnOptions(columns);
+const columnOptions = createApiTableColumnOptions(columns);
 const allColumnKeys = columnOptions.map((item) => item.value);
 const visibleColumns = ref<string[]>([...allColumnKeys]);
 
@@ -251,10 +245,6 @@ function handleStatusSwitchChange(row: ApiListItem, value: unknown) {
   void handleStatusChange(row, Boolean(value));
 }
 
-function handleManageParams(row: ApiListItem, type: ApiColumnType) {
-  paramsModalRef.value?.open(row, type);
-}
-
 function resolveGroupLabel(id?: IdType) {
   if (!id) return '-';
   return groupMap.value.get(String(id)) || '-';
@@ -433,22 +423,6 @@ onMounted(() => {
                     {{ $t('common.delete') }}
                   </Button>
                 </Popconfirm>
-                <Button
-                  size="small"
-                  theme="default"
-                  variant="outline"
-                  @click="handleManageParams(row, 1)"
-                >
-                  {{ $t('system.api.requestParams') }}
-                </Button>
-                <Button
-                  size="small"
-                  theme="default"
-                  variant="outline"
-                  @click="handleManageParams(row, 2)"
-                >
-                  {{ $t('system.api.responseParams') }}
-                </Button>
               </template>
 
               <template v-else>
@@ -476,6 +450,5 @@ onMounted(() => {
     </div>
 
     <ApiModal ref="apiModalRef" @success="fetchTableData" />
-    <ParamsModal ref="paramsModalRef" />
   </Page>
 </template>

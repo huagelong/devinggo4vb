@@ -43,7 +43,6 @@ func BindController(group *ghttp.RouterGroup) {
 			system.AppGroupController,
 			system.AppController,
 			system.ApiController,
-			system.ApiColumnController,
 			system.ApiGroupController,
 			system.CacheController,
 			system.DataMaintainController,

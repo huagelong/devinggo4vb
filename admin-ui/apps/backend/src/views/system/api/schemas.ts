@@ -1,8 +1,5 @@
 import type {
-  ApiColumnFormModel,
-  ApiColumnOptionItem,
-  ApiColumnSearchFormModel,
-  ApiColumnTableColumn,
+  ApiTableColumnOptionItem,
   ApiFormModel,
   ApiSearchFormModel,
   ApiTableColumn,
@@ -47,56 +44,9 @@ export function createApiTableColumns(): ApiTableColumn[] {
   ];
 }
 
-export function createApiColumnOptions(
+export function createApiTableColumnOptions(
   columns: ApiTableColumn[],
-): ApiColumnOptionItem[] {
-  return columns
-    .filter((column) => column.colKey !== 'row-select' && column.title)
-    .map((column) => ({
-      label: String(column.title),
-      value: String(column.colKey),
-    }));
-}
-
-export function createApiColumnSearchForm(): ApiColumnSearchFormModel {
-  return {
-    name: '',
-    data_type: undefined,
-    status: undefined,
-    is_required: undefined,
-    created_at: [],
-  };
-}
-
-export function createApiColumnTableColumns(): ApiColumnTableColumn[] {
-  return [
-    {
-      align: 'center',
-      colKey: 'row-select',
-      type: 'multiple',
-      width: 52,
-    },
-    { colKey: 'name', title: $t('system.api.fieldName'), minWidth: 220 },
-    { colKey: 'data_type', title: $t('system.api.dataType'), width: 140 },
-    { colKey: 'type', title: $t('system.api.fieldType'), width: 120 },
-    { colKey: 'is_required', title: $t('system.api.isRequired'), width: 100, align: 'center' },
-    { colKey: 'status', title: $t('common.status'), width: 100, align: 'center' },
-    { colKey: 'default_value', title: $t('system.api.defaultValue'), minWidth: 180 },
-    { colKey: 'remark', title: $t('common.remark'), minWidth: 200 },
-    { colKey: 'created_at', title: $t('common.createTime'), minWidth: 180 },
-    {
-      align: 'center',
-      colKey: 'action',
-      fixed: 'right',
-      title: $t('common.action'),
-      width: 200,
-    },
-  ];
-}
-
-export function createApiColumnColumnOptions(
-  columns: ApiColumnTableColumn[],
-): ApiColumnOptionItem[] {
+): ApiTableColumnOptionItem[] {
   return columns
     .filter((column) => column.colKey !== 'row-select' && column.title)
     .map((column) => ({
@@ -114,19 +64,5 @@ export function createApiFormDefaultValues(): ApiFormModel {
     status: 1,
     auth_mode: 1,
     remark: '',
-  };
-}
-
-export function createApiColumnFormDefaultValues(): ApiColumnFormModel {
-  return {
-    api_id: 0,
-    data_type: undefined,
-    default_value: '',
-    description: '',
-    is_required: 2,
-    name: '',
-    remark: '',
-    status: 1,
-    type: 1,
   };
 }
