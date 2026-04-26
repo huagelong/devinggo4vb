@@ -26,6 +26,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^6.2.1",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -50,6 +51,7 @@
     "webcrypto-liner-shim": "^1.4.8",
     "tdesign-icons-vue-next": "catalog:",
     "tdesign-vue-next": "catalog:",
+    "tinymce": "^6.8.5",
     "vue": "catalog:",
     "vue-router": "catalog:"
   },

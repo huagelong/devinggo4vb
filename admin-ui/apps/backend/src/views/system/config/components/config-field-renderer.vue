@@ -16,6 +16,7 @@ import {
   Textarea,
 } from 'tdesign-vue-next';
 
+import ConfigRichTextEditor from './config-rich-text-editor.vue';
 import ConfigUploadInput from './config-upload-input.vue';
 import KeyValueEditor from './key-value-editor.vue';
 
@@ -45,24 +46,34 @@ const switchValues = computed(() => {
   const defaults = props.field.switchValues ?? { checked: 1, unchecked: 0 };
   return [defaults.checked, defaults.unchecked];
 });
+
+const normalizedInputType = computed(() =>
+  String(props.field.input_type ?? '')
+    .trim()
+    .toLowerCase(),
+);
 </script>
 
 <template>
   <div class="config-field-renderer">
     <Input
-      v-if="field.input_type === 'input'"
+      v-if="normalizedInputType === 'input'"
       v-model="innerValue"
       allow-clear
       :placeholder="$t('common.enterContent')"
     />
     <Textarea
-      v-else-if="field.input_type === 'textarea' || field.input_type === 'editor'"
+      v-else-if="normalizedInputType === 'textarea'"
       v-model="innerValue"
       :autosize="{ minRows: 3, maxRows: 6 }"
       :placeholder="$t('common.enterContent')"
     />
+    <ConfigRichTextEditor
+      v-else-if="normalizedInputType === 'editor'"
+      v-model="innerValue"
+    />
     <Select
-      v-else-if="field.input_type === 'select'"
+      v-else-if="normalizedInputType === 'select'"
       v-model="innerValue"
       :options="selectOptions"
       :placeholder="$t('ui.placeholder.select')"
@@ -70,7 +81,7 @@ const switchValues = computed(() => {
       class="w-full"
     />
     <RadioGroup
-      v-else-if="field.input_type === 'radio'"
+      v-else-if="normalizedInputType === 'radio'"
       v-model="innerValue"
       class="flex flex-wrap gap-3"
     >
@@ -83,7 +94,7 @@ const switchValues = computed(() => {
       </Radio>
     </RadioGroup>
     <CheckboxGroup
-      v-else-if="field.input_type === 'checkbox'"
+      v-else-if="normalizedInputType === 'checkbox'"
       v-model="innerValue"
       class="flex flex-wrap gap-3"
     >
@@ -96,16 +107,16 @@ const switchValues = computed(() => {
       </Checkbox>
     </CheckboxGroup>
     <Switch
-      v-else-if="field.input_type === 'switch'"
+      v-else-if="normalizedInputType === 'switch'"
       v-model="innerValue"
       :custom-value="switchValues"
     />
     <ConfigUploadInput
-      v-else-if="field.input_type === 'upload'"
+      v-else-if="normalizedInputType === 'upload'"
       v-model="innerValue"
     />
     <KeyValueEditor
-      v-else-if="field.input_type === 'key-value'"
+      v-else-if="normalizedInputType === 'key-value'"
       v-model="innerValue"
     />
     <Input

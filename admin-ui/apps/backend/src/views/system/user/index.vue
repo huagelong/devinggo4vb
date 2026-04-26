@@ -534,7 +534,7 @@ onUnmounted(() => {
       :header="$t('system.user.setHomePage')"
       destroy-on-close
     >
-      <Form label-width="90px" layout="inline">
+      <Form label-width="130px" layout="inline">
         <FormItem :label="$t('system.user.selectHomePage')">
           <Select
             v-model="selectedHomePage"
