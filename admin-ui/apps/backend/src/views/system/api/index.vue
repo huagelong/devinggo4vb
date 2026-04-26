@@ -251,8 +251,8 @@ function handleStatusSwitchChange(row: ApiListItem, value: unknown) {
   void handleStatusChange(row, Boolean(value));
 }
 
-function handleManageParams(_row: ApiListItem, _type: ApiColumnType) {
-  message.info($t('common.actionNotAvailable', [$t('system.api.paramsManage')]));
+function handleManageParams(row: ApiListItem, type: ApiColumnType) {
+  paramsModalRef.value?.open(row, type);
 }
 
 function resolveGroupLabel(id?: IdType) {
