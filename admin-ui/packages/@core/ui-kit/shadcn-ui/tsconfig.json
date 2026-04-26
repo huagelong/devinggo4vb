@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@vben/tsconfig/web.json",
+  "extends": "../../../../internal/tsconfig/web.json",
   "compilerOptions": {
     "paths": {
       "@vben-core/shadcn-ui/*": ["./src/*"]
